@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Models\Desa;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Database\Seeder;
@@ -11,7 +10,7 @@ use Illuminate\Support\Facades\Hash;
 class UserSeeder extends Seeder
 {
     /**
-     * Seed 1 admin (tanpa desa) + 1 operator per desa dummy.
+     * Seed 1 admin + contoh operator dinas.
      * Jangan jalankan di production.
      */
     public function run(): void
@@ -19,30 +18,49 @@ class UserSeeder extends Seeder
         $adminRole    = Role::where('name', 'admin')->firstOrFail();
         $operatorRole = Role::where('name', 'operator')->firstOrFail();
 
-        // Admin kabupaten — desa_id null (bisa akses semua desa)
+        // Admin
         User::firstOrCreate(
             ['email' => 'admin@diskominfo.test'],
             [
-                'name'     => 'Administrator',
-                'password' => Hash::make('password'),
-                'role_id'  => $adminRole->id,
-                'desa_id'  => null,
+                'name'       => 'Administrator',
+                'password'   => Hash::make('password'),
+                'role_id'    => $adminRole->id,
+                'nama_dinas' => 'Dinas Komunikasi dan Informatika',
+                'alias'      => 'Diskominfo',
             ]
         );
 
-        // 1 operator per desa
-        $desas = Desa::all();
+        // Operator dinas contoh
+        $dinasList = [
+            [
+                'email'      => 'operator.diskominfo@diskominfo.test',
+                'name'       => 'Operator Diskominfo',
+                'nama_dinas' => 'Dinas Komunikasi dan Informatika',
+                'alias'      => 'Diskominfo',
+            ],
+            [
+                'email'      => 'operator.bappeda@diskominfo.test',
+                'name'       => 'Operator Bappeda',
+                'nama_dinas' => 'Badan Perencanaan Pembangunan Daerah',
+                'alias'      => 'Bappeda',
+            ],
+            [
+                'email'      => 'operator.dinkes@diskominfo.test',
+                'name'       => 'Operator Dinkes',
+                'nama_dinas' => 'Dinas Kesehatan',
+                'alias'      => 'Dinkes',
+            ],
+        ];
 
-        foreach ($desas as $desa) {
-            $slug = strtolower($desa->kode_desa);
-
+        foreach ($dinasList as $dinas) {
             User::firstOrCreate(
-                ['email' => "operator.{$slug}@diskominfo.test"],
+                ['email' => $dinas['email']],
                 [
-                    'name'     => "Operator {$desa->nama_desa}",
-                    'password' => Hash::make('password'),
-                    'role_id'  => $operatorRole->id,
-                    'desa_id'  => $desa->id,
+                    'name'       => $dinas['name'],
+                    'password'   => Hash::make('password'),
+                    'role_id'    => $operatorRole->id,
+                    'nama_dinas' => $dinas['nama_dinas'],
+                    'alias'      => $dinas['alias'],
                 ]
             );
         }

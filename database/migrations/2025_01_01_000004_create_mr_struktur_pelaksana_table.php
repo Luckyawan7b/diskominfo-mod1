@@ -10,11 +10,11 @@ return new class extends Migration
     {
         Schema::create('mr_struktur_pelaksana', function (Blueprint $table) {
             $table->id();
-            // 1:1 dengan mr_konteks — gunakan unique constraint
+            // 1:1 dengan mr_konteks
             $table->foreignId('mr_konteks_id')->unique()->constrained('mr_konteks')->cascadeOnDelete();
             $table->string('pemilik_risiko')->nullable();
             $table->string('koordinator_risiko')->nullable();
-            $table->text('pengelola_risiko')->nullable(); // bisa lebih dari 1 nama
+            $table->text('pengelola_risiko')->nullable();
             $table->timestamps();
         });
     }

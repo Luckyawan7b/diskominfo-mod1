@@ -19,7 +19,8 @@ class User extends Authenticatable
         'email',
         'password',
         'role_id',
-        'desa_id',
+        'nama_dinas',
+        'alias',
     ];
 
     protected $hidden = ['password', 'remember_token'];
@@ -37,15 +38,6 @@ class User extends Authenticatable
     public function role(): BelongsTo
     {
         return $this->belongsTo(Role::class);
-    }
-
-    /**
-     * null untuk admin (akses semua desa).
-     * Untuk pengembangan multi-operator per desa, ganti ke pivot table user_desa.
-     */
-    public function desa(): BelongsTo
-    {
-        return $this->belongsTo(Desa::class);
     }
 
     // ─── Helpers ─────────────────────────────────────────────────────────────

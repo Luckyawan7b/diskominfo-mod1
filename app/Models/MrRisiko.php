@@ -23,7 +23,7 @@ class MrRisiko extends Model
         'indikator_kinerja_snapshot',
         'kode_risiko',
         'peristiwa_risiko',
-        'ref_kategori_risiko_id',
+        'kategori_risiko',
         'penyebab',
         'dampak',
         'area_dampak',
@@ -31,8 +31,6 @@ class MrRisiko extends Model
         'level_dampak',
         'besaran_risiko',
         'prioritas_risiko',
-        'status',
-        'catatan_penolakan',
         'created_by',
     ];
 
@@ -53,11 +51,6 @@ class MrRisiko extends Model
     public function sasaran(): BelongsTo
     {
         return $this->belongsTo(MrSasaranUpr::class, 'mr_sasaran_upr_id');
-    }
-
-    public function kategoriRisiko(): BelongsTo
-    {
-        return $this->belongsTo(RefKategoriRisiko::class, 'ref_kategori_risiko_id');
     }
 
     public function creator(): BelongsTo
@@ -100,11 +93,11 @@ class MrRisiko extends Model
 
     public function isEditableByOperator(): bool
     {
-        return in_array($this->status, ['draft', 'rejected']);
+        return true;
     }
 
     public function isRejected(): bool
     {
-        return $this->status === 'rejected';
+        return false;
     }
 }

@@ -14,7 +14,7 @@ return new class extends Migration
             $table->enum('periode', ['semester_1', 'semester_2']);
             $table->year('tahun');
             $table->text('hasil_pelaksanaan')->nullable();
-            $table->text('data_dukung_catatan')->nullable(); // catatan teks; file ada di mr_lampiran
+            $table->text('data_dukung_catatan')->nullable();
             $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamps();
             $table->softDeletes();

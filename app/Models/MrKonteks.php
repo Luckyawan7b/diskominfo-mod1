@@ -15,7 +15,6 @@ class MrKonteks extends Model
     protected $table = 'mr_konteks';
 
     protected $fillable = [
-        'desa_id',
         'layanan_id',
         'nama_instansi',
         'nama_upr',
@@ -24,7 +23,6 @@ class MrKonteks extends Model
         'tahun_penilaian',
         'tahun_pelaksanaan',
         'selera_risiko',
-        'status',
         'created_by',
     ];
 
@@ -35,11 +33,6 @@ class MrKonteks extends Model
     ];
 
     // ─── Relations ───────────────────────────────────────────────────────────
-
-    public function desa(): BelongsTo
-    {
-        return $this->belongsTo(Desa::class);
-    }
 
     public function layanan(): BelongsTo
     {
@@ -68,15 +61,14 @@ class MrKonteks extends Model
 
     // ─── Helpers ─────────────────────────────────────────────────────────────
 
-    /** Operator tidak bisa mengedit saat submitted/approved/archived */
+    /** Form bersifat final tetapi selalu bisa diubah (CRUD biasa) */
     public function isEditableByOperator(): bool
     {
-        // Dengan flow auto-approve, hanya 'draft' yang bisa diedit
-        return $this->status === 'draft';
+        return true;
     }
 
     public function isApproved(): bool
     {
-        return $this->status === 'approved';
+        return true;
     }
 }

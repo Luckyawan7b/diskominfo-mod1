@@ -16,11 +16,6 @@ class Layanan extends Model
         'tahun_pembuatan' => 'integer',
     ];
 
-    public function desa()
-    {
-        return $this->belongsTo(Desa::class);
-    }
-
     public function creator()
     {
         return $this->belongsTo(User::class, 'created_by');

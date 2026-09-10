@@ -1,58 +1,114 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Sistem Informasi Manajemen Risiko & Layanan SPBE - Diskominfo
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Aplikasi ini merupakan modul manajemen risiko dan katalog layanan Sistem Pemerintahan Berbasis Elektronik (SPBE) untuk **Pemerintah Daerah / Dinas (Perangkat Daerah)**, dikelola oleh Dinas Komunikasi dan Informatika (Diskominfo).
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## 📌 Konteks Penting untuk Agen & Pengembang Selanjutnya
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Dokumen ini memuat catatan arsitektur dan riwayat perubahan penting agar agen AI maupun pengembang berikutnya memahami konteks sistem saat ini dan tidak mengembalikan kode ke pola lama.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+---
 
-## Learning Laravel
+### 1. Peralihan dari Level "Desa" ke Level "Dinas / Perangkat Daerah"
+- **Latar Belakang**: Prototipe awal aplikasi menggunakan entitas `desa` (`desa_id`). Saat ini aplikasi resmi ditujukan untuk tingkat **Dinas / OPD (Organisasi Perangkat Daerah)**.
+- **Perubahan Database**:
+  - Tabel `desa` dan semua kolom `desa_id` telah **dihapus sepenuhnya** dari database migrasi.
+  - Tabel `users` kini memiliki kolom `nama_dinas` (varchar 191) dan `alias` (varchar 191, contoh: `Diskominfo`, `Bappeda`, `Dinkes`).
+  - Tabel `layanans` kini memiliki kolom `unit_pelaksana` (varchar 191).
+  - Tabel `mr_konteks` terhubung langsung ke `layanans` via `layanan_id` (`UNIQUE FK`) dan memiliki `nama_instansi` serta `nama_upr`.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+---
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### 2. Penghapusan Alur Approval & Penolakan (Sistem CRUD Biasa)
+- **Latar Belakang**: Sebelumnya sistem dirancang dengan alur persetujuan bertingkat (`draft` → `submitted` → `approved` / `rejected` → `archived`). Berdasarkan keputusan bisnis terbaru:
+  - Perangkat Daerah mengirimkan data yang **bersifat langsung final**, namun **tetap selalu bisa diubah kapan saja (CRUD biasa)**.
+  - Admin **tidak melakukan revisi atau penolakan di dalam sistem** (proses evaluasi/revisi dilakukan di luar sistem/offline).
+- **Perubahan Database**:
+  - Kolom `status` ('draft', 'submitted', 'approved', 'rejected', 'archived') pada `mr_konteks` **telah dihapus**.
+  - Kolom `status` ('draft', 'submitted', 'approved', 'rejected') pada `mr_risiko` **telah dihapus**.
+  - Kolom `catatan_penolakan` pada `mr_risiko` **telah dihapus**.
+- **Perubahan Model**:
+  - `MrKonteks::isEditableByOperator()` selalu mengembalikan `true`.
+  - `MrRisiko::isEditableByOperator()` selalu mengembalikan `true`.
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+---
 
-## Agentic Development
+### 3. Perubahan Kategori Risiko (Dropdown Referensi → Input Teks)
+- **Latar Belakang**: Kategori risiko tidak lagi dibatasi oleh 10 kategori baku yang terdaftar di tabel referensi terpisah, melainkan dapat diisi langsung oleh user.
+- **Perubahan Database**:
+  - Tabel `ref_kategori_risiko` dan seedernya telah **dihapus sepenuhnya**.
+  - Kolom `ref_kategori_risiko_id` pada tabel `mr_risiko` digantikan oleh kolom teks biasa:
+    ```php
+    $table->string('kategori_risiko')->nullable();
+    ```
+- **Catatan UI**: Komponen form input risiko harus menggunakan input teks (`<input type="text">`), bukan `<select>` dropdown ke tabel master.
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+---
 
-```bash
-composer require laravel/boost --dev
+### 4. Perhitungan Otomatis Kolom `prioritas_risiko`
+- Kolom `prioritas_risiko` (unsigned smallint) pada tabel `mr_risiko` **bukan diinput manual oleh user**.
+- Nilai dihitung dan diurutkan otomatis oleh `App\Observers\MrRisikoObserver` berdasarkan ranking besaran kritis risiko (`besaran_risiko DESC`) dalam satu konteks penilaian yang sama:
+  - `besaran_risiko` = `level_kemungkinan` × `level_dampak` (dihitung via `RiskMatrixCalculator`).
+  - Baris dengan besaran risiko tertinggi otomatis mendapat `prioritas_risiko = 1`.
 
-php artisan boost:install
+---
+
+## 🗄️ Struktur Migrasi Database (17 File Bersih)
+
+Seluruh migrasi tambahan (patch alter table, drop table sementara, placeholder data migrasi) telah dibersihkan dan disusun ulang dari awal (*clean slate*) sesuai urutan dependensi foreign key:
+
+```text
+database/migrations/
+├── 0001_01_01_000000_create_roles_table.php             # Roles user (admin, operator)
+├── 0001_01_01_000001_create_users_table.php             # Users (role_id, nama_dinas, alias, softDeletes) + Auth tokens
+├── 0001_01_01_000002_create_cache_table.php             # Driver cache
+├── 0001_01_01_000003_create_jobs_table.php              # Driver queues
+├── 2025_01_01_000001_create_layanans_table.php          # Manajemen Layanan SPBE (27 atribut + unit_pelaksana)
+├── 2025_01_01_000002_create_ref_sasaran_nasional_table.php # Referensi Sasaran Strategis Nasional
+├── 2025_01_01_000003_create_mr_konteks_table.php        # Konteks SPBE (layanan_id UNIQUE, tahun_pelaksanaan)
+├── 2025_01_01_000004_create_mr_struktur_pelaksana_table.php # Struktur pelaksana UPR (1:1 mr_konteks)
+├── 2025_01_01_000005_create_mr_sasaran_upr_table.php    # Sasaran UPR
+├── 2025_01_01_000006_create_mr_indikator_kinerja_table.php # Indikator kinerja sasaran UPR
+├── 2025_01_01_000007_create_mr_risiko_table.php         # Baris risiko (kategori_risiko string, mr_sasaran_upr_id)
+├── 2025_01_01_000008_create_mr_risiko_perlakuan_table.php # Rencana tindak perlakuan risiko
+├── 2025_01_01_000009_create_mr_risiko_residual_table.php  # Risiko residual pasca perlakuan
+├── 2025_01_01_000010_create_mr_kolom_tambahan_table.php # SPBE Digital (Bagian E)
+├── 2025_01_01_000011_create_mr_layanan_digital_table.php # MKB (Manajemen Keberlangsungan Bisnis)
+├── 2025_01_01_000012_create_mr_pemantauan_risiko_table.php # Pemantauan berkala Semester 1 & 2
+└── 2025_01_01_000013_create_mr_lampiran_table.php       # Bukti dukung polimorfik
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+Skema DDL Oracle/SQL resmi yang identik juga tersimpan di [Schema ERD Data modeler.sql](file:///c:/laragon/www/diskominfo-mod1/Schema%20ERD%20Data%20modeler.sql).
 
-## Contributing
+---
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## 🛠️ Panduan untuk Tugas UI / Komponen Selanjutnya
 
-## Code of Conduct
+Jika Anda bertugas memperbaiki atau melanjutkan pengembangan komponen Livewire / Blade:
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+1. **Bersihkan Kode yang Masih Memanggil Desa**:
+   - Komponen lama seperti `App\Livewire\Admin\Desa\DesaIndex` tidak lagi memiliki tabel di database.
+   - Filter di `KonteksIndex.php` yang sebelumnya menggunakan `desa_id` / `Desa::all()` harus disesuaikan menjadi filter berdasarkan dinas/OPD (`User::where('role_id', ...)->pluck('nama_dinas')` atau `alias`).
+2. **Sederhanakan Alur Pengiriman Form**:
+   - Hapus komponen atau tombol "Kirim untuk Review" / "Submit Konteks" yang mengunci form menjadi read-only.
+   - Hapus tampilan badge status approval (`Draft`, `Submitted`, `Approved`, `Rejected`) karena status tersebut sudah tidak ada di database.
+   - Form cukup memiliki tombol **"Simpan"** / **"Perbarui"** standar CRUD.
+3. **Form Input Risiko**:
+   - Ganti elemen select `ref_kategori_risiko_id` menjadi text field `kategori_risiko`.
 
-## Security Vulnerabilities
+---
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## 🚀 Setup & Testing
 
-## License
+### Fresh Migration & Seeding
+```bash
+php artisan migrate:fresh
+php artisan db:seed
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### Akun Bawaan Seeder:
+- **Admin**: `admin@diskominfo.test` / password: `password`
+- **Operator Diskominfo**: `operator.diskominfo@diskominfo.test` / password: `password`
+- **Operator Bappeda**: `operator.bappeda@diskominfo.test` / password: `password`
+- **Operator Dinkes**: `operator.dinkes@diskominfo.test` / password: `password`

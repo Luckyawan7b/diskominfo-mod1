@@ -11,7 +11,7 @@ return new class extends Migration
         Schema::create('mr_lampiran', function (Blueprint $table) {
             $table->id();
             // Polymorphic: bisa attached ke MrPemantauanRisiko atau MrRisiko
-            $table->morphs('lampirable'); // membuat lampirable_id (bigint) + lampirable_type (string) + index
+            $table->morphs('lampirable');
             $table->string('nama_file');
             $table->string('path_file');
             $table->string('mime_type')->nullable();
