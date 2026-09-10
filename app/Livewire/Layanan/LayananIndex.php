@@ -14,26 +14,27 @@ class LayananIndex extends Component
         $user = auth()->user();
 
         if ($user->isOperator()) {
-            $prioritas = Layanan::where('desa_id', $user->desa_id)
+            // Scoping by created_by: operator hanya melihat layanan miliknya sendiri
+            $prioritas = Layanan::where('created_by', $user->id)
                 ->where('is_prioritas', true)
                 ->withCount(['mrKonteks'])
                 ->orderBy('nama_layanan')
                 ->get();
 
-            $reguler = Layanan::where('desa_id', $user->desa_id)
+            $reguler = Layanan::where('created_by', $user->id)
                 ->where('is_prioritas', false)
                 ->withCount(['mrKonteks'])
                 ->orderBy('nama_layanan')
                 ->get();
         } else {
-            // Admin: tampilkan semua layanan dengan relasi desa
-            $prioritas = Layanan::with('desa')
+            // Admin: tampilkan semua layanan dengan info creator (nama_dinas)
+            $prioritas = Layanan::with('creator')
                 ->where('is_prioritas', true)
                 ->withCount(['mrKonteks'])
                 ->orderBy('nama_layanan')
                 ->get();
 
-            $reguler = Layanan::with('desa')
+            $reguler = Layanan::with('creator')
                 ->where('is_prioritas', false)
                 ->withCount(['mrKonteks'])
                 ->orderBy('nama_layanan')
@@ -41,8 +42,8 @@ class LayananIndex extends Component
         }
 
         return view('livewire.layanan.layanan-index', [
-            'prioritas'   => $prioritas,
-            'reguler'     => $reguler,
+            'prioritas'    => $prioritas,
+            'reguler'      => $reguler,
             'totalLayanan' => $prioritas->count() + $reguler->count(),
         ]);
     }

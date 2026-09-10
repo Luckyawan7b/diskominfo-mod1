@@ -3,8 +3,8 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Sistem Manajemen Risiko SPBE Desa">
-    <title>{{ $title ?? 'Manajemen Risiko' }} — SPBE Desa</title>
+    <meta name="description" content="Sistem Manajemen Risiko SPBE Perangkat Daerah">
+    <title>{{ $title ?? 'Manajemen Risiko' }} — SPBE Diskominfo</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="min-h-screen bg-slate-900 antialiased" x-data="{ sidebarOpen: false }">
@@ -23,7 +23,7 @@
             </div>
             <div>
                 <span class="text-white font-semibold text-sm">Manajemen Risiko</span>
-                <p class="text-slate-500 text-xs">SPBE Desa</p>
+                <p class="text-slate-500 text-xs">SPBE Perangkat Daerah</p>
             </div>
         </div>
 
@@ -44,7 +44,7 @@
                 <div class="mb-4">
                     <div class="px-3 py-2 mx-1 rounded-lg bg-emerald-950/30 border border-emerald-500/20">
                         <div class="text-sm font-semibold text-emerald-400 leading-tight">
-                            {{ $konteks->desa->nama_desa }} — {{ $konteks->nama_upr ?: 'Tanpa UPR' }}
+                            {{ $konteks->nama_instansi ?: ($konteks->layanan?->creator?->nama_dinas ?? 'Perangkat Daerah') }} — {{ $konteks->nama_upr ?: 'Tanpa UPR' }}
                         </div>
                         <div class="text-[11px] text-slate-400 mt-1">
                             Penilaian {{ $konteks->tahun_penilaian }} / Pelaksanaan {{ $konteks->tahun_pelaksanaan }}
@@ -113,9 +113,6 @@
 
                 <a href="{{ route('admin.review.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors {{ request()->routeIs('admin.review.*') ? 'bg-amber-500/10 text-amber-400 font-medium' : 'text-slate-300 hover:text-white hover:bg-slate-700/50' }}">
                     Monitoring
-                </a>
-                <a href="{{ route('admin.desa.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors {{ request()->routeIs('admin.desa.*') ? 'bg-violet-500/10 text-violet-400 font-medium' : 'text-slate-300 hover:text-white hover:bg-slate-700/50' }}">
-                    Kelola Desa
                 </a>
                 <a href="{{ route('admin.user.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors {{ request()->routeIs('admin.user.*') ? 'bg-violet-500/10 text-violet-400 font-medium' : 'text-slate-300 hover:text-white hover:bg-slate-700/50' }}">
                     Kelola User

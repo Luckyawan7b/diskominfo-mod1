@@ -37,8 +37,8 @@
             @if($layanan->bidang_bagian)
                 <p class="text-xs text-slate-500 mt-0.5">{{ $layanan->bidang_bagian }}</p>
             @endif
-            @if(auth()->user()->isAdmin() && $layanan->desa)
-                <p class="text-xs text-slate-500 mt-0.5">{{ $layanan->desa->nama_desa }}</p>
+            @if(auth()->user()->isAdmin() && $layanan->creator)
+                <p class="text-xs text-slate-500 mt-0.5">{{ $layanan->creator->nama_dinas }}</p>
             @endif
         </div>
         <span class="shrink-0 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border {{ $statusLabel['class'] }}">

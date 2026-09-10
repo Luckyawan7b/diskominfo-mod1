@@ -44,9 +44,7 @@
                                  style="width: {{ $progPct }}%"></div>
                         </div>
                     </div>
-                    @if(auth()->user()->isOperator())
-                        @livewire('layanan.submit-layanan', ['layanan' => $layanan], key('submit-'.$layanan->id))
-                    @endif
+
                 </div>
             </div>
         </div>
@@ -123,9 +121,9 @@
                 Masuk sebagai <span class="text-slate-300 font-medium">{{ auth()->user()->name }}</span>
                 <span class="text-slate-600 mx-1">•</span>
                 <span class="text-slate-400">{{ auth()->user()->role->label }}</span>
-                @if(auth()->user()->desa)
+                @if(auth()->user()->nama_dinas)
                     <span class="text-slate-600 mx-1">•</span>
-                    <span class="text-slate-400">{{ auth()->user()->desa->nama_desa }}</span>
+                    <span class="text-slate-400">{{ auth()->user()->nama_dinas }}</span>
                 @endif
             </p>
         </div>

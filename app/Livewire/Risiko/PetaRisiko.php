@@ -59,16 +59,10 @@ class PetaRisiko extends Component
         }
 
         $user = auth()->user();
-        $availableKonteks = collect();
-        if ($user->isOperator()) {
-            $availableKonteks = MrKonteks::where('desa_id', $user->desa_id)
-                ->orderByDesc('tahun_penilaian')
-                ->get();
-        } elseif ($user->isAdmin()) {
-            $availableKonteks = MrKonteks::where('desa_id', $this->konteks->desa_id)
-                ->orderByDesc('tahun_penilaian')
-                ->get();
-        }
+        // Gunakan scope accessibleBy: operator -> layanan miliknya; admin -> semua
+        $availableKonteks = MrKonteks::accessibleBy($user)
+            ->orderByDesc('tahun_penilaian')
+            ->get();
 
         return view('livewire.risiko.peta', [
             'matrix'          => $matrix,

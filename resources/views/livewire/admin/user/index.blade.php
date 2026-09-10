@@ -2,7 +2,7 @@
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
         <div>
             <h1 class="text-2xl font-bold text-white">Kelola Pengguna Sistem</h1>
-            <p class="text-sm text-slate-400 mt-1">Daftar akun Administrator dan Operator Desa</p>
+            <p class="text-sm text-slate-400 mt-1">Daftar akun Administrator dan Operator Perangkat Daerah</p>
         </div>
         <button wire:click="openCreateModal"
             class="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-gradient-to-r from-emerald-500 to-teal-600 text-sm font-semibold text-white shadow-lg shadow-emerald-500/25 hover:from-emerald-600 hover:to-teal-700 transition-all cursor-pointer">
@@ -15,7 +15,7 @@
     <div class="mb-4 max-w-sm">
         <input wire:model.live.debounce.300ms="search" type="text"
             class="w-full rounded-lg border border-slate-600 bg-slate-800 text-sm text-slate-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500"
-            placeholder="Cari nama atau email...">
+            placeholder="Cari nama, email, atau nama dinas...">
     </div>
 
     {{-- Table --}}
@@ -26,7 +26,7 @@
                     <th class="text-left px-5 py-3.5 text-xs font-semibold text-slate-400 uppercase">Nama Pengguna</th>
                     <th class="text-left px-5 py-3.5 text-xs font-semibold text-slate-400 uppercase">Email</th>
                     <th class="text-center px-5 py-3.5 text-xs font-semibold text-slate-400 uppercase">Role</th>
-                    <th class="text-left px-5 py-3.5 text-xs font-semibold text-slate-400 uppercase">Penugasan Desa</th>
+                    <th class="text-left px-5 py-3.5 text-xs font-semibold text-slate-400 uppercase">Perangkat Daerah</th>
                     <th class="text-right px-5 py-3.5 text-xs font-semibold text-slate-400 uppercase">Aksi</th>
                 </tr>
             </thead>
@@ -47,12 +47,19 @@
                                 </span>
                             @else
                                 <span class="px-2.5 py-1 rounded-full text-xs font-medium bg-blue-500/10 text-blue-400 border border-blue-500/20">
-                                    Operator Desa
+                                    Operator Dinas
                                 </span>
                             @endif
                         </td>
                         <td class="px-5 py-4 text-slate-400 text-xs">
-                            {{ $u->desa?->nama_desa ?? ($u->isAdmin() ? 'Semua Desa (Kabupaten)' : '-') }}
+                            @if($u->nama_dinas)
+                                <span class="text-slate-300">{{ $u->nama_dinas }}</span>
+                                @if($u->alias)
+                                    <span class="text-slate-600 ml-1">({{ $u->alias }})</span>
+                                @endif
+                            @else
+                                <span class="text-slate-600">{{ $u->isAdmin() ? 'Semua Perangkat Daerah' : '-' }}</span>
+                            @endif
                         </td>
                         <td class="px-5 py-4 text-right space-x-2">
                             <button wire:click="openEditModal({{ $u->id }})" class="text-emerald-400 hover:text-emerald-300 text-xs font-medium cursor-pointer">
@@ -94,7 +101,7 @@
 
                     <div>
                         <label class="block text-xs font-medium text-slate-300 mb-1">Email <span class="text-red-400">*</span></label>
-                        <input wire:model="email" type="email" class="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-3 py-2 text-white text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none" placeholder="budi@desa.go.id">
+                        <input wire:model="email" type="email" class="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-3 py-2 text-white text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none" placeholder="budi@dinas.go.id">
                         @error('email') <p class="mt-1 text-xs text-red-400">{{ $message }}</p> @enderror
                     </div>
 
@@ -120,14 +127,22 @@
 
                     @if($chosenRole && $chosenRole->name === 'operator')
                         <div>
-                            <label class="block text-xs font-medium text-slate-300 mb-1">Desa <span class="text-red-400">*</span></label>
-                            <select wire:model="desa_id" class="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-3 py-2 text-white text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none">
-                                <option value="">-- Pilih Desa --</option>
-                                @foreach($desas as $d)
-                                    <option value="{{ $d->id }}">{{ $d->nama_desa }}</option>
-                                @endforeach
-                            </select>
-                            @error('desa_id') <p class="mt-1 text-xs text-red-400">{{ $message }}</p> @enderror
+                            <label class="block text-xs font-medium text-slate-300 mb-1">
+                                Nama Perangkat Daerah <span class="text-red-400">*</span>
+                            </label>
+                            <input wire:model="nama_dinas" type="text"
+                                class="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-3 py-2 text-white text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                                placeholder="Dinas Komunikasi dan Informatika">
+                            @error('nama_dinas') <p class="mt-1 text-xs text-red-400">{{ $message }}</p> @enderror
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-300 mb-1">
+                                Singkatan / Alias
+                            </label>
+                            <input wire:model="alias" type="text"
+                                class="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-3 py-2 text-white text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                                placeholder="Diskominfo" maxlength="50">
+                            @error('alias') <p class="mt-1 text-xs text-red-400">{{ $message }}</p> @enderror
                         </div>
                     @endif
 

@@ -42,8 +42,8 @@ class LayananForm extends Component
     public function mount(?Layanan $layanan = null)
     {
         if ($layanan && $layanan->exists) {
-            // Check ownership
-            if (auth()->user()->isOperator() && $layanan->desa_id !== auth()->user()->desa_id) {
+            // Pastikan operator hanya bisa edit layanan miliknya sendiri (scoping by created_by)
+            if (auth()->user()->isOperator() && $layanan->created_by !== auth()->id()) {
                 abort(403, 'Unauthorized access.');
             }
             
@@ -81,38 +81,39 @@ class LayananForm extends Component
     public function save()
     {
         $validatedData = $this->validate([
-            'bidang_bagian' => 'nullable|string|max:255',
-            'status_layanan' => 'required|in:berjalan,direncanakan,dihentikan',
-            'nama_layanan' => 'required|string|max:255',
-            'deskripsi_layanan' => 'nullable|string',
-            'target_pengguna' => 'nullable|in:Publik/Masyarakat,Internal Pemerintahan',
-            'kl_terkait' => 'nullable|string|max:255',
-            'supplier_data' => 'nullable|string|max:255',
-            'nama_data_input' => 'nullable|string',
-            'nama_data_output' => 'nullable|string',
-            'sifat_data' => 'nullable|in:terbuka,terbatas,tertutup',
-            'jenis_data' => 'nullable|string|max:255',
-            'validitas_data' => 'nullable|string|max:255',
-            'interoperabilitas' => 'boolean',
-            'tujuan_integrasi' => 'nullable|string',
-            'metode_integrasi' => 'nullable|string|max:255',
-            'link_dokumen_integrasi' => 'nullable|url|max:255',
-            'nama_aplikasi' => 'nullable|string|max:255',
-            'tipe_aplikasi' => 'nullable|string|max:255',
-            'link_aplikasi' => 'nullable|url|max:255',
-            'keluaran_aplikasi' => 'nullable|string',
-            'letak_server' => 'nullable|string|max:255',
-            'link_dpa' => 'nullable|url|max:255',
-            'tahun_pembuatan' => 'nullable|integer|min:1900|max:' . (date('Y') + 5),
-            'link_sla' => 'nullable|string|max:255',
-            'link_sop' => 'nullable|string|max:255',
-            'helpdesk' => 'nullable|string|max:255',
-            'is_prioritas' => 'boolean',
+            'bidang_bagian'         => 'nullable|string|max:255',
+            'status_layanan'        => 'required|in:berjalan,direncanakan,dihentikan',
+            'nama_layanan'          => 'required|string|max:255',
+            'deskripsi_layanan'     => 'nullable|string',
+            'target_pengguna'       => 'nullable|in:publik/masyarakat,internal pemerintahan',
+            'kl_terkait'            => 'nullable|string|max:255',
+            'supplier_data'         => 'nullable|string|max:255',
+            'nama_data_input'       => 'nullable|string',
+            'nama_data_output'      => 'nullable|string',
+            'sifat_data'            => 'nullable|in:terbuka,terbatas,tertutup',
+            'jenis_data'            => 'nullable|string|max:255',
+            'validitas_data'        => 'nullable|string|max:255',
+            'interoperabilitas'     => 'boolean',
+            'tujuan_integrasi'      => 'nullable|string',
+            'metode_integrasi'      => 'nullable|string|max:255',
+            'link_dokumen_integrasi'=> 'nullable|url|max:255',
+            'nama_aplikasi'         => 'nullable|string|max:255',
+            'tipe_aplikasi'         => 'nullable|string|max:255',
+            'link_aplikasi'         => 'nullable|url|max:255',
+            'keluaran_aplikasi'     => 'nullable|string',
+            'letak_server'          => 'nullable|string|max:255',
+            'link_dpa'              => 'nullable|url|max:255',
+            'tahun_pembuatan'       => 'nullable|integer|min:1900|max:' . (date('Y') + 5),
+            'link_sla'              => 'nullable|string|max:255',
+            'link_sop'              => 'nullable|string|max:255',
+            'helpdesk'              => 'nullable|string|max:255',
+            'is_prioritas'          => 'boolean',
         ]);
 
         if (!$this->layanan || !$this->layanan->exists) {
-            $validatedData['desa_id'] = auth()->user()->desa_id;
-            $validatedData['created_by'] = auth()->user()->id;
+            // Saat create: isi created_by dan unit_pelaksana otomatis dari profil user
+            $validatedData['created_by']    = auth()->id();
+            $validatedData['unit_pelaksana'] = auth()->user()->nama_dinas ?? '';
             $layanan = Layanan::create($validatedData);
             session()->flash('success', 'Layanan berhasil dibuat.');
             return redirect()->route('layanan.index');

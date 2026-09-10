@@ -27,7 +27,7 @@ class EnsureHasLayanan
             ];
 
             if (!in_array($request->route()->getName(), $ignoredRoutes)) {
-                $hasLayanan = \App\Models\Layanan::where('desa_id', $user->desa_id)->exists();
+                $hasLayanan = \App\Models\Layanan::where('created_by', $user->id)->exists();
 
                 if (!$hasLayanan) {
                     session()->flash('warning', 'Anda harus mengisi deskripsi layanan terlebih dahulu sebelum dapat mengakses halaman lain.');

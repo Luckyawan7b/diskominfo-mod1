@@ -2,7 +2,6 @@
 
 namespace App\Livewire\Konteks;
 
-use App\Models\Desa;
 use App\Models\Layanan;
 use App\Models\MrKonteks;
 use App\Models\MrSasaranUpr;
@@ -14,14 +13,15 @@ use Livewire\Component;
 #[Layout('components.layouts.app')]
 class KonteksIndex extends Component
 {
-    public ?int $filterDesa = null;
-    public string $filterStatus = '';
+    public string $filterDinas = '';
 
     // ─── Dipakai admin saja ──────────────────────────────────────────────────
     public bool $showCreateModal = false;
     public int $newTahun = 0;
     public int $newTahunPelaksanaan = 0;
     public ?int $duplicateFromId = null;
+    public string $newNamaInstansi = '';
+    public string $newNamaUpr = '';
 
     public function mount(): void
     {
@@ -33,10 +33,10 @@ class KonteksIndex extends Component
         $user = auth()->user();
         if ($user->isOperator()) {
             // Kita hanya redirect otomatis jika datang dari layanan.dashboard
-            // (URL mengandung /layanan/{id}/manajemen → referer atau session)
             $layananId = session('active_layanan_id');
             if ($layananId) {
-                $layanan = Layanan::where('desa_id', $user->desa_id)->find($layananId);
+                // Scoping: layanan harus milik operator ini (created_by)
+                $layanan = Layanan::where('created_by', $user->id)->find($layananId);
                 if ($layanan) {
                     $konteks = $this->ensureKonteksForLayanan($layanan, $user);
                     session()->forget('active_layanan_id');
@@ -55,12 +55,11 @@ class KonteksIndex extends Component
         return MrKonteks::firstOrCreate(
             ['layanan_id' => $layanan->id],
             [
-                'desa_id'           => $layanan->desa_id,
-                'nama_instansi'     => $layanan->desa->nama_desa ?? '',
+                // Tidak ada lagi desa_id atau status — langsung isi dari creator
+                'nama_instansi'     => $layanan->creator?->nama_dinas ?? $layanan->unit_pelaksana ?? '',
                 'nama_upr'          => $layanan->nama_layanan,
                 'tahun_penilaian'   => (int) date('Y'),
                 'tahun_pelaksanaan' => (int) date('Y'),
-                'status'            => 'draft',
                 'created_by'        => $user->id,
             ]
         );
@@ -69,41 +68,50 @@ class KonteksIndex extends Component
     public function render()
     {
         $user  = auth()->user();
-        $query = MrKonteks::with(['desa', 'risiko', 'layanan'])->withCount('risiko');
 
-        // Operator: hanya desanya sendiri
         if ($user->isOperator()) {
-            $query->where('desa_id', $user->desa_id);
+            // Operator: hanya konteks dari layanan miliknya sendiri (scoping via created_by)
+            $query = MrKonteks::whereHas('layanan', fn ($q) => $q->where('created_by', $user->id))
+                ->with(['layanan.creator', 'risiko'])
+                ->withCount('risiko');
         } else {
-            // Admin: bisa filter by desa
-            if ($this->filterDesa) {
-                $query->where('desa_id', $this->filterDesa);
+            // Admin: semua konteks, bisa filter by nama dinas
+            $query = MrKonteks::with(['layanan.creator', 'risiko'])->withCount('risiko');
+            if ($this->filterDinas) {
+                $query->whereHas('layanan.creator', fn ($q) => $q->where('nama_dinas', 'like', "%{$this->filterDinas}%"));
             }
-        }
-
-        if ($this->filterStatus) {
-            $query->where('status', $this->filterStatus);
         }
 
         $konteks = $query->orderByDesc('tahun_penilaian')->get();
 
+        // Untuk duplikat: opsi konteks dari layanan milik operator ini
         $previousKonteksOptions = collect();
-        if ($user->desa_id) {
-            $previousKonteksOptions = MrKonteks::where('desa_id', $user->desa_id)
+        if ($user->isOperator()) {
+            $previousKonteksOptions = MrKonteks::whereHas('layanan', fn ($q) => $q->where('created_by', $user->id))
                 ->orderByDesc('tahun_penilaian')
                 ->get();
         }
 
+        // Ambil daftar dinas unik untuk filter admin
+        $dinasList = collect();
+        if ($user->isAdmin()) {
+            $dinasList = \App\Models\User::whereNotNull('nama_dinas')
+                ->distinct()
+                ->orderBy('nama_dinas')
+                ->pluck('nama_dinas');
+        }
+
         return view('livewire.konteks.index', [
             'konteks'                => $konteks,
-            'desaList'               => $user->isAdmin() ? Desa::orderBy('nama_desa')->get() : collect(),
+            'dinasList'              => $dinasList,
             'previousKonteksOptions' => $previousKonteksOptions,
             'breadcrumb'             => ['Manajemen Risiko' => route('konteks.index'), 'Daftar Konteks' => null],
         ]);
     }
 
     /**
-     * Hanya dipakai Admin untuk membuat konteks tanpa layanan (mode lama).
+     * Hanya dipakai Admin untuk membuat konteks tanpa relasi layanan yang ada
+     * (mode manual — fallback jika layanan belum ada di sistem).
      */
     public function createKonteks(): void
     {
@@ -114,24 +122,17 @@ class KonteksIndex extends Component
             return;
         }
 
-        $desaId = $this->filterDesa ?? $user->desa_id;
-        if (! $desaId) {
-            $this->addError('newTahun', 'Pilih Desa terlebih dahulu.');
-            return;
-        }
-
         $this->validate([
+            'newNamaInstansi'     => 'required|string|max:255',
             'newTahunPelaksanaan' => 'required|integer|min:2020|max:2099',
             'newTahun'            => 'required|integer|min:2020|max:2099',
         ]);
 
         DB::beginTransaction();
         try {
-            $desa    = Desa::findOrFail($desaId);
             $konteks = MrKonteks::create([
-                'desa_id'           => $desaId,
-                'nama_instansi'     => $desa->nama_desa,
-                'nama_upr'          => '',
+                'nama_instansi'     => $this->newNamaInstansi,
+                'nama_upr'          => $this->newNamaUpr ?: '',
                 'tahun_penilaian'   => $this->newTahun,
                 'tahun_pelaksanaan' => $this->newTahunPelaksanaan,
                 'created_by'        => $user->id,
@@ -139,7 +140,7 @@ class KonteksIndex extends Component
 
             if ($this->duplicateFromId) {
                 $source = MrKonteks::find($this->duplicateFromId);
-                if ($source && $source->desa_id === $desaId) {
+                if ($source) {
                     $this->duplicateNonRiskData($source, $konteks);
                 }
             }

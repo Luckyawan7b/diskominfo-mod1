@@ -8,10 +8,10 @@ use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Memastikan konteks masih bisa diedit.
+ * Memastikan konteks bisa diedit oleh operator yang bersangkutan.
  *
  * - Admin: selalu bisa akses
- * - Operator: hanya jika status konteks = draft / rejected
+ * - Operator: hanya jika konteks milik layanan yang mereka buat (created_by)
  *
  * Route harus memiliki parameter {konteks} (route model binding).
  */
@@ -33,15 +33,10 @@ class EnsureKonteksEditable
             return $next($request);
         }
 
-        // Operator hanya bisa edit jika draft/rejected
-        if (! $konteks->isEditableByOperator()) {
-            return redirect()->route('konteks.index')
-                ->with('error', 'Dokumen ini tidak bisa diedit karena statusnya: ' . $konteks->status);
-        }
-
-        // Operator hanya boleh akses konteks desanya sendiri
-        if ($konteks->desa_id !== $user->desa_id) {
-            abort(403, 'Anda tidak memiliki akses ke dokumen desa lain.');
+        // Operator hanya boleh akses konteks milik layanannya sendiri
+        // isEditableByOperator() selalu true (tidak ada approval), cukup cek kepemilikan
+        if ($konteks->layanan && $konteks->layanan->created_by !== $user->id) {
+            abort(403, 'Anda tidak memiliki akses ke dokumen perangkat daerah lain.');
         }
 
         return $next($request);

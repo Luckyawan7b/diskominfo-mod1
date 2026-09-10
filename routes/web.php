@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\LogoutController;
-use App\Livewire\Admin\Desa\DesaIndex;
 use App\Livewire\Admin\ReviewDetail;
 use App\Livewire\Admin\ReviewIndex;
 use App\Livewire\Admin\User\UserIndex;
@@ -58,7 +57,6 @@ Route::middleware('auth')->group(function () {
     Route::middleware('role:admin')->prefix('admin')->name('admin.')->group(function () {
         Route::get('/review', ReviewIndex::class)->name('review.index');
         Route::get('/review/{konteks}', ReviewDetail::class)->name('review.detail');
-        Route::get('/desa', DesaIndex::class)->name('desa.index');
         Route::get('/user', UserIndex::class)->name('user.index');
     });
 });

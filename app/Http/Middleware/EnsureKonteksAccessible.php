@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\MrKonteks;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -21,6 +22,11 @@ class EnsureKonteksAccessible
             return $next($request);
         }
 
+        // Pastikan model sudah di-resolve (route model binding)
+        if (! $konteks instanceof MrKonteks) {
+            $konteks = MrKonteks::with('layanan')->findOrFail($konteks);
+        }
+
         $user = $request->user();
 
         // Admin selalu lolos
@@ -28,11 +34,14 @@ class EnsureKonteksAccessible
             return $next($request);
         }
 
-        // Operator hanya lolos jika desa_id cocok
-        if ($user && $user->isOperator() && $konteks->desa_id === $user->desa_id) {
-            return $next($request);
+        // Operator hanya lolos jika konteks milik layanan yang mereka buat
+        if ($user && $user->isOperator()) {
+            $layanan = $konteks->layanan;
+            if ($layanan && $layanan->created_by === $user->id) {
+                return $next($request);
+            }
         }
 
-        abort(403, 'Anda tidak memiliki akses ke konteks risiko desa lain.');
+        abort(403, 'Anda tidak memiliki akses ke konteks risiko perangkat daerah lain.');
     }
 }

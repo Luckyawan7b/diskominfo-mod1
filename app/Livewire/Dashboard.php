@@ -17,8 +17,8 @@ class Dashboard extends Component
     {
         $user = auth()->user();
 
-        // Pastikan operator hanya bisa akses layanan miliknya
-        if ($user->isOperator() && $layanan->desa_id !== $user->desa_id) {
+        // Pastikan operator hanya bisa akses layanan miliknya (scoping by created_by)
+        if ($user->isOperator() && $layanan->created_by !== $user->id) {
             abort(403, 'Anda tidak memiliki akses ke layanan ini.');
         }
 
@@ -51,12 +51,8 @@ class Dashboard extends Component
         // Hitung badge: jumlah konteks MR layanan ini yang pending / rejected
         $mrKonteks = MrKonteks::where('layanan_id', $layanan->id)->first();
 
+        // Tidak ada lagi alur approval/submit — badge selalu 0
         $badgeCount = 0;
-        if ($mrKonteks) {
-            if ($user->isAdmin() && $mrKonteks->status === 'submitted') {
-                $badgeCount = 1;
-            }
-        }
 
         return view('livewire.dashboard', [
             'layanan'    => $layanan,

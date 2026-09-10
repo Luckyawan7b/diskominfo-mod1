@@ -3,7 +3,6 @@ namespace App\Livewire\Risiko;
 
 use App\Models\MrKonteks;
 use App\Models\MrRisiko;
-use App\Models\RefKategoriRisiko;
 use App\Services\RiskMatrixCalculator;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
@@ -24,11 +23,10 @@ class RisikoForm extends Component
     public string $peristiwa_risiko = '';
     public string $penyebab = '';
     public string $dampak = '';
-    public ?int $ref_kategori_risiko_id = null;
+    public string $kategori_risiko = '';   // ← teks bebas (bukan FK)
     public string $area_dampak = '';
 
     // Tab 2: Analisis
-
     public ?int $level_kemungkinan = null;
     public ?int $level_dampak = null;
 
@@ -60,7 +58,6 @@ class RisikoForm extends Component
         if ($risiko instanceof MrRisiko) {
             $this->risikoModel = $risiko->loadMissing(['perlakuan', 'residual', 'kolomTambahan', 'layananDigital']);
             $this->fillFromRisiko();
-            // Get the position/index of this risk in the current context
             $this->no = $konteks->risiko()->where('id', '<=', $this->risikoModel->id)->count();
         } elseif ($risiko && $risiko !== 'new') {
             $this->risikoModel = MrRisiko::with(['perlakuan', 'residual', 'kolomTambahan', 'layananDigital'])->findOrFail($risiko);
@@ -70,31 +67,33 @@ class RisikoForm extends Component
             $this->isNew = true;
             $count = $konteks->risiko()->count();
             $this->no = $count + 1;
-            $desa = $konteks->desa;
-            $this->kode_risiko = ($desa->kode_desa ?? 'DSA') . '-R-' . ($count + 1);
+            // Kode risiko: gunakan alias atau nama instansi singkat
+            $namaInstansi = $konteks->nama_instansi ?: ($konteks->layanan?->creator?->alias ?? 'UPR');
+            $prefix = strtoupper(substr(preg_replace('/[^A-Z0-9]/i', '', $namaInstansi), 0, 4));
+            $this->kode_risiko = $prefix . '-R-' . ($count + 1);
         }
     }
 
     private function fillFromRisiko(): void
     {
         $r = $this->risikoModel;
-        $this->mr_sasaran_upr_id      = $r->mr_sasaran_upr_id;
-        $this->indikator_kinerja_snapshot = $r->indikator_kinerja_snapshot ?? '';
-        $this->kode_risiko            = $r->kode_risiko ?? '';
-        $this->peristiwa_risiko       = $r->peristiwa_risiko ?? '';
-        $this->penyebab               = $r->penyebab ?? '';
-        $this->dampak                 = $r->dampak ?? '';
-        $this->ref_kategori_risiko_id = $r->ref_kategori_risiko_id;
-        $this->area_dampak            = $r->area_dampak ?? '';
-        $this->level_kemungkinan      = $r->level_kemungkinan;
-        $this->level_dampak           = $r->level_dampak;
-        $this->keputusan_perlakuan         = $r->perlakuan?->keputusan_perlakuan ?? '';
-        $this->deskripsi_detail_perlakuan  = $r->perlakuan?->deskripsi_detail_perlakuan ?? '';
-        $this->waktu_rencana_perlakuan     = $r->perlakuan?->waktu_rencana_perlakuan ?? '';
-        $this->penanggung_jawab            = $r->perlakuan?->penanggung_jawab ?? '';
-        $this->level_kemungkinan_residual  = $r->residual?->level_kemungkinan;
-        $this->level_dampak_residual       = $r->residual?->level_dampak;
-        $this->keterangan_residual         = $r->residual?->keterangan_residual ?? '';
+        $this->mr_sasaran_upr_id            = $r->mr_sasaran_upr_id;
+        $this->indikator_kinerja_snapshot   = $r->indikator_kinerja_snapshot ?? '';
+        $this->kode_risiko                  = $r->kode_risiko ?? '';
+        $this->peristiwa_risiko             = $r->peristiwa_risiko ?? '';
+        $this->penyebab                     = $r->penyebab ?? '';
+        $this->dampak                       = $r->dampak ?? '';
+        $this->kategori_risiko              = $r->kategori_risiko ?? '';   // ← teks bebas
+        $this->area_dampak                  = $r->area_dampak ?? '';
+        $this->level_kemungkinan            = $r->level_kemungkinan;
+        $this->level_dampak                 = $r->level_dampak;
+        $this->keputusan_perlakuan          = $r->perlakuan?->keputusan_perlakuan ?? '';
+        $this->deskripsi_detail_perlakuan   = $r->perlakuan?->deskripsi_detail_perlakuan ?? '';
+        $this->waktu_rencana_perlakuan      = $r->perlakuan?->waktu_rencana_perlakuan ?? '';
+        $this->penanggung_jawab             = $r->perlakuan?->penanggung_jawab ?? '';
+        $this->level_kemungkinan_residual   = $r->residual?->level_kemungkinan;
+        $this->level_dampak_residual        = $r->residual?->level_dampak;
+        $this->keterangan_residual          = $r->residual?->keterangan_residual ?? '';
 
         // Kolom Tambahan
         if ($r->kolomTambahan) {
@@ -106,7 +105,6 @@ class RisikoForm extends Component
             $this->ippd_terkait               = $r->kolomTambahan->ippd_terkait ?? '';
             $this->membutuhkan_perubahan      = (bool) $r->kolomTambahan->membutuhkan_perubahan;
         }
-
     }
 
     public function updatedMrSasaranUprId($value)
@@ -117,24 +115,24 @@ class RisikoForm extends Component
     public function save(): void
     {
         $this->validate([
-            'kode_risiko'            => 'required|string|max:50',
-            'peristiwa_risiko'       => 'required|string',
-            'ref_kategori_risiko_id' => 'nullable|exists:ref_kategori_risiko,id',
+            'kode_risiko'      => 'required|string|max:50',
+            'peristiwa_risiko' => 'required|string',
+            'kategori_risiko'  => 'nullable|string|max:191',  // ← teks bebas
         ]);
 
         $data = [
-            'mr_konteks_id'          => $this->konteks->id,
-            'mr_sasaran_upr_id'      => $this->mr_sasaran_upr_id,
+            'mr_konteks_id'              => $this->konteks->id,
+            'mr_sasaran_upr_id'          => $this->mr_sasaran_upr_id,
             'indikator_kinerja_snapshot' => $this->indikator_kinerja_snapshot,
-            'kode_risiko'            => $this->kode_risiko,
-            'peristiwa_risiko'       => $this->peristiwa_risiko,
-            'penyebab'               => $this->penyebab,
-            'dampak'                 => $this->dampak,
-            'ref_kategori_risiko_id' => $this->ref_kategori_risiko_id,
-            'area_dampak'            => $this->area_dampak ?: null,
-            'level_kemungkinan'      => $this->level_kemungkinan,
-            'level_dampak'           => $this->level_dampak,
-            'created_by'             => auth()->id(),
+            'kode_risiko'                => $this->kode_risiko,
+            'peristiwa_risiko'           => $this->peristiwa_risiko,
+            'penyebab'                   => $this->penyebab,
+            'dampak'                     => $this->dampak,
+            'kategori_risiko'            => $this->kategori_risiko ?: null,  // ← teks bebas
+            'area_dampak'                => $this->area_dampak ?: null,
+            'level_kemungkinan'          => $this->level_kemungkinan,
+            'level_dampak'               => $this->level_dampak,
+            'created_by'                 => auth()->id(),
         ];
 
         if ($this->isNew) {
@@ -154,7 +152,7 @@ class RisikoForm extends Component
             ]);
         }
 
-        // Residual (Tab 4 & Tab 5)
+        // Residual (Tab 4)
         if ($this->level_kemungkinan_residual || $this->level_dampak_residual || $this->keterangan_residual) {
             $calc = app(RiskMatrixCalculator::class);
             $besaranRes = ($this->level_kemungkinan_residual && $this->level_dampak_residual)
@@ -171,7 +169,7 @@ class RisikoForm extends Component
 
         // Kolom Tambahan (Tab 5)
         if ($this->layanan_pendukung || $this->pemilik_layanan || $this->layanan_prioritas) {
-            $kolom = $this->risikoModel->kolomTambahan()->updateOrCreate([], [
+            $this->risikoModel->kolomTambahan()->updateOrCreate([], [
                 'layanan_pendukung'          => $this->layanan_pendukung ?: null,
                 'layanan_prioritas'          => $this->layanan_prioritas ?: null,
                 'pemilik_layanan'            => $this->pemilik_layanan ?: null,
@@ -189,8 +187,10 @@ class RisikoForm extends Component
     public function render()
     {
         $calc = app(RiskMatrixCalculator::class);
-        $besaran = ($this->level_kemungkinan && $this->level_dampak) ? $calc->calculate($this->level_kemungkinan, $this->level_dampak) : null;
-        $besaranResidual = ($this->level_kemungkinan_residual && $this->level_dampak_residual) ? $calc->calculate($this->level_kemungkinan_residual, $this->level_dampak_residual) : null;
+        $besaran         = ($this->level_kemungkinan && $this->level_dampak)
+            ? $calc->calculate($this->level_kemungkinan, $this->level_dampak) : null;
+        $besaranResidual = ($this->level_kemungkinan_residual && $this->level_dampak_residual)
+            ? $calc->calculate($this->level_kemungkinan_residual, $this->level_dampak_residual) : null;
 
         $sasaranNasionalText = null;
         $indikatorList = collect();
@@ -203,33 +203,33 @@ class RisikoForm extends Component
         }
 
         $user = auth()->user();
-        $availableKonteks = collect();
-        if ($user->isOperator()) {
-            $availableKonteks = MrKonteks::where('desa_id', $user->desa_id)
-                ->orderByDesc('tahun_penilaian')
-                ->get();
-        } elseif ($user->isAdmin()) {
-            $availableKonteks = MrKonteks::where('desa_id', $this->konteks->desa_id)
-                ->orderByDesc('tahun_penilaian')
-                ->get();
-        }
+        // Gunakan scope reusable untuk availableKonteks
+        $availableKonteks = MrKonteks::accessibleBy($user)
+            ->orderByDesc('tahun_penilaian')
+            ->get();
+
+        // Daftar kategori risiko yang pernah dipakai (sebagai UX datalist helper, bukan constraint)
+        $kategoriSuggestions = MrRisiko::whereNotNull('kategori_risiko')
+            ->distinct()
+            ->orderBy('kategori_risiko')
+            ->pluck('kategori_risiko');
 
         return view('livewire.risiko.form', [
-            'kategoriList' => RefKategoriRisiko::orderBy('id')->get(),
-            'sasaranList'  => $this->konteks->sasaranUpr()->orderBy('urutan')->get(),
-            'indikatorList' => $indikatorList,
+            'sasaranList'         => $this->konteks->sasaranUpr()->orderBy('urutan')->get(),
+            'indikatorList'       => $indikatorList,
             'sasaranNasionalText' => $sasaranNasionalText,
-            'besaran'      => $besaran,
-            'besaranLabel' => $besaran ? $calc->label($besaran) : null,
-            'besaranResidual' => $besaranResidual,
-            'isEditable'   => $this->konteks->isEditableByOperator() || auth()->user()->isAdmin(),
-            'breadcrumb'   => [
+            'besaran'             => $besaran,
+            'besaranLabel'        => $besaran ? $calc->label($besaran) : null,
+            'besaranResidual'     => $besaranResidual,
+            'kategoriSuggestions' => $kategoriSuggestions,
+            'isEditable'          => $this->konteks->isEditableByOperator() || auth()->user()->isAdmin(),
+            'breadcrumb'          => [
                 'Manajemen Risiko' => route('konteks.index'),
-                'Risiko' => route('risiko.index', $this->konteks),
+                'Risiko'           => route('risiko.index', $this->konteks),
                 ($this->isNew ? 'Baru' : $this->kode_risiko) => null,
             ],
         ])->layout('components.layouts.app', [
-            'konteks' => $this->konteks,
+            'konteks'          => $this->konteks,
             'availableKonteks' => $availableKonteks,
         ]);
     }

@@ -67,8 +67,24 @@ class MrKonteks extends Model
         return true;
     }
 
+    // ─── Scopes ──────────────────────────────────────────────────────────────
+
+    /**
+     * Scope: hanya konteks yang dapat diakses oleh $user.
+     * - Admin: semua konteks
+     * - Operator: hanya konteks dari layanan yang mereka buat (created_by)
+     */
+    public function scopeAccessibleBy($query, $user)
+    {
+        if ($user->isOperator()) {
+            $query->whereHas('layanan', fn ($q) => $q->where('created_by', $user->id));
+        }
+        return $query;
+    }
+
     public function isApproved(): bool
     {
         return true;
     }
 }
+

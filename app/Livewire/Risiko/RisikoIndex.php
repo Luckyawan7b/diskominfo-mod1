@@ -10,32 +10,30 @@ use Livewire\Component;
 class RisikoIndex extends Component
 {
     public MrKonteks $konteks;
-    public string $filterStatus = '';
 
     public function mount(MrKonteks $konteks): void { $this->konteks = $konteks; }
 
     public function render()
     {
-        $query = $this->konteks->risiko()->with('kategoriRisiko')->orderBy('prioritas_risiko');
-        if ($this->filterStatus) $query->where('status', $this->filterStatus);
+        // Hapus filterStatus (kolom tidak ada), hapus kategoriRisiko relasi (sudah jadi teks)
+        $risikos = $this->konteks->risiko()->orderBy('prioritas_risiko')->get();
+
         $user = auth()->user();
-        $availableKonteks = collect();
-        if ($user->isOperator()) {
-            $availableKonteks = MrKonteks::where('desa_id', $user->desa_id)
-                ->orderByDesc('tahun_penilaian')
-                ->get();
-        } elseif ($user->isAdmin()) {
-            $availableKonteks = MrKonteks::where('desa_id', $this->konteks->desa_id)
-                ->orderByDesc('tahun_penilaian')
-                ->get();
-        }
+        // Gunakan scope reusable accessibleBy
+        $availableKonteks = MrKonteks::accessibleBy($user)
+            ->orderByDesc('tahun_penilaian')
+            ->get();
 
         return view('livewire.risiko.index', [
-            'risikos' => $query->get(),
+            'risikos'    => $risikos,
             'isEditable' => $this->konteks->isEditableByOperator() || auth()->user()->isAdmin(),
-            'breadcrumb' => ['Manajemen Risiko' => route('konteks.index'), 'Konteks ' . $this->konteks->tahun_penilaian . ' / ' . $this->konteks->tahun_pelaksanaan => route('konteks.form', $this->konteks), 'Daftar Risiko' => null],
+            'breadcrumb' => [
+                'Manajemen Risiko' => route('konteks.index'),
+                'Konteks ' . $this->konteks->tahun_penilaian . ' / ' . $this->konteks->tahun_pelaksanaan => route('konteks.form', $this->konteks),
+                'Daftar Risiko' => null,
+            ],
         ])->layout('components.layouts.app', [
-            'konteks' => $this->konteks,
+            'konteks'          => $this->konteks,
             'availableKonteks' => $availableKonteks,
         ]);
     }

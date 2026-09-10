@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="Sistem Pemerintahan Berbasis Elektronik — Dashboard Hub">
-    <title>{{ $title ?? 'Dashboard' }} — SPBE Desa</title>
+    <title>{{ $title ?? 'Dashboard' }} — SPBE Diskominfo</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="min-h-screen bg-slate-900 antialiased">
@@ -22,7 +22,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
                     </svg>
                 </div>
-                <span class="text-white font-semibold text-lg">SPBE Desa</span>
+                <span class="text-white font-semibold text-lg">SPBE Perangkat Daerah</span>
             </div>
 
             {{-- User info --}}
@@ -31,8 +31,8 @@
                     <p class="text-sm font-medium text-white">{{ auth()->user()->name }}</p>
                     <p class="text-xs text-slate-400">
                         {{ auth()->user()->role->label }}
-                        @if(auth()->user()->desa)
-                            — {{ auth()->user()->desa->nama_desa }}
+                        @if(auth()->user()->nama_dinas)
+                            — {{ auth()->user()->nama_dinas }}
                         @endif
                     </p>
                 </div>

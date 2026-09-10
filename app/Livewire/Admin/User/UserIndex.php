@@ -2,7 +2,6 @@
 
 namespace App\Livewire\Admin\User;
 
-use App\Models\Desa;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
@@ -12,19 +11,20 @@ use Livewire\Component;
 #[Layout('components.layouts.app')]
 class UserIndex extends Component
 {
-    public string $search = '';
-    public bool $showModal = false;
-    public ?int $editingId = null;
+    public string $search     = '';
+    public bool   $showModal  = false;
+    public ?int   $editingId  = null;
 
-    public string $name = '';
-    public string $email = '';
-    public string $password = '';
-    public ?int $role_id = null;
-    public ?int $desa_id = null;
+    public string  $name       = '';
+    public string  $email      = '';
+    public string  $password   = '';
+    public ?int    $role_id    = null;
+    public string  $nama_dinas = '';
+    public string  $alias      = '';
 
     public function openCreateModal(): void
     {
-        $this->reset(['editingId', 'name', 'email', 'password', 'role_id', 'desa_id']);
+        $this->reset(['editingId', 'name', 'email', 'password', 'role_id', 'nama_dinas', 'alias']);
         $operatorRole = Role::where('name', 'operator')->first();
         $this->role_id = $operatorRole?->id;
         $this->showModal = true;
@@ -33,27 +33,27 @@ class UserIndex extends Component
     public function openEditModal(int $id): void
     {
         $user = User::findOrFail($id);
-        $this->editingId = $user->id;
-        $this->name      = $user->name;
-        $this->email     = $user->email;
-        $this->password  = ''; // kosongkan password jika tidak ingin ganti
-        $this->role_id   = $user->role_id;
-        $this->desa_id   = $user->desa_id;
-        $this->showModal = true;
+        $this->editingId  = $user->id;
+        $this->name       = $user->name;
+        $this->email      = $user->email;
+        $this->password   = '';
+        $this->role_id    = $user->role_id;
+        $this->nama_dinas = $user->nama_dinas ?? '';
+        $this->alias      = $user->alias ?? '';
+        $this->showModal  = true;
     }
 
     public function save(): void
     {
         $operatorRole = Role::where('name', 'operator')->first();
-        $isOperator = $this->role_id == $operatorRole?->id;
+        $isOperator   = $this->role_id == $operatorRole?->id;
 
         $rules = [
-            'name'    => 'required|string|max:255',
-            'email'   => 'required|email|max:255|unique:users,email,' . $this->editingId,
-            'role_id' => 'required|exists:roles,id',
-            'desa_id' => $isOperator 
-                ? 'required|exists:desa,id|unique:users,desa_id,' . $this->editingId 
-                : 'nullable|exists:desa,id',
+            'name'      => 'required|string|max:255',
+            'email'     => 'required|email|max:255|unique:users,email,' . $this->editingId,
+            'role_id'   => 'required|exists:roles,id',
+            'nama_dinas'=> $isOperator ? 'required|string|max:255' : 'nullable|string|max:255',
+            'alias'     => 'nullable|string|max:50',
         ];
 
         if (! $this->editingId) {
@@ -62,18 +62,19 @@ class UserIndex extends Component
             $rules['password'] = 'nullable|min:6';
         }
 
-        $this->validate($rules, [
-            'desa_id.unique' => 'OPD/Desa ini sudah memiliki akun operator. Satu OPD hanya boleh memiliki 1 akun.',
-        ]);
+        $this->validate($rules);
 
         $selectedRole = Role::find($this->role_id);
-        $finalDesaId = ($selectedRole && $selectedRole->name === 'admin') ? null : $this->desa_id;
+        // Admin tidak perlu nama_dinas/alias
+        $finalNamaDinas = ($selectedRole && $selectedRole->name === 'admin') ? null : ($this->nama_dinas ?: null);
+        $finalAlias     = ($selectedRole && $selectedRole->name === 'admin') ? null : ($this->alias ?: null);
 
         $data = [
-            'name'    => $this->name,
-            'email'   => $this->email,
-            'role_id' => $this->role_id,
-            'desa_id' => $finalDesaId,
+            'name'       => $this->name,
+            'email'      => $this->email,
+            'role_id'    => $this->role_id,
+            'nama_dinas' => $finalNamaDinas,
+            'alias'      => $finalAlias,
         ];
 
         if (! empty($this->password)) {
@@ -103,12 +104,13 @@ class UserIndex extends Component
 
     public function render()
     {
-        $query = User::with(['role', 'desa']);
+        $query = User::with(['role']);
 
         if ($this->search) {
             $query->where(function ($q) {
                 $q->where('name', 'like', "%{$this->search}%")
-                  ->orWhere('email', 'like', "%{$this->search}%");
+                  ->orWhere('email', 'like', "%{$this->search}%")
+                  ->orWhere('nama_dinas', 'like', "%{$this->search}%");
             });
         }
 
@@ -117,9 +119,8 @@ class UserIndex extends Component
         return view('livewire.admin.user.index', [
             'users'      => $users,
             'roles'      => Role::all(),
-            'desas'      => Desa::orderBy('nama_desa')->get(),
             'breadcrumb' => [
-                'Admin' => null,
+                'Admin'       => null,
                 'Kelola User' => null,
             ],
         ]);

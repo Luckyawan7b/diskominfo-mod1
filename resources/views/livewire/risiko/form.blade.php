@@ -223,14 +223,17 @@
             {{-- 7. Kategori & 10. Area Dampak --}}
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                    <label class="block text-sm font-medium text-slate-300 mb-1.5">Kategori Risiko <span class="text-xs text-slate-500 font-normal ml-2">Diisi kategori risiko terkait</span></label>
-                    <select wire:model="ref_kategori_risiko_id" {{ !$isEditable ? 'disabled' : '' }}
-                        class="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-4 py-2.5 text-white text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none disabled:opacity-50">
-                        <option value="">-- Pilih Kategori Risiko --</option>
-                        @foreach($kategoriList as $kat)
-                            <option value="{{ $kat->id }}">{{ $kat->kode_kategori }} - {{ $kat->nama_kategori }}</option>
+                    <label class="block text-sm font-medium text-slate-300 mb-1.5">Kategori Risiko <span class="text-xs text-slate-500 font-normal ml-2">Ketik bebas, contoh: Risiko Operasional, Risiko Keamanan Informasi</span></label>
+                    <input wire:model="kategori_risiko" type="text" list="kategori-risiko-list"
+                        {{ !$isEditable ? 'disabled' : '' }}
+                        class="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-4 py-2.5 text-white text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none disabled:opacity-50"
+                        placeholder="Masukkan kategori risiko...">
+                    {{-- datalist dari histori kategori yang pernah dipakai (UX helper, bukan constraint) --}}
+                    <datalist id="kategori-risiko-list">
+                        @foreach($kategoriSuggestions as $saran)
+                            <option value="{{ $saran }}"></option>
                         @endforeach
-                    </select>
+                    </datalist>
                 </div>
 
                 <div>

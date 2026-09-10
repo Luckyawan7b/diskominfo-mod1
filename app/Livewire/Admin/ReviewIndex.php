@@ -2,42 +2,39 @@
 
 namespace App\Livewire\Admin;
 
-use App\Models\Desa;
 use App\Models\Layanan;
 use App\Models\MrKonteks;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 
 /**
- * Monitoring Admin — sebelumnya "Review & Approval"
- *
- * Dengan alur auto-approve yang baru, admin tidak lagi perlu mengambil
- * tindakan. Halaman ini berubah fungsi menjadi monitoring read-only:
- * menampilkan daftar layanan beserta status modul MR masing-masing.
+ * Monitoring Admin — Halaman ini berfungsi sebagai monitoring read-only.
+ * Tidak ada lagi alur approval/rejection — admin hanya melihat data yang telah diisi operator.
  */
 #[Layout('components.layouts.app')]
 class ReviewIndex extends Component
 {
-    public ?int $filterDesa   = null;
-    public string $filterStatus = '';
+    public string $filterDinas = '';
 
     public function render()
     {
-        $query = MrKonteks::with(['desa', 'risiko', 'layanan'])->withCount('risiko');
+        $query = MrKonteks::with(['layanan.creator', 'risiko'])->withCount('risiko');
 
-        if ($this->filterDesa) {
-            $query->where('desa_id', $this->filterDesa);
-        }
-
-        if ($this->filterStatus) {
-            $query->where('status', $this->filterStatus);
+        if ($this->filterDinas) {
+            $query->whereHas('layanan.creator', fn ($q) => $q->where('nama_dinas', 'like', "%{$this->filterDinas}%"));
         }
 
         $konteksList = $query->orderByDesc('updated_at')->get();
 
+        // Daftar dinas unik untuk filter dropdown
+        $dinasList = \App\Models\User::whereNotNull('nama_dinas')
+            ->distinct()
+            ->orderBy('nama_dinas')
+            ->pluck('nama_dinas');
+
         return view('livewire.admin.review', [
             'konteksList' => $konteksList,
-            'desaList'    => Desa::orderBy('nama_desa')->get(),
+            'dinasList'   => $dinasList,
             'breadcrumb'  => [
                 'Admin'      => null,
                 'Monitoring' => null,
