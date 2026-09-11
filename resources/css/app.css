@@ -3,6 +3,14 @@
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
 
+/*
+ * Safelist: kelas dipakai via interpolasi PHP (bg-{{ $module['tint'] }}, text-{{ $module['tint'] }})
+ * sehingga tidak bisa di-scan Tailwind secara statis. Daftarkan eksplisit di sini.
+ *
+ * bg-module-1 bg-module-2 bg-module-3 bg-module-4 bg-module-5
+ * text-module-1 text-module-2 text-module-3 text-module-4 text-module-5
+ */
+
 @theme {
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';

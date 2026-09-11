@@ -4,7 +4,7 @@
         {{-- Header --}}
         <div class="mb-10">
             {{-- Breadcrumb back --}}
-            <a href="{{ route('layanan.index') }}" class="inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-slate-300 transition-colors mb-4">
+            <a href="{{ route('layanan.index') }}" class="inline-flex items-center gap-1.5 text-sm text-muted hover:text-text transition-colors mb-4">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
                 </svg>
@@ -22,8 +22,8 @@
                         @endif
                         <span class="text-xs text-slate-500 font-medium uppercase tracking-wider">Layanan</span>
                     </div>
-                    <h1 class="text-2xl sm:text-3xl font-bold text-white truncate">{{ $layanan->nama_layanan }}</h1>
-                    <p class="text-slate-400 mt-1 text-sm">
+                    <h1 class="text-2xl sm:text-3xl font-bold text-text-strong truncate">{{ $layanan->nama_layanan }}</h1>
+                    <p class="text-muted mt-1 text-sm">
                         @if($layanan->bidang_bagian) {{ $layanan->bidang_bagian }} · @endif
                         Pilih modul yang ingin Anda kelola
                     </p>
@@ -36,11 +36,11 @@
                     $progPct     = $totalModul > 0 ? round(($filledModul / $totalModul) * 100) : 0;
                 @endphp
                 <div class="flex flex-col gap-3 shrink-0 items-end">
-                    <div class="rounded-xl border border-slate-700/50 bg-slate-800/50 p-4 min-w-[160px] text-center w-full">
-                        <div class="text-2xl font-bold text-white">{{ $filledModul }}/{{ $totalModul }}</div>
-                        <div class="text-xs text-slate-400 mt-0.5">Modul Terisi</div>
-                        <div class="h-1.5 rounded-full bg-slate-700 mt-2">
-                            <div class="h-1.5 rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 transition-all"
+                    <div class="rounded-xl border border-border bg-surface p-4 min-w-[160px] text-center w-full">
+                        <div class="text-2xl font-bold text-text-strong">{{ $filledModul }}/{{ $totalModul }}</div>
+                        <div class="text-xs text-muted mt-0.5">Modul Terisi</div>
+                        <div class="h-1.5 rounded-full bg-border mt-2">
+                            <div class="h-1.5 rounded-full bg-accent transition-all"
                                  style="width: {{ $progPct }}%"></div>
                         </div>
                     </div>
@@ -63,11 +63,11 @@
                     @endphp
                     {{-- Active module card --}}
                     <{{ $tag }} {!! $attrStr !!}
-                       class="group relative rounded-2xl border {{ $module['border'] }} {{ $module['bg'] }} p-6 transition-all duration-300 hover:scale-[1.03] hover:shadow-2xl hover:{{ $module['shadow'] }} cursor-pointer text-left w-full">
+                       class="group relative rounded-2xl border border-border bg-module-bg p-6 transition-all duration-300 hover:scale-[1.03] hover:shadow-2xl cursor-pointer text-left w-full">
 
                         {{-- Badge count --}}
                         @if($index === 0 && $badgeCount > 0)
-                            <div class="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-red-500 text-white text-xs font-bold flex items-center justify-center shadow-lg shadow-red-500/30 animate-pulse">
+                            <div class="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-danger text-white text-xs font-bold flex items-center justify-center shadow-lg animate-pulse">
                                 {{ $badgeCount }}
                             </div>
                         @endif
@@ -75,22 +75,22 @@
                         {{-- Filled indicator --}}
                         @if($module['filled'])
                             <div class="absolute top-3 right-3">
-                                <svg class="w-4 h-4 text-emerald-400" fill="currentColor" viewBox="0 0 20 20">
+                                <svg class="w-4 h-4 text-success" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                                 </svg>
                             </div>
                         @endif
 
                         {{-- Icon --}}
-                        <div class="w-14 h-14 rounded-xl bg-gradient-to-br {{ $module['gradient'] }} flex items-center justify-center shadow-lg {{ $module['shadow'] }} mb-4 group-hover:scale-110 transition-transform duration-300">
+                        <div class="w-14 h-14 rounded-xl bg-{{ $module['tint'] }} flex items-center justify-center shadow-lg mb-4 group-hover:scale-110 transition-transform duration-300">
                             @include('partials.icons.' . $module['icon'], ['class' => 'w-7 h-7 text-white'])
                         </div>
 
-                        <h3 class="text-lg font-semibold text-white mb-1">{{ $module['name'] }}</h3>
-                        <p class="text-sm text-slate-400 leading-relaxed">{{ $module['description'] }}</p>
+                        <h3 class="text-lg font-semibold text-text-strong mb-1">{{ $module['name'] }}</h3>
+                        <p class="text-sm text-muted leading-relaxed">{{ $module['description'] }}</p>
 
                         {{-- Arrow indicator --}}
-                        <div class="mt-4 flex items-center gap-1 {{ $module['text'] }} text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <div class="mt-4 flex items-center gap-1 text-{{ $module['tint'] }} text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                             <span>{{ $module['filled'] ? 'Lihat / Edit' : 'Mulai Isi' }}</span>
                             <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
@@ -99,17 +99,17 @@
                     </{{ $tag }}>
                 @else
                     {{-- Coming soon card --}}
-                    <div class="relative rounded-2xl border border-slate-700/30 bg-slate-800/30 p-6 opacity-50 cursor-not-allowed">
+                    <div class="relative rounded-2xl border border-border bg-surface-soft p-6 opacity-50 cursor-not-allowed">
                         <div class="absolute top-4 right-4">
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-700/50 text-slate-400 border border-slate-600/30">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-surface text-muted border border-border">
                                 Segera Hadir
                             </span>
                         </div>
-                        <div class="w-14 h-14 rounded-xl bg-slate-700/50 flex items-center justify-center mb-4">
-                            @include('partials.icons.' . $module['icon'], ['class' => 'w-7 h-7 text-slate-500'])
+                        <div class="w-14 h-14 rounded-xl bg-surface-raised flex items-center justify-center mb-4">
+                            @include('partials.icons.' . $module['icon'], ['class' => 'w-7 h-7 text-muted'])
                         </div>
-                        <h3 class="text-lg font-semibold text-slate-400 mb-1">{{ $module['name'] }}</h3>
-                        <p class="text-sm text-slate-500 leading-relaxed">{{ $module['description'] }}</p>
+                        <h3 class="text-lg font-semibold text-muted mb-1">{{ $module['name'] }}</h3>
+                        <p class="text-sm text-muted leading-relaxed">{{ $module['description'] }}</p>
                     </div>
                 @endif
             @endforeach
@@ -117,13 +117,13 @@
 
         {{-- User summary bar --}}
         <div class="mt-10 text-center">
-            <p class="text-sm text-slate-500">
-                Masuk sebagai <span class="text-slate-300 font-medium">{{ auth()->user()->name }}</span>
-                <span class="text-slate-600 mx-1">•</span>
-                <span class="text-slate-400">{{ auth()->user()->role->label }}</span>
+            <p class="text-sm text-muted">
+                Masuk sebagai <span class="text-text font-medium">{{ auth()->user()->name }}</span>
+                <span class="text-border-strong mx-1">•</span>
+                <span class="text-muted">{{ auth()->user()->role->label }}</span>
                 @if(auth()->user()->nama_dinas)
-                    <span class="text-slate-600 mx-1">•</span>
-                    <span class="text-slate-400">{{ auth()->user()->nama_dinas }}</span>
+                    <span class="text-border-strong mx-1">•</span>
+                    <span class="text-muted">{{ auth()->user()->nama_dinas }}</span>
                 @endif
             </p>
         </div>

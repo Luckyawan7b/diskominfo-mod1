@@ -63,7 +63,9 @@ class Dashboard extends Component
 
     private function getModules(Layanan $layanan, ?MrKonteks $mrKonteks): array
     {
-        return [
+        $moduleTint = ['module-1', 'module-2', 'module-3', 'module-4', 'module-5'];
+
+        $items = [
             [
                 'name'        => 'Manajemen Risiko',
                 'description' => 'Identifikasi, analisis, dan penanganan risiko SPBE',
@@ -72,37 +74,24 @@ class Dashboard extends Component
                 'wireAction'  => $mrKonteks ? null : 'openModulMR',
                 'active'      => true,
                 'filled'      => (bool) $mrKonteks,
-                'gradient'    => 'from-emerald-500 to-teal-600',
-                'shadow'      => 'shadow-emerald-500/25',
-                'bg'          => 'bg-emerald-500/10',
-                'text'        => 'text-emerald-400',
-                'border'      => 'border-emerald-500/20',
             ],
             [
                 'name'        => 'Manajemen Pengetahuan',
                 'description' => 'Pengelolaan dan berbagi pengetahuan organisasi',
                 'icon'        => 'book-open',
                 'route'       => null,
+                'wireAction'  => null,
                 'active'      => false,
                 'filled'      => false,
-                'gradient'    => 'from-blue-500 to-indigo-600',
-                'shadow'      => 'shadow-blue-500/25',
-                'bg'          => 'bg-blue-500/10',
-                'text'        => 'text-blue-400',
-                'border'      => 'border-blue-500/20',
             ],
             [
                 'name'        => 'Manajemen Perubahan',
                 'description' => 'Perencanaan dan pelaksanaan perubahan organisasi',
                 'icon'        => 'arrows-right-left',
                 'route'       => null,
+                'wireAction'  => null,
                 'active'      => false,
                 'filled'      => false,
-                'gradient'    => 'from-amber-500 to-orange-600',
-                'shadow'      => 'shadow-amber-500/25',
-                'bg'          => 'bg-amber-500/10',
-                'text'        => 'text-amber-400',
-                'border'      => 'border-amber-500/20',
             ],
             [
                 'name'        => 'Manajemen Keberlangsungan',
