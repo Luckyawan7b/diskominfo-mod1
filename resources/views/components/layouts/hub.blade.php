@@ -10,18 +10,18 @@
             var saved = localStorage.getItem('theme');
             if (saved === 'dark') {
                 document.documentElement.setAttribute('data-theme', 'dark');
+            } else {
+                document.documentElement.setAttribute('data-theme', 'light');
             }
         })();
     </script>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="min-h-screen bg-slate-900 antialiased">
-    {{-- Background pattern --}}
-    <div class="fixed inset-0 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900"></div>
-    <div class="fixed inset-0 opacity-20" style="background-image: radial-gradient(circle at 20% 30%, rgba(16, 185, 129, 0.15) 0%, transparent 40%), radial-gradient(circle at 80% 70%, rgba(59, 130, 246, 0.1) 0%, transparent 40%);"></div>
+<body class="min-h-screen bg-page antialiased">
+    {{-- Background token-based — tidak ada fixed gradient --}}
 
     {{-- Topbar minimal --}}
-    <nav class="relative z-20 border-b border-slate-700/50 bg-slate-900/80 backdrop-blur-sm">
+    <nav class="relative z-20 border-b border-border bg-surface/90 backdrop-blur-sm">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
             {{-- Logo --}}
             <div class="flex items-center gap-3">
@@ -30,14 +30,14 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
                     </svg>
                 </div>
-                <span class="text-white font-semibold text-lg">SPBE Perangkat Daerah</span>
+                <span class="text-text-strong font-semibold text-lg">SPBE Perangkat Daerah</span>
             </div>
 
             {{-- User info --}}
             <div class="flex items-center gap-4">
                 <div class="text-right hidden sm:block">
-                    <p class="text-sm font-medium text-white">{{ auth()->user()->name }}</p>
-                    <p class="text-xs text-slate-400">
+                    <p class="text-sm font-medium text-text-strong">{{ auth()->user()->name }}</p>
+                    <p class="text-xs text-muted">
                         {{ auth()->user()->role->label }}
                         @if(auth()->user()->nama_dinas)
                             — {{ auth()->user()->nama_dinas }}
@@ -66,7 +66,7 @@
                 </button>
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
-                    <button type="submit" class="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-slate-400 hover:text-white hover:bg-slate-700/50 transition-colors cursor-pointer">
+                    <button type="submit" class="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-muted hover:text-text-strong hover:bg-surface-soft transition-colors cursor-pointer">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
                         </svg>

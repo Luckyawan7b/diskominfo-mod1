@@ -10,15 +10,16 @@
             var saved = localStorage.getItem('theme');
             if (saved === 'dark') {
                 document.documentElement.setAttribute('data-theme', 'dark');
+            } else {
+                document.documentElement.setAttribute('data-theme', 'light');
             }
         })();
     </script>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="min-h-screen bg-slate-900 flex items-center justify-center p-4 antialiased">
-    {{-- Subtle gradient background --}}
-    <div class="fixed inset-0 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900"></div>
-    <div class="fixed inset-0 opacity-30" style="background-image: radial-gradient(circle at 25% 25%, rgba(59, 130, 246, 0.1) 0%, transparent 50%), radial-gradient(circle at 75% 75%, rgba(16, 185, 129, 0.08) 0%, transparent 50%);"></div>
+<body class="min-h-screen bg-page flex items-center justify-center p-4 antialiased">
+    {{-- Subtle decorative overlay — only visible in dark mode --}}
+    <div class="fixed inset-0 pointer-events-none dark:opacity-30 opacity-0 transition-opacity" style="background-image: radial-gradient(circle at 25% 25%, rgba(59, 130, 246, 0.1) 0%, transparent 50%), radial-gradient(circle at 75% 75%, rgba(16, 185, 129, 0.08) 0%, transparent 50%);"></div>
 
     {{-- Theme toggle (floating, pojok kanan atas) --}}
     <div class="fixed top-4 right-4 z-50">
@@ -52,8 +53,8 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
                 </svg>
             </div>
-            <h1 class="text-2xl font-bold text-white">SPBE Desa</h1>
-            <p class="text-slate-400 text-sm mt-1">Sistem Pemerintahan Berbasis Elektronik</p>
+            <h1 class="text-2xl font-bold text-text-strong">SPBE Desa</h1>
+            <p class="text-muted text-sm mt-1">Sistem Pemerintahan Berbasis Elektronik</p>
         </div>
 
         {{ $slot }}

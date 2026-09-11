@@ -82,6 +82,24 @@ class RiskMatrixCalculator
         return $besaran > $seleraRisiko;
     }
 
+    /**
+     * Kembalikan pasangan class token semantik untuk badge besaran risiko.
+     * Digunakan IDENTIK di keempat tempat: index, peta, konteks/form, risiko/form.
+     *
+     * @param  string  $label  Hasil dari label()
+     * @return string          Class string untuk bg, text, dan border
+     */
+    public function colorClass(string $label): string
+    {
+        return match ($label) {
+            'Rendah'        => 'bg-risk-low-bg text-risk-low border-risk-low/30',
+            'Sedang'        => 'bg-risk-medium-bg text-risk-medium border-risk-medium/30',
+            'Tinggi'        => 'bg-risk-high-bg text-risk-high border-risk-high/30',
+            'Sangat Tinggi' => 'bg-risk-critical-bg text-risk-critical border-risk-critical/30',
+            default         => 'bg-surface-soft text-muted border-border',
+        };
+    }
+
     private function isValidLevel(int $level): bool
     {
         return $level >= 1 && $level <= 5;

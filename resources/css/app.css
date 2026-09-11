@@ -9,6 +9,15 @@
  *
  * bg-module-1 bg-module-2 bg-module-3 bg-module-4 bg-module-5
  * text-module-1 text-module-2 text-module-3 text-module-4 text-module-5
+ *
+ * Kelas badge risiko dari RiskMatrixCalculator::colorClass() — dibangun via PHP string
+ * bg-risk-low-bg text-risk-low border-risk-low/30
+ * bg-risk-medium-bg text-risk-medium border-risk-medium/30
+ * bg-risk-high-bg text-risk-high border-risk-high/30
+ * bg-risk-critical-bg text-risk-critical border-risk-critical/30
+ * bg-risk-low bg-risk-medium bg-risk-high bg-risk-critical
+ * ring-risk-low/50 ring-risk-medium/50 ring-risk-high/50 ring-risk-critical/50
+ * border-risk-low border-risk-medium border-risk-high border-risk-critical
  */
 
 @theme {
