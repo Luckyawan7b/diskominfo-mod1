@@ -1,10 +1,18 @@
 <!DOCTYPE html>
-<html lang="id" class="dark">
+<html lang="id">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="Sistem Manajemen Risiko SPBE Perangkat Daerah">
     <title>{{ $title ?? 'Manajemen Risiko' }} — SPBE Diskominfo</title>
+    <script>
+        (function () {
+            var saved = localStorage.getItem('theme');
+            if (saved === 'dark') {
+                document.documentElement.setAttribute('data-theme', 'dark');
+            }
+        })();
+    </script>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="min-h-screen bg-slate-900 antialiased" x-data="{ sidebarOpen: false }">
@@ -157,6 +165,26 @@
                     <p class="text-sm font-medium text-white">{{ auth()->user()->name }}</p>
                     <p class="text-xs text-slate-400">{{ auth()->user()->role->label }}</p>
                 </div>
+                <button
+                    type="button"
+                    id="theme-toggle-app"
+                    x-data="{ dark: document.documentElement.getAttribute('data-theme') === 'dark' }"
+                    x-init="$watch('dark', value => {
+                        document.documentElement.setAttribute('data-theme', value ? 'dark' : 'light');
+                        localStorage.setItem('theme', value ? 'dark' : 'light');
+                    })"
+                    @click="dark = !dark"
+                    :aria-pressed="dark.toString()"
+                    aria-label="Ganti tema gelap/terang"
+                    class="p-2 rounded-lg text-muted hover:bg-surface-soft hover:text-text transition-colors cursor-pointer"
+                >
+                    <svg x-show="!dark" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.36 6.36l-.7-.7M6.34 6.34l-.7-.7m12.02 0l-.7.7M6.34 17.66l-.7.7M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+                    </svg>
+                    <svg x-show="dark" x-cloak class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+                    </svg>
+                </button>
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
                     <button type="submit" class="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-700/50 transition-colors cursor-pointer" title="Keluar">

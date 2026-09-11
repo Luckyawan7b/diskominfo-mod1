@@ -6,4 +6,98 @@
 @theme {
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
+
+    /* Brand */
+    --color-primary: #293681;
+    --color-primary-dark: #232e70;
+    --color-primary-light: #3b4aa0;
+    --color-accent: #1683ff;
+
+    /* Surface & layout */
+    --color-page: #c4e5ff;
+    --color-surface: #ffffff;
+    --color-surface-soft: #eef8ff;
+    --color-surface-raised: #ffffff;
+    --color-field: #e5f4ff;
+    --color-border: #d4dce5;
+    --color-border-strong: #b9c4cf;
+
+    /* Teks */
+    --color-text: #171717;
+    --color-text-strong: #0b0b0b;
+    --color-muted: #6d7784;
+
+    /* Semantik umum */
+    --color-success: #12a800;
+    --color-success-bg: #e8ffe0;
+    --color-danger: #d40006;
+    --color-danger-bg: #ffe1e2;
+    --color-warning: #a86400;
+    --color-warning-bg: #fff3d9;
+    --color-info: #1683ff;
+    --color-info-bg: #e5f4ff;
+
+    /* Skala risiko resmi — 4 level */
+    --color-risk-low: #16a34a;
+    --color-risk-low-bg: #dcfce7;
+    --color-risk-medium: #ca8a04;
+    --color-risk-medium-bg: #fef9c3;
+    --color-risk-high: #ea580c;
+    --color-risk-high-bg: #ffedd5;
+    --color-risk-critical: #dc2626;
+    --color-risk-critical-bg: #fee2e2;
+
+    /* Modul dashboard — 1 keluarga warna, tint bertahap dari primary */
+    --color-module-1: #293681;
+    --color-module-2: #3b4aa0;
+    --color-module-3: #4d5db8;
+    --color-module-4: #5f70cf;
+    --color-module-5: #7183e0;
+    --color-module-bg: #eef1fb;
+}
+
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+
+[data-theme="dark"] {
+    --color-primary: #5b6ae0;
+    --color-primary-dark: #4a58c9;
+    --color-primary-light: #7c89ea;
+    --color-accent: #4aa2ff;
+
+    --color-page: #0f1522;
+    --color-surface: #161d2e;
+    --color-surface-soft: #1c2438;
+    --color-surface-raised: #202a41;
+    --color-field: #1c2438;
+    --color-border: #2b3550;
+    --color-border-strong: #3c4a6b;
+
+    --color-text: #e7ebf3;
+    --color-text-strong: #ffffff;
+    --color-muted: #99a3b8;
+
+    --color-success: #4ade80;
+    --color-success-bg: #113322;
+    --color-danger: #ff6166;
+    --color-danger-bg: #3a1418;
+    --color-warning: #fbbf24;
+    --color-warning-bg: #3a2c0c;
+    --color-info: #4aa2ff;
+    --color-info-bg: #10223a;
+
+    --color-risk-low: #4ade80;
+    --color-risk-low-bg: #10331f;
+    --color-risk-medium: #facc15;
+    --color-risk-medium-bg: #362b08;
+    --color-risk-high: #fb923c;
+    --color-risk-high-bg: #3a2410;
+    --color-risk-critical: #f87171;
+    --color-risk-critical-bg: #3a1213;
+
+    --color-module-1: #5b6ae0;
+    --color-module-2: #7c89ea;
+    --color-module-3: #8b97ee;
+    --color-module-4: #9aa4f2;
+    --color-module-5: #a9b2f5;
+    --color-module-bg: #1c2340;
 }
