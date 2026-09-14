@@ -14,6 +14,7 @@ use Livewire\Component;
 class KonteksIndex extends Component
 {
     public string $filterDinas = '';
+    public ?Layanan $activeLayanan = null;
 
     // ─── Dipakai admin saja ──────────────────────────────────────────────────
     public bool $showCreateModal = false;
@@ -28,52 +29,30 @@ class KonteksIndex extends Component
         $this->newTahun           = (int) date('Y');
         $this->newTahunPelaksanaan = (int) date('Y');
 
-        // Operator: langsung pastikan ada konteks MR untuk layanan aktif.
-        // Jika belum ada, buat otomatis, lalu redirect ke form-nya.
         $user = auth()->user();
         if ($user->isOperator()) {
-            // Kita hanya redirect otomatis jika datang dari layanan.dashboard
             $layananId = session('active_layanan_id');
             if ($layananId) {
                 // Scoping: layanan harus milik operator ini (created_by)
-                $layanan = Layanan::where('created_by', $user->id)->find($layananId);
-                if ($layanan) {
-                    $konteks = $this->ensureKonteksForLayanan($layanan, $user);
-                    session()->forget('active_layanan_id');
-                    $this->redirect(route('konteks.form', $konteks), navigate: true);
-                    return;
-                }
+                $this->activeLayanan = Layanan::where('created_by', $user->id)->find($layananId);
             }
         }
     }
 
-    /**
-     * Ambil atau buat MrKonteks untuk layanan yang diberikan.
-     */
-    public static function ensureKonteksForLayanan(Layanan $layanan, $user): MrKonteks
-    {
-        return MrKonteks::firstOrCreate(
-            ['layanan_id' => $layanan->id],
-            [
-                // Tidak ada lagi desa_id atau status — langsung isi dari creator
-                'nama_instansi'     => $layanan->creator?->nama_dinas ?? $layanan->unit_pelaksana ?? '',
-                'nama_upr'          => $layanan->nama_layanan,
-                'tahun_penilaian'   => (int) date('Y'),
-                'tahun_pelaksanaan' => (int) date('Y'),
-                'created_by'        => $user->id,
-            ]
-        );
-    }
 
     public function render()
     {
         $user  = auth()->user();
 
         if ($user->isOperator()) {
-            // Operator: hanya konteks dari layanan miliknya sendiri (scoping via created_by)
+            // Operator: hanya konteks dari layanan aktif jika ada
             $query = MrKonteks::whereHas('layanan', fn ($q) => $q->where('created_by', $user->id))
                 ->with(['layanan.creator', 'risiko'])
                 ->withCount('risiko');
+                
+            if ($this->activeLayanan) {
+                $query->where('layanan_id', $this->activeLayanan->id);
+            }
         } else {
             // Admin: semua konteks, bisa filter by nama dinas
             $query = MrKonteks::with(['layanan.creator', 'risiko'])->withCount('risiko');
@@ -87,9 +66,11 @@ class KonteksIndex extends Component
         // Untuk duplikat: opsi konteks dari layanan milik operator ini
         $previousKonteksOptions = collect();
         if ($user->isOperator()) {
-            $previousKonteksOptions = MrKonteks::whereHas('layanan', fn ($q) => $q->where('created_by', $user->id))
-                ->orderByDesc('tahun_penilaian')
-                ->get();
+            $prevQuery = MrKonteks::whereHas('layanan', fn ($q) => $q->where('created_by', $user->id));
+            if ($this->activeLayanan) {
+                $prevQuery->where('layanan_id', $this->activeLayanan->id);
+            }
+            $previousKonteksOptions = $prevQuery->orderByDesc('tahun_penilaian')->get();
         }
 
         // Ambil daftar dinas unik untuk filter admin
@@ -110,33 +91,46 @@ class KonteksIndex extends Component
     }
 
     /**
-     * Hanya dipakai Admin untuk membuat konteks tanpa relasi layanan yang ada
-     * (mode manual — fallback jika layanan belum ada di sistem).
+     * Membuat konteks MR baru (dapat dilakukan oleh Admin dan Operator)
      */
     public function createKonteks(): void
     {
         $user = auth()->user();
 
-        if (! $user->isAdmin()) {
-            $this->addError('newTahun', 'Operator harus membuat konteks melalui Layanan.');
+        $rules = [
+            'newTahunPelaksanaan' => 'required|integer|min:2020|max:2099',
+            'newTahun'            => 'required|integer|min:2020|max:2099',
+        ];
+
+        if ($user->isAdmin()) {
+            $rules['newNamaInstansi'] = 'required|string|max:255';
+        }
+
+        $this->validate($rules);
+
+        if ($user->isOperator() && !$this->activeLayanan) {
+            $this->addError('newTahun', 'Silakan pilih layanan terlebih dahulu melalui Dashboard.');
             return;
         }
 
-        $this->validate([
-            'newNamaInstansi'     => 'required|string|max:255',
-            'newTahunPelaksanaan' => 'required|integer|min:2020|max:2099',
-            'newTahun'            => 'required|integer|min:2020|max:2099',
-        ]);
-
         DB::beginTransaction();
         try {
-            $konteks = MrKonteks::create([
-                'nama_instansi'     => $this->newNamaInstansi,
-                'nama_upr'          => $this->newNamaUpr ?: '',
+            $data = [
                 'tahun_penilaian'   => $this->newTahun,
                 'tahun_pelaksanaan' => $this->newTahunPelaksanaan,
                 'created_by'        => $user->id,
-            ]);
+            ];
+
+            if ($user->isOperator() && $this->activeLayanan) {
+                $data['layanan_id']    = $this->activeLayanan->id;
+                $data['nama_instansi'] = $this->activeLayanan->creator?->nama_dinas ?? $this->activeLayanan->unit_pelaksana ?? '';
+                $data['nama_upr']      = $this->activeLayanan->nama_layanan;
+            } else {
+                $data['nama_instansi'] = $this->newNamaInstansi;
+                $data['nama_upr']      = $this->newNamaUpr ?: '';
+            }
+
+            $konteks = MrKonteks::create($data);
 
             if ($this->duplicateFromId) {
                 $source = MrKonteks::find($this->duplicateFromId);

@@ -33,7 +33,7 @@ class PetaRisiko extends Component
     public function render()
     {
         $calc = app(RiskMatrixCalculator::class);
-        $risikos = $this->konteks->risiko()->with('kategoriRisiko')->get();
+        $risikos = $this->konteks->risiko()->get();
 
         // Build 5x5 matrix counts
         $matrix = [];

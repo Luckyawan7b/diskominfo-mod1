@@ -80,7 +80,7 @@
                             <span class="{{ $selectedSasaran ? 'text-text font-medium' : 'text-muted' }} break-words leading-relaxed">
                                 {{ $selectedSasaran ? $selectedSasaran->sasaran_upr : '-- Pilih Sasaran UPR --' }}
                             </span>
-                            <svg class="w-4 h-4 text-slate-400 shrink-0 transition-transform duration-200" :class="{ 'rotate-180': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="w-4 h-4 text-muted shrink-0 transition-transform duration-200" :class="{ 'rotate-180': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                             </svg>
                         </button>
@@ -112,7 +112,7 @@
                                     @endif
                                 </button>
                             @empty
-                                <div class="px-4 py-3 text-xs text-slate-400 italic">
+                                <div class="px-4 py-3 text-xs text-muted italic">
                                     Belum ada Sasaran UPR yang dibuat. Silakan tambahkan pada tahap Sasaran UPR terlebih dahulu.
                                 </div>
                             @endforelse
@@ -139,7 +139,7 @@
 
             {{-- 4. Indikator Kinerja --}}
             <div>
-                <label class="block text-sm font-medium text-slate-300 mb-1.5">Indikator Kinerja <span class="text-xs text-slate-500 font-normal ml-2">Diisi indikator kinerja berdasarkan formulir 0.0</span></label>
+                <label class="block text-sm font-medium text-text mb-1.5">Indikator Kinerja <span class="text-xs text-muted font-normal ml-2">Diisi indikator kinerja berdasarkan formulir 0.0</span></label>
                 
                 <div x-data="{ open: false }" class="relative" wire:key="select-indikator-{{ $mr_sasaran_upr_id }}-{{ $indikator_kinerja_snapshot }}">
                     <button type="button" 
@@ -155,7 +155,7 @@
                                 -- Pilih Indikator Kinerja --
                             @endif
                         </span>
-                        <svg class="w-4 h-4 text-slate-400 shrink-0 transition-transform duration-200" :class="{ 'rotate-180': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-4 h-4 text-muted shrink-0 transition-transform duration-200" :class="{ 'rotate-180': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                         </svg>
                     </button>
@@ -193,7 +193,7 @@
                                     @endif
                                 </button>
                             @empty
-                                <div class="px-4 py-3 text-xs text-slate-400 italic">
+                                <div class="px-4 py-3 text-xs text-muted italic">
                                     Sasaran UPR ini belum memiliki indikator kinerja. Anda dapat menambahkannya di tahap Sasaran UPR.
                                 </div>
                             @endforelse
@@ -204,7 +204,7 @@
 
             {{-- 6. Peristiwa Risiko --}}
             <div>
-                <label class="block text-sm font-medium text-slate-300 mb-1.5">Peristiwa Risiko <span class="text-xs text-slate-500 font-normal ml-2">Diisi peristiwa risiko yang mungkin terjadi</span></label>
+                <label class="block text-sm font-medium text-text mb-1.5">Peristiwa Risiko <span class="text-xs text-muted font-normal ml-2">Diisi peristiwa risiko yang mungkin terjadi</span></label>
                 <x-textarea-auto wire:model="peristiwa_risiko" rows="3" :disabled="!$isEditable"
                     placeholder="Deskripsi kejadian atau peristiwa risiko" />
                 @error('peristiwa_risiko') <p class="mt-1 text-sm text-danger">{{ $message }}</p> @enderror
@@ -324,14 +324,23 @@
                                 @php
                                     $isSelected = ($level_kemungkinan == $k && $level_dampak == $d);
                                     $cellCalc = app(\App\Services\RiskMatrixCalculator::class)->calculate($k, $d);
-                                    $cellColor = match(true) {
-                                        $cellCalc <= 4  => 'bg-emerald-600/40',
-                                        $cellCalc <= 9  => 'bg-amber-600/40',
-                                        $cellCalc <= 16 => 'bg-orange-600/40',
-                                        default         => 'bg-red-600/40',
+                                    $cellLabel = app(\App\Services\RiskMatrixCalculator::class)->label($cellCalc);
+                                    $cellColor = match($cellLabel) {
+                                        'Rendah'        => 'bg-risk-low-bg',
+                                        'Sedang'        => 'bg-risk-medium-bg',
+                                        'Tinggi'        => 'bg-risk-high-bg',
+                                        'Sangat Tinggi' => 'bg-risk-critical-bg',
+                                        default         => 'bg-surface-soft',
+                                    };
+                                    $textColor = match($cellLabel) {
+                                        'Rendah'        => 'text-risk-low',
+                                        'Sedang'        => 'text-risk-medium',
+                                        'Tinggi'        => 'text-risk-high',
+                                        'Sangat Tinggi' => 'text-risk-critical',
+                                        default         => 'text-muted',
                                     };
                                 @endphp
-                                <div class="rounded-xs {{ $cellColor }} {{ $isSelected ? 'ring-2 ring-white scale-110 z-10' : 'opacity-60' }} flex items-center justify-center text-[9px] text-white">
+                                <div class="rounded-xs border border-border {{ $cellColor }} {{ $textColor }} {{ $isSelected ? 'ring-2 ring-white scale-110 z-10' : 'opacity-80' }} flex items-center justify-center text-[10px] font-bold">
                                     {{ $isSelected ? '★' : '' }}
                                 </div>
                             @endfor

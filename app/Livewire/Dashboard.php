@@ -27,20 +27,13 @@ class Dashboard extends Component
 
     /**
      * Dipanggil saat user klik kartu Manajemen Risiko.
-     * Menyimpan layanan_id ke session, lalu KonteksIndex akan auto-create konteks.
+     * Mengarahkan ke halaman Daftar Konteks Risiko (KonteksIndex).
      */
     public function openModulMR(): void
     {
-        $mrKonteks = MrKonteks::where('layanan_id', $this->layanan->id)->first();
-
-        if ($mrKonteks) {
-            // Konteks sudah ada → langsung masuk form
-            $this->redirect(route('konteks.form', $mrKonteks), navigate: true);
-        } else {
-            // Konteks belum ada → simpan session, biarkan KonteksIndex auto-create
-            session(['active_layanan_id' => $this->layanan->id]);
-            $this->redirect(route('konteks.index'), navigate: true);
-        }
+        // Simpan layanan_id ke session agar KonteksIndex tahu layanan apa yang sedang aktif
+        session(['active_layanan_id' => $this->layanan->id]);
+        $this->redirect(route('konteks.index'), navigate: true);
     }
 
     public function render()
@@ -70,10 +63,11 @@ class Dashboard extends Component
                 'name'        => 'Manajemen Risiko',
                 'description' => 'Identifikasi, analisis, dan penanganan risiko SPBE',
                 'icon'        => 'shield-check',
-                'route'       => $mrKonteks ? route('konteks.form', $mrKonteks) : null,
-                'wireAction'  => $mrKonteks ? null : 'openModulMR',
+                'route'       => null,
+                'wireAction'  => 'openModulMR',
                 'active'      => true,
                 'filled'      => (bool) $mrKonteks,
+                'tint'        => $moduleTint[0],
             ],
             [
                 'name'        => 'Manajemen Pengetahuan',
@@ -83,6 +77,7 @@ class Dashboard extends Component
                 'wireAction'  => null,
                 'active'      => false,
                 'filled'      => false,
+                'tint'        => $moduleTint[1],
             ],
             [
                 'name'        => 'Manajemen Perubahan',
@@ -92,6 +87,7 @@ class Dashboard extends Component
                 'wireAction'  => null,
                 'active'      => false,
                 'filled'      => false,
+                'tint'        => $moduleTint[2],
             ],
             [
                 'name'        => 'Manajemen Keberlangsungan',
@@ -120,5 +116,7 @@ class Dashboard extends Component
                 'border'      => 'border-rose-500/20',
             ],
         ];
+
+        return $items;
     }
 }

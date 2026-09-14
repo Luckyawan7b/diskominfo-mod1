@@ -31,18 +31,18 @@
     --color-accent: #1683ff;
 
     /* Surface & layout */
-    --color-page: #c4e5ff;
+    --color-page: #f8fafc;
     --color-surface: #ffffff;
-    --color-surface-soft: #eef8ff;
+    --color-surface-soft: #f1f5f9;
     --color-surface-raised: #ffffff;
-    --color-field: #e5f4ff;
-    --color-border: #d4dce5;
-    --color-border-strong: #b9c4cf;
+    --color-field: #ffffff;
+    --color-border: #e2e8f0;
+    --color-border-strong: #94a3b8;
 
     /* Teks */
-    --color-text: #171717;
-    --color-text-strong: #0b0b0b;
-    --color-muted: #6d7784;
+    --color-text: #1e293b;
+    --color-text-strong: #0f172a;
+    --color-muted: #64748b;
 
     /* Semantik umum */
     --color-success: #12a800;
@@ -71,6 +71,19 @@
     --color-module-4: #5f70cf;
     --color-module-5: #7183e0;
     --color-module-bg: #eef1fb;
+
+    /* Chrome: Sidebar & Topbar (Light) */
+    --color-sidebar: var(--color-primary);
+    --color-sidebar-border: var(--color-primary-dark);
+    --color-sidebar-text: #ffffff;
+    --color-sidebar-muted: #a9b2f5;
+    --color-sidebar-hover: var(--color-primary-light);
+    
+    --color-topbar: var(--color-primary);
+    --color-topbar-border: var(--color-primary-dark);
+    --color-topbar-text: #ffffff;
+    --color-topbar-muted: #a9b2f5;
+    --color-topbar-hover: var(--color-primary-light);
 }
 
 @custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
@@ -117,4 +130,17 @@
     --color-module-4: #9aa4f2;
     --color-module-5: #a9b2f5;
     --color-module-bg: #1c2340;
+
+    /* Chrome: Sidebar & Topbar (Dark) */
+    --color-sidebar: var(--color-surface-soft);
+    --color-sidebar-border: var(--color-border);
+    --color-sidebar-text: var(--color-text-strong);
+    --color-sidebar-muted: var(--color-muted);
+    --color-sidebar-hover: var(--color-surface-raised);
+    
+    --color-topbar: var(--color-surface);
+    --color-topbar-border: var(--color-border);
+    --color-topbar-text: var(--color-text-strong);
+    --color-topbar-muted: var(--color-muted);
+    --color-topbar-hover: var(--color-surface-raised);
 }

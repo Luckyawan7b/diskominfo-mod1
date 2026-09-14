@@ -61,7 +61,7 @@
                                             class="h-16 rounded-xl border p-2 flex flex-col items-center justify-between transition-all cursor-pointer {{ $colorBg }} {{ $isSelected ? 'ring-2 ring-white scale-105 shadow-xl' : '' }}">
                                             <span class="text-[10px] opacity-70 font-mono font-medium">{{ $cell['besaran'] }}</span>
                                             @if($cell['count'] > 0)
-                                                <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-white text-slate-900 font-bold text-xs shadow">
+                                                <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-surface border border-border text-text-strong font-bold text-xs shadow-sm">
                                                     {{ $cell['count'] }}
                                                 </span>
                                             @else
@@ -115,7 +115,7 @@
                         </div>
                         <p class="text-sm text-text line-clamp-2 leading-relaxed">{{ $item->peristiwa_risiko }}</p>
                         <div class="mt-2 flex items-center justify-between text-[11px] text-muted">
-                            <span>{{ $item->kategoriRisiko?->nama_kategori ?? 'Tanpa kategori' }}</span>
+                            <span>{{ $item->kategori_risiko ?? 'Tanpa kategori' }}</span>
                         </div>
                     </a>
                 @empty

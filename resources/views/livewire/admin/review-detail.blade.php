@@ -100,7 +100,7 @@
                             {{ $r->kode_risiko }}
                         </span>
                         <span class="text-xs text-slate-400">
-                            {{ $r->kategoriRisiko?->nama_kategori ?? 'Tanpa Kategori' }}
+                            {{ $r->kategori_risiko ?? 'Tanpa Kategori' }}
                         </span>
                         <span class="text-xs px-2 py-0.5 rounded border {{ $besaranColor }} font-semibold">
                             K={{ $r->level_kemungkinan }} × D={{ $r->level_dampak }}

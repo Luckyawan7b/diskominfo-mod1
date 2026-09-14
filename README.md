@@ -54,6 +54,15 @@ Dokumen ini memuat catatan arsitektur dan riwayat perubahan penting agar agen AI
 
 ---
 
+### 5. Alur Navigasi & Pembuatan Konteks Manajemen Risiko (Multi-tahun)
+- **Latar Belakang**: Sebelumnya, mengakses Manajemen Risiko dari Dashboard akan mengarahkan pengguna secara otomatis ke form isian, dan membuat satu buah dokumen konteks secara otomatis jika belum ada di database.
+- **Perubahan Navigasi (Baru)**:
+  - Mengakses Manajemen Risiko dari Dashboard kini **selalu mengarahkan pengguna ke halaman Daftar Konteks Risiko**.
+  - Daftar tersebut di-*filter* khusus untuk menampilkan riwayat dokumen risiko milik Layanan yang diklik (menggunakan `session('active_layanan_id')`).
+  - Fitur **Buat Konteks Baru** dipindahkan ke dalam bentuk Modal di halaman daftar tersebut, sehingga operator dapat membuat dokumen risiko untuk **tahun penilaian yang berbeda-beda** (multi-tahun) pada layanan yang sama. Data Instansi dan UPR akan diisi otomatis berdasarkan data Layanan terkait.
+
+---
+
 ## 🗄️ Struktur Migrasi Database (17 File Bersih)
 
 Seluruh migrasi tambahan (patch alter table, drop table sementara, placeholder data migrasi) telah dibersihkan dan disusun ulang dari awal (*clean slate*) sesuai urutan dependensi foreign key:

@@ -19,7 +19,6 @@
                     Tambah Risiko
                 </a>
             @endif
-            <livewire:konteks.submit-konteks :konteks="$konteks" />
         </div>
     </div>
 
@@ -54,7 +53,7 @@
                         <td class="px-4 py-3 text-text max-w-xs">
                             <div class="truncate">{{ $r->peristiwa_risiko }}</div>
                         </td>
-                        <td class="px-4 py-3 text-muted text-xs">{{ $r->kategoriRisiko?->nama_kategori ?? '-' }}</td>
+                        <td class="px-4 py-3 text-muted text-xs">{{ $r->kategori_risiko ?? '-' }}</td>
                         <td class="px-4 py-3 text-center text-text">{{ $r->level_kemungkinan ?? '-' }}</td>
                         <td class="px-4 py-3 text-center text-text">{{ $r->level_dampak ?? '-' }}</td>
                         <td class="px-4 py-3 text-center">
