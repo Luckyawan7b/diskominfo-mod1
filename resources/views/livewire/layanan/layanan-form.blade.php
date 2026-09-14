@@ -17,7 +17,7 @@
 
     {{-- Form Sections with AlpineJS Accordion --}}
     <div x-data="{ activeTab: 'identitas' }" class="flex flex-col lg:flex-row gap-6">
-        
+
         {{-- Sidebar Navigation --}}
         <div class="w-full lg:w-64 shrink-0">
             <nav class="flex flex-col gap-1 sticky top-6">
@@ -38,11 +38,11 @@
 
         {{-- Content Area --}}
         <div class="flex-1 rounded-xl border border-border bg-surface p-6 sm:p-8">
-            
+
             {{-- Section: Identitas Layanan --}}
             <div x-show="activeTab === 'identitas'" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" class="space-y-6">
                 <h2 class="text-lg font-bold text-text-strong mb-4 border-b border-border pb-2">Identitas Layanan</h2>
-                
+
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <label class="block text-sm font-semibold text-text mb-1">Nama Layanan <span class="text-danger">*</span></label>
@@ -80,7 +80,7 @@
             {{-- Section: Data & Integrasi --}}
             <div x-show="activeTab === 'data'" style="display: none;" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" class="space-y-6">
                 <h2 class="text-lg font-bold text-text-strong mb-4 border-b border-border pb-2">Data & Integrasi</h2>
-                
+
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <label class="block text-sm font-semibold text-text mb-1">Target Pengguna</label>
@@ -127,7 +127,7 @@
                         <textarea wire:model="nama_data_output" rows="2" class="w-full rounded-lg border border-border bg-field px-4 py-2.5 text-text text-sm focus:outline-none focus:ring-2 focus:ring-accent"></textarea>
                     </div>
                 </div>
-                
+
                 <div class="border-t border-border pt-4 mt-4">
                     <label class="flex items-center gap-2 cursor-pointer mb-4">
                         <input wire:model.live="interoperabilitas" type="checkbox" class="w-5 h-5 rounded border-border bg-field text-accent focus:ring-accent focus:ring-offset-surface">
@@ -156,7 +156,7 @@
             {{-- Section: Aplikasi & Infrastruktur --}}
             <div x-show="activeTab === 'aplikasi'" style="display: none;" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" class="space-y-6">
                 <h2 class="text-lg font-bold text-text-strong mb-4 border-b border-border pb-2">Aplikasi & Infrastruktur</h2>
-                
+
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <label class="block text-sm font-semibold text-text mb-1">Nama Aplikasi</label>
@@ -192,7 +192,7 @@
             {{-- Section: Dokumen Pendukung --}}
             <div x-show="activeTab === 'dokumen'" style="display: none;" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" class="space-y-6">
                 <h2 class="text-lg font-bold text-text-strong mb-4 border-b border-border pb-2">Dokumen Pendukung & Bantuan</h2>
-                
+
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <label class="block text-sm font-semibold text-text mb-1">Link SLA (Service Level Agreement)</label>
@@ -204,7 +204,7 @@
                     </div>
                     <div class="md:col-span-2">
                         <label class="block text-sm font-semibold text-text mb-1">Helpdesk / Kontak Bantuan</label>
-                        <input wire:model="helpdesk" type="text" class="w-full rounded-lg border border-border bg-field px-4 py-2.5 text-text text-sm focus:outline-none focus:ring-2 focus:ring-accent" placeholder="Contoh: 0812-3456-7890 atau helpdesk@desa.id">
+                        <input wire:model="helpdesk" type="text" class="w-full rounded-lg border border-border bg-field px-4 py-2.5 text-text text-sm focus:outline-none focus:ring-2 focus:ring-accent" placeholder="Contoh: 0812-3456-7890 atau helpdesk@diskominfo.id">
                     </div>
                 </div>
             </div>

@@ -67,14 +67,14 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                     <label class="block text-sm font-medium text-text mb-1.5">Sasaran UPR <span class="text-xs text-muted font-normal ml-2">Diisi sesuai sasaran UPR</span></label>
-                    
+
                     <div x-data="{ open: false }" class="relative" wire:key="select-sasaran-upr-{{ $mr_sasaran_upr_id }}">
                         @php
                             $selectedSasaran = $sasaranList->firstWhere('id', $mr_sasaran_upr_id);
                         @endphp
 
-                        <button type="button" 
-                            @click="open = !open" 
+                        <button type="button"
+                            @click="open = !open"
                             {{ !$isEditable ? 'disabled' : '' }}
                             class="w-full min-h-[44px] rounded-lg border border-border bg-field px-4 py-2.5 text-left text-sm focus:ring-2 focus:ring-accent focus:outline-none disabled:opacity-50 flex items-center justify-between gap-2 transition-all cursor-pointer disabled:cursor-not-allowed">
                             <span class="{{ $selectedSasaran ? 'text-text font-medium' : 'text-muted' }} break-words leading-relaxed">
@@ -85,9 +85,9 @@
                             </svg>
                         </button>
 
-                        <div x-show="open" 
-                            @click.outside="open = false" 
-                            x-cloak 
+                        <div x-show="open"
+                            @click.outside="open = false"
+                            x-cloak
                             x-transition:enter="transition ease-out duration-100"
                             x-transition:enter-start="opacity-0 scale-95"
                             x-transition:enter-end="opacity-100 scale-100"
@@ -95,13 +95,13 @@
                             x-transition:leave-start="opacity-100 scale-100"
                             x-transition:leave-end="opacity-0 scale-95"
                             class="absolute z-50 mt-1.5 w-full rounded-xl border border-border bg-surface shadow-2xl overflow-hidden max-h-72 overflow-y-auto divide-y divide-border">
-                            <button type="button" 
+                            <button type="button"
                                 @click="$wire.set('mr_sasaran_upr_id', null); open = false"
                                 class="w-full text-left px-4 py-3 text-xs text-muted hover:bg-surface-soft transition-colors cursor-pointer">
                                 -- Kosongkan Pilihan --
                             </button>
                             @forelse($sasaranList as $s)
-                                <button type="button" 
+                                <button type="button"
                                     @click="$wire.set('mr_sasaran_upr_id', {{ $s->id }}); open = false"
                                     class="w-full text-left px-4 py-3 text-sm transition-colors flex items-start justify-between gap-3 hover:bg-surface-soft cursor-pointer {{ $mr_sasaran_upr_id == $s->id ? 'bg-primary/10 text-primary font-semibold' : 'text-text' }}">
                                     <span class="break-words leading-relaxed">{{ $s->sasaran_upr }}</span>
@@ -140,10 +140,10 @@
             {{-- 4. Indikator Kinerja --}}
             <div>
                 <label class="block text-sm font-medium text-text mb-1.5">Indikator Kinerja <span class="text-xs text-muted font-normal ml-2">Diisi indikator kinerja berdasarkan formulir 0.0</span></label>
-                
+
                 <div x-data="{ open: false }" class="relative" wire:key="select-indikator-{{ $mr_sasaran_upr_id }}-{{ $indikator_kinerja_snapshot }}">
-                    <button type="button" 
-                        @click="open = !open" 
+                    <button type="button"
+                        @click="open = !open"
                         {{ !$isEditable || empty($mr_sasaran_upr_id) ? 'disabled' : '' }}
                         class="w-full min-h-[44px] rounded-lg border border-border bg-field px-4 py-2.5 text-left text-sm focus:ring-2 focus:ring-accent focus:outline-none disabled:opacity-50 flex items-center justify-between gap-2 transition-all cursor-pointer disabled:cursor-not-allowed">
                         <span class="{{ filled($indikator_kinerja_snapshot) ? 'text-text font-medium' : 'text-muted' }} break-words leading-relaxed">
@@ -161,9 +161,9 @@
                     </button>
 
                     @if(!empty($mr_sasaran_upr_id))
-                        <div x-show="open" 
-                            @click.outside="open = false" 
-                            x-cloak 
+                        <div x-show="open"
+                            @click.outside="open = false"
+                            x-cloak
                             x-transition:enter="transition ease-out duration-100"
                             x-transition:enter-start="opacity-0 scale-95"
                             x-transition:enter-end="opacity-100 scale-100"
@@ -171,13 +171,13 @@
                             x-transition:leave-start="opacity-100 scale-100"
                             x-transition:leave-end="opacity-0 scale-95"
                             class="absolute z-50 mt-1.5 w-full rounded-xl border border-border bg-surface shadow-2xl overflow-hidden max-h-72 overflow-y-auto divide-y divide-border">
-                            <button type="button" 
+                            <button type="button"
                                 @click="$wire.set('indikator_kinerja_snapshot', null); open = false"
                                 class="w-full text-left px-4 py-3 text-xs text-muted hover:bg-surface-soft transition-colors cursor-pointer">
                                 -- Kosongkan Pilihan --
                             </button>
                             @forelse($indikatorList as $ind)
-                                <button type="button" 
+                                <button type="button"
                                     @click="$wire.set('indikator_kinerja_snapshot', @js($ind->indikator_kinerja)); open = false"
                                     class="w-full text-left px-4 py-3 text-sm transition-colors flex items-start justify-between gap-3 hover:bg-surface-soft cursor-pointer {{ $indikator_kinerja_snapshot === $ind->indikator_kinerja ? 'bg-primary/10 text-primary font-semibold' : 'text-text' }}">
                                     <div class="space-y-0.5">
@@ -468,7 +468,7 @@
                     </label>
                     <input wire:model="layanan_pendukung" type="text" {{ !$isEditable ? 'disabled' : '' }}
                         class="w-full rounded-lg border border-border bg-field px-4 py-2.5 text-text text-sm focus:ring-2 focus:ring-accent focus:outline-none disabled:opacity-50"
-                        placeholder="Contoh: Jaringan internet desa, server/pusat data, aplikasi pelayanan internal">
+                        placeholder="Contoh: Jaringan internet, server/pusat data, aplikasi pelayanan internal">
                 </div>
 
                 <div>
@@ -492,7 +492,7 @@
                     <select wire:model="pemilik_layanan" {{ !$isEditable ? 'disabled' : '' }}
                         class="w-full rounded-lg border border-border bg-field px-4 py-2.5 text-text text-sm focus:ring-2 focus:ring-accent focus:outline-none disabled:opacity-50">
                         <option value="">-- Pilih Pemilik Layanan --</option>
-                        <option value="Milik sendiri">Milik sendiri (Desa)</option>
+                        <option value="Milik sendiri">Milik sendiri (Dinas)</option>
                         <option value="Pusat">Pusat (Kementerian/Lembaga)</option>
                         <option value="Instansi lain">Instansi lain (Pemda/OPD Lain)</option>
                     </select>
@@ -538,7 +538,7 @@
                         IPPD Terkait <span class="text-xs text-muted font-normal ml-2">Diisi IPPD yang berkaitan dengan kejadian risiko</span>
                     </label>
                     <x-textarea-auto wire:model="ippd_terkait" rows="4" :disabled="!$isEditable"
-                        placeholder="Contoh: Seluruh Perangkat Daerah / Instansi pengguna layanan TIK desa..." />
+                        placeholder="Contoh: Seluruh Perangkat Daerah / Instansi pengguna layanan TIK" />
                 </div>
             </div>
 

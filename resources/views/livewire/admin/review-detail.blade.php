@@ -4,7 +4,7 @@
         <div>
             <div class="flex items-center gap-3 flex-wrap">
                 <h1 class="text-2xl font-bold text-white">
-                    {{ $konteks->desa->nama_desa ?? 'Desa' }}
+                    {{ $konteks->nama_instansi ?? 'Dinas' }}
                 </h1>
                 @if($konteks->layanan)
                     <span class="text-slate-400 text-sm">—</span>

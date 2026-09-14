@@ -6,7 +6,7 @@
         </div>
     </div>
 
-    {{-- Filter berdasarkan Nama Dinas (bukan Desa) --}}
+    {{-- Filter berdasarkan Nama Dinas --}}
     <div class="flex flex-wrap gap-3 mb-6">
         <select wire:model.live="filterDinas" class="rounded-lg border border-slate-600 bg-slate-800 text-sm text-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500">
             <option value="">Semua Perangkat Daerah</option>

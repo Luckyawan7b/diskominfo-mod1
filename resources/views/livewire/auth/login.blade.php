@@ -9,7 +9,7 @@
                 <label for="email" class="block text-sm font-medium text-text mb-1.5">Email</label>
                 <input wire:model="email" type="email" id="email" autocomplete="email" autofocus
                     class="w-full rounded-lg border border-border bg-field px-4 py-2.5 text-text placeholder-muted text-sm focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition-shadow"
-                    placeholder="nama@desa.go.id">
+                    placeholder="nama@dinas.go.id">
                 @error('email')
                     <p class="mt-1.5 text-sm text-danger">{{ $message }}</p>
                 @enderror

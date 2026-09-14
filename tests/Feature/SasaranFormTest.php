@@ -35,7 +35,7 @@ class SasaranFormTest extends TestCase
             'created_by'     => $operator->id,
         ]);
 
-        // Tidak ada lagi desa_id atau status — buat konteks langsung dengan created_by
+        // Tidak ada lagi desa_id (diganti dengan nama_dinas) atau status — buat konteks langsung dengan created_by
         $konteks = MrKonteks::create([
             'layanan_id'      => $layanan->id,
             'nama_instansi'   => $operator->nama_dinas ?? 'Dinas Kominfo',

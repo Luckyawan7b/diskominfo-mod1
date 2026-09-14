@@ -90,9 +90,9 @@
                 Masuk sebagai <span class="text-text font-medium">{{ auth()->user()->name }}</span>
                 <span class="text-border-strong mx-1">•</span>
                 <span class="text-muted">{{ auth()->user()->role->label }}</span>
-                @if(auth()->user()->desa)
+                @if(auth()->user()->nama_dinas)
                     <span class="text-border-strong mx-1">•</span>
-                    <span class="text-muted">{{ auth()->user()->desa->nama_desa }}</span>
+                    <span class="text-muted">{{ auth()->user()->nama_dinas }}</span>
                 @endif
             </p>
         </div>

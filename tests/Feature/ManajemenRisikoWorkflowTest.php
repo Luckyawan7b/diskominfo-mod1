@@ -115,8 +115,15 @@ class ManajemenRisikoWorkflowTest extends TestCase
         // 1. Buat Layanan
         $layanan = $this->createLayananForOperator($operator);
 
-        // 2. Auto-create Konteks MR via KonteksIndex::ensureKonteksForLayanan
-        $konteks = KonteksIndex::ensureKonteksForLayanan($layanan, $operator);
+        // 2. Buat Konteks MR
+        $konteks = MrKonteks::create([
+            'layanan_id'        => $layanan->id,
+            'tahun_penilaian'   => (int) date('Y'),
+            'tahun_pelaksanaan' => (int) date('Y'),
+            'nama_instansi'     => $operator->nama_dinas,
+            'nama_upr'          => $layanan->nama_layanan,
+            'created_by'        => $operator->id,
+        ]);
         $this->assertNotNull($konteks);
         $this->assertEquals($layanan->id, $konteks->layanan_id);
         // Tidak ada lagi desa_id — nama_instansi diisi dari nama_dinas creator
@@ -223,7 +230,7 @@ class ManajemenRisikoWorkflowTest extends TestCase
             ->assertSee('2026');
     }
 
-    public function test_admin_user_crud_without_desa(): void
+    public function test_admin_user_crud_with_dinas(): void
     {
         $admin = User::where('email', 'admin@diskominfo.test')->first();
         $this->actingAs($admin);

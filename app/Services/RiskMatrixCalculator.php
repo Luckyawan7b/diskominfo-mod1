@@ -5,7 +5,7 @@ namespace App\Services;
 /**
  * RiskMatrixCalculator
  *
- * Mengimplementasikan Tabel 5 Matriks Risiko resmi SPBE Desa.
+ * Mengimplementasikan Tabel 5 Matriks Risiko resmi SPBE Dinas.
  * Hasil `besaran_risiko` = kemungkinan × dampak (1–25).
  *
  * Disimpan (bukan dihitung on-the-fly) agar laporan historis tidak
@@ -72,7 +72,7 @@ class RiskMatrixCalculator
     }
 
     /**
-     * Apakah risiko ini melampaui selera risiko (appetit) desa?
+     * Apakah risiko ini melampaui selera risiko (appetit) instansi?
      *
      * @param  int  $besaran         Nilai besaran risiko (1–25)
      * @param  int  $seleraRisiko    Nilai batas dari mr_konteks.selera_risiko

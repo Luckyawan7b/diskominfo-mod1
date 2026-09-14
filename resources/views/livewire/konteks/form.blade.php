@@ -29,7 +29,7 @@
                 <p class="text-xs text-muted mb-2">Diisi dengan nama instansi yang akan dinilai manajemen risikonya.</p>
                 <input wire:model="nama_instansi" type="text" {{ !$isEditable ? 'disabled' : '' }}
                     class="w-full rounded-lg border border-border bg-field px-4 py-2.5 text-text text-sm focus:outline-none focus:ring-2 focus:ring-accent disabled:opacity-50 disabled:cursor-not-allowed"
-                    placeholder="Contoh: Pemerintah Desa Sukamaju / Diskominfo Kabupaten">
+                    placeholder="Contoh: Dinas Kominfo / Pemerintah Daerah">
                 @error('nama_instansi') <p class="mt-1 text-sm text-danger">{{ $message }}</p> @enderror
             </div>
 
@@ -39,7 +39,7 @@
                 <p class="text-xs text-muted mb-2">Diisi dengan nama Unit Pemilik Risiko yang akan dinilai risikonya.</p>
                 <input wire:model="nama_upr" type="text" {{ !$isEditable ? 'disabled' : '' }}
                     class="w-full rounded-lg border border-border bg-field px-4 py-2.5 text-text text-sm focus:outline-none focus:ring-2 focus:ring-accent disabled:opacity-50 disabled:cursor-not-allowed"
-                    placeholder="Contoh: Pemerintah Desa Sukamaju">
+                    placeholder="Contoh: Dinas Komunikasi dan Informatika">
                 @error('nama_upr') <p class="mt-1 text-sm text-danger">{{ $message }}</p> @enderror
             </div>
         </div>
@@ -48,7 +48,7 @@
         <div>
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 mb-1.5">
                 <label class="block text-sm font-semibold text-text">Tugas UPR</label>
-                <span class="text-[11px] text-muted">Contoh: Melaksanakan pelayanan administrasi kependudukan dan penyelenggaraan sistem desa</span>
+                <span class="text-[11px] text-muted">Contoh: Melaksanakan pelayanan publik dan penyelenggaraan sistem informasi instansi</span>
             </div>
             <p class="text-xs text-muted mb-2">Diisi dengan tugas Unit Pemilik Risiko yang akan dinilai risikonya.</p>
             <x-textarea-auto wire:model="tugas_upr" rows="3" :disabled="!$isEditable"
@@ -59,7 +59,7 @@
         <div>
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 mb-1.5">
                 <label class="block text-sm font-semibold text-text">Fungsi UPR</label>
-                <span class="text-[11px] text-muted">Contoh: Pengelolaan arsip desa, penerbitan surat pengantar, pengelolaan web/aplikasi desa</span>
+                <span class="text-[11px] text-muted">Contoh: Pengelolaan data, pelayanan surat elektronik, pengelolaan web/aplikasi instansi</span>
             </div>
             <p class="text-xs text-muted mb-2">Diisi dengan fungsi Unit Pemilik Risiko yang akan dinilai risikonya.</p>
             <x-textarea-auto wire:model="fungsi_upr" rows="4" :disabled="!$isEditable"
@@ -91,7 +91,7 @@
                         'label' => 'Rendah',
                         'score' => 4,
                         'badge' => 'Skor 1 - 4',
-                        'desc' => 'Desa sangat berhati-hati. Segala potensi kegagalan sekecil apapun pada layanan publik harus segera dimitigasi.',
+                        'desc' => 'Dinas sangat berhati-hati. Segala potensi kegagalan sekecil apapun pada layanan publik harus segera dimitigasi.',
                         'bgActive' => 'bg-risk-low-bg border-risk-low text-risk-low ring-1 ring-risk-low/50',
                         'bgDefault' => 'bg-surface-soft border-border hover:border-border-strong text-text',
                         'dotColor' => 'bg-risk-low',
@@ -109,7 +109,7 @@
                         'label' => 'Tinggi',
                         'score' => 16,
                         'badge' => 'Skor 10 - 16',
-                        'desc' => 'Siap menghadapi risiko sedang-tinggi demi percepatan program, inovasi digital, atau pembangunan desa.',
+                        'desc' => 'Siap menghadapi risiko sedang-tinggi demi percepatan program, inovasi digital, atau pembangunan daerah/instansi.',
                         'bgActive' => 'bg-risk-high-bg border-risk-high text-risk-high ring-1 ring-risk-high/50',
                         'bgDefault' => 'bg-surface-soft border-border hover:border-border-strong text-text',
                         'dotColor' => 'bg-risk-high',
