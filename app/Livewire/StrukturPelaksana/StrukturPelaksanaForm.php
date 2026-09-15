@@ -28,6 +28,11 @@ class StrukturPelaksanaForm extends Component
 
     public function save(): void
     {
+        if (auth()->user()->isAdmin()) {
+            abort(403, 'Admin hanya memiliki akses lihat (read-only).');
+        }
+
+
         StrukturModel::updateOrCreate(
             ['mr_konteks_id' => $this->konteks->id],
             [
@@ -42,15 +47,17 @@ class StrukturPelaksanaForm extends Component
     public function render()
     {
         $user = auth()->user();
-        // Gunakan scope accessibleBy: operator -> layanan miliknya; admin -> semua
-        $availableKonteks = MrKonteks::accessibleBy($user)
+        
+        $availableKonteks = MrKonteks::where('layanan_id', $this->konteks->layanan_id)
             ->orderByDesc('tahun_penilaian')
             ->get();
 
         return view('livewire.struktur-pelaksana.form', [
-            'isEditable' => $this->konteks->isEditableByOperator() || auth()->user()->isAdmin(),
+            'isEditable' => $this->konteks->isEditableByOperator() && !auth()->user()->isAdmin(),
             'breadcrumb' => [
-                'Manajemen Risiko' => route('konteks.index'),
+                'Manajemen Risiko' => auth()->user()->isAdmin()
+                    ? route('admin.review.konteks', $this->konteks->layanan_id)
+                    : route('konteks.index'),
                 'Konteks ' . $this->konteks->tahun_penilaian . ' / ' . $this->konteks->tahun_pelaksanaan => route('konteks.form', $this->konteks),
                 'Struktur Pelaksana' => null,
             ],

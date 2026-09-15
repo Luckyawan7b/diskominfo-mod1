@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('mr_konteks', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('layanan_id')->unique()->constrained('layanans')->cascadeOnDelete();
+            $table->foreignId('layanan_id')->constrained('layanans')->cascadeOnDelete();
             $table->string('nama_instansi');
             $table->string('nama_upr');
             $table->text('tugas_upr')->nullable();

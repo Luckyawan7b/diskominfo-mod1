@@ -25,4 +25,9 @@ class Layanan extends Model
     {
         return $this->hasOne(MrKonteks::class, 'layanan_id');
     }
+
+    public function mrKonteksHistory()
+    {
+        return $this->hasMany(MrKonteks::class, 'layanan_id');
+    }
 }

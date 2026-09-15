@@ -24,12 +24,22 @@ class KonteksIndex extends Component
     public string $newNamaInstansi = '';
     public string $newNamaUpr = '';
 
-    public function mount(): void
+    public function mount(?Layanan $layanan = null): void
     {
         $this->newTahun           = (int) date('Y');
         $this->newTahunPelaksanaan = (int) date('Y');
 
         $user = auth()->user();
+
+        if ($layanan && $layanan->exists) {
+            $this->activeLayanan = $layanan;
+            return;
+        }
+
+        if ($user->isAdmin() && !$layanan) {
+            abort(403, 'Admin hanya dapat mengakses konteks melalui menu Monitoring per Layanan.');
+        }
+
         if ($user->isOperator()) {
             $layananId = session('active_layanan_id');
             if ($layananId) {
@@ -54,10 +64,10 @@ class KonteksIndex extends Component
                 $query->where('layanan_id', $this->activeLayanan->id);
             }
         } else {
-            // Admin: semua konteks, bisa filter by nama dinas
+            // Admin: konteks berdasarkan layanan yang sedang di-review
             $query = MrKonteks::with(['layanan.creator', 'risiko'])->withCount('risiko');
-            if ($this->filterDinas) {
-                $query->whereHas('layanan.creator', fn ($q) => $q->where('nama_dinas', 'like', "%{$this->filterDinas}%"));
+            if ($this->activeLayanan) {
+                $query->where('layanan_id', $this->activeLayanan->id);
             }
         }
 
@@ -86,7 +96,10 @@ class KonteksIndex extends Component
             'konteks'                => $konteks,
             'dinasList'              => $dinasList,
             'previousKonteksOptions' => $previousKonteksOptions,
-            'breadcrumb'             => ['Manajemen Risiko' => route('konteks.index'), 'Daftar Konteks' => null],
+            'breadcrumb'             => [
+                'Manajemen Risiko' => $user->isAdmin() ? route('admin.review.index') : route('konteks.index'),
+                ($this->activeLayanan ? $this->activeLayanan->nama_layanan : 'Daftar Konteks') => null
+            ],
         ]);
     }
 

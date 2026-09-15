@@ -19,16 +19,18 @@ class RisikoIndex extends Component
         $risikos = $this->konteks->risiko()->orderBy('prioritas_risiko')->get();
 
         $user = auth()->user();
-        // Gunakan scope reusable accessibleBy
-        $availableKonteks = MrKonteks::accessibleBy($user)
+        
+        $availableKonteks = MrKonteks::where('layanan_id', $this->konteks->layanan_id)
             ->orderByDesc('tahun_penilaian')
             ->get();
 
         return view('livewire.risiko.index', [
             'risikos'    => $risikos,
-            'isEditable' => $this->konteks->isEditableByOperator() || auth()->user()->isAdmin(),
+            'isEditable' => $this->konteks->isEditableByOperator() && !auth()->user()->isAdmin(),
             'breadcrumb' => [
-                'Manajemen Risiko' => route('konteks.index'),
+                'Manajemen Risiko' => auth()->user()->isAdmin()
+                    ? route('admin.review.konteks', $this->konteks->layanan_id)
+                    : route('konteks.index'),
                 'Konteks ' . $this->konteks->tahun_penilaian . ' / ' . $this->konteks->tahun_pelaksanaan => route('konteks.form', $this->konteks),
                 'Daftar Risiko' => null,
             ],

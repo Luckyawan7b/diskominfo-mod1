@@ -50,6 +50,11 @@ class SasaranForm extends Component
 
     public function addBlock(): void
     {
+        if (auth()->user()->isAdmin()) {
+            abort(403, 'Admin hanya memiliki akses lihat (read-only).');
+        }
+
+
         $upr = MrSasaranUpr::create([
             'mr_konteks_id' => $this->konteks->id,
             'sasaran_upr'   => '',
@@ -77,6 +82,11 @@ class SasaranForm extends Component
 
     public function removeBlock(int $index): void
     {
+        if (auth()->user()->isAdmin()) {
+            abort(403, 'Admin hanya memiliki akses lihat (read-only).');
+        }
+
+
         $block = $this->blocks[$index] ?? null;
         if (! $block || ! $block['id']) {
             return;
@@ -92,6 +102,11 @@ class SasaranForm extends Component
 
     public function saveBlock(int $index): void
     {
+        if (auth()->user()->isAdmin()) {
+            abort(403, 'Admin hanya memiliki akses lihat (read-only).');
+        }
+
+
         $block = $this->blocks[$index] ?? null;
         if (! $block || ! $block['id']) {
             return;
@@ -126,6 +141,11 @@ class SasaranForm extends Component
 
     public function addIndikator(int $blockIndex): void
     {
+        if (auth()->user()->isAdmin()) {
+            abort(403, 'Admin hanya memiliki akses lihat (read-only).');
+        }
+
+
         $block = $this->blocks[$blockIndex] ?? null;
         if (! $block || ! $block['id']) {
             return;
@@ -145,6 +165,11 @@ class SasaranForm extends Component
 
     public function removeIndikator(int $blockIndex, int $indIndex): void
     {
+        if (auth()->user()->isAdmin()) {
+            abort(403, 'Admin hanya memiliki akses lihat (read-only).');
+        }
+
+
         $ind = $this->blocks[$blockIndex]['indikator'][$indIndex] ?? null;
         if (! $ind || ! $ind['id']) {
             return;
@@ -159,15 +184,17 @@ class SasaranForm extends Component
     public function render()
     {
         $user = auth()->user();
-        // Gunakan scope accessibleBy: operator -> layanan miliknya; admin -> semua
-        $availableKonteks = MrKonteks::accessibleBy($user)
+        
+        $availableKonteks = MrKonteks::where('layanan_id', $this->konteks->layanan_id)
             ->orderByDesc('tahun_penilaian')
             ->get();
 
         return view('livewire.sasaran.form', [
-            'isEditable' => $this->konteks->isEditableByOperator() || auth()->user()->isAdmin(),
+            'isEditable' => $this->konteks->isEditableByOperator() && !auth()->user()->isAdmin(),
             'breadcrumb' => [
-                'Manajemen Risiko' => route('konteks.index'),
+                'Manajemen Risiko' => auth()->user()->isAdmin()
+                    ? route('admin.review.konteks', $this->konteks->layanan_id)
+                    : route('konteks.index'),
                 'Konteks ' . $this->konteks->tahun_penilaian . ' / ' . $this->konteks->tahun_pelaksanaan => route('konteks.form', $this->konteks),
                 'Sasaran UPR' => null,
             ],

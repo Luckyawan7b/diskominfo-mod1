@@ -3,7 +3,7 @@
 namespace App\Livewire\Admin;
 
 use App\Models\Layanan;
-use App\Models\MrKonteks;
+use App\Models\User;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 
@@ -14,26 +14,33 @@ use Livewire\Component;
 #[Layout('components.layouts.app')]
 class ReviewIndex extends Component
 {
+    public string $search = '';
     public string $filterDinas = '';
 
     public function render()
     {
-        $query = MrKonteks::with(['layanan.creator', 'risiko'])->withCount('risiko');
+        $query = Layanan::with('creator')
+            ->withCount('mrKonteksHistory')
+            ->withMax('mrKonteksHistory', 'updated_at');
 
-        if ($this->filterDinas) {
-            $query->whereHas('layanan.creator', fn ($q) => $q->where('nama_dinas', 'like', "%{$this->filterDinas}%"));
-        }
+        $query->when($this->search, function ($q) {
+            $term = "%{$this->search}%";
+            $q->where(function ($qq) use ($term) {
+                $qq->where('nama_layanan', 'like', $term)
+                   ->orWhereHas('creator', fn ($c) => $c->where('nama_dinas', 'like', $term));
+            });
+        });
 
-        $konteksList = $query->orderByDesc('updated_at')->get();
+        $query->when($this->filterDinas, function ($q) {
+            $q->whereHas('creator', fn ($c) => $c->where('nama_dinas', $this->filterDinas));
+        });
 
-        // Daftar dinas unik untuk filter dropdown
-        $dinasList = \App\Models\User::whereNotNull('nama_dinas')
-            ->distinct()
-            ->orderBy('nama_dinas')
-            ->pluck('nama_dinas');
+        $layananList = $query->orderByDesc('updated_at')->get();
+
+        $dinasList = User::whereNotNull('nama_dinas')->distinct()->orderBy('nama_dinas')->pluck('nama_dinas');
 
         return view('livewire.admin.review', [
-            'konteksList' => $konteksList,
+            'layananList' => $layananList,
             'dinasList'   => $dinasList,
             'breadcrumb'  => [
                 'Admin'      => null,

@@ -45,6 +45,10 @@ class LayananDigitalIndex extends Component
 
     public function saveAll(): void
     {
+        if (auth()->user()->isAdmin()) {
+            abort(403, 'Admin hanya memiliki akses lihat (read-only).');
+        }
+
         if (!$this->isEditable()) {
             return;
         }
@@ -68,21 +72,23 @@ class LayananDigitalIndex extends Component
 
     public function isEditable(): bool
     {
-        return $this->konteks->isEditableByOperator() || auth()->user()->isAdmin();
+        return $this->konteks->isEditableByOperator() && !auth()->user()->isAdmin();
     }
 
     public function render()
     {
         $user = auth()->user();
-        // Gunakan scope accessibleBy: operator -> layanan miliknya; admin -> semua
-        $availableKonteks = MrKonteks::accessibleBy($user)
+        
+        $availableKonteks = MrKonteks::where('layanan_id', $this->konteks->layanan_id)
             ->orderByDesc('tahun_penilaian')
             ->get();
 
         return view('livewire.layanan-digital.index', [
             'isEditable' => $this->isEditable(),
             'breadcrumb'      => [
-                'Manajemen Risiko' => route('konteks.index'),
+                'Manajemen Risiko' => auth()->user()->isAdmin()
+                    ? route('admin.review.konteks', $this->konteks->layanan_id)
+                    : route('konteks.index'),
                 'Konteks ' . $this->konteks->tahun_penilaian . ' / ' . $this->konteks->tahun_pelaksanaan => route('konteks.form', $this->konteks),
                 'Layanan Digital' => null,
             ],

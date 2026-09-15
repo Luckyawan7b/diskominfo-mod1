@@ -35,6 +35,10 @@ class PemantauanForm extends Component
 
     public function savePemantauan(): void
     {
+        if (auth()->user()->isAdmin()) {
+            abort(403, 'Admin hanya memiliki akses lihat (read-only).');
+        }
+
         $this->validate([
             'selectedRisikoId'  => 'required|exists:mr_risiko,id',
             'periode'           => 'required|string',
@@ -70,6 +74,10 @@ class PemantauanForm extends Component
 
     public function deletePemantauan(int $id): void
     {
+        if (auth()->user()->isAdmin()) {
+            abort(403, 'Admin hanya memiliki akses lihat (read-only).');
+        }
+
         $pemantauan = MrPemantauanRisiko::findOrFail($id);
         $pemantauan->delete();
         session()->flash('success', 'Catatan pemantauan dihapus.');
@@ -82,8 +90,8 @@ class PemantauanForm extends Component
         $pemantauanList = $selectedRisiko ? $selectedRisiko->pemantauan()->with('lampiran')->latest()->get() : collect();
 
         $user = auth()->user();
-        // Gunakan scope accessibleBy: operator -> layanan miliknya; admin -> semua
-        $availableKonteks = MrKonteks::accessibleBy($user)
+        
+        $availableKonteks = MrKonteks::where('layanan_id', $this->konteks->layanan_id)
             ->orderByDesc('tahun_penilaian')
             ->get();
 
@@ -91,9 +99,11 @@ class PemantauanForm extends Component
             'risikos'         => $risikos,
             'selectedRisiko'  => $selectedRisiko,
             'pemantauanList'  => $pemantauanList,
-            'isEditable'      => $this->konteks->isEditableByOperator() || auth()->user()->isAdmin(),
+            'isEditable'      => $this->konteks->isEditableByOperator() && !auth()->user()->isAdmin(),
             'breadcrumb'      => [
-                'Manajemen Risiko' => route('konteks.index'),
+                'Manajemen Risiko' => auth()->user()->isAdmin()
+                    ? route('admin.review.konteks', $this->konteks->layanan_id)
+                    : route('konteks.index'),
                 'Konteks ' . $this->konteks->tahun_penilaian . ' / ' . $this->konteks->tahun_pelaksanaan => route('konteks.form', $this->konteks),
                 'Pemantauan Risiko' => null,
             ],

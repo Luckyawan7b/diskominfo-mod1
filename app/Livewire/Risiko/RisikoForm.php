@@ -114,6 +114,10 @@ class RisikoForm extends Component
 
     public function save(): void
     {
+        if (auth()->user()->isAdmin()) {
+            abort(403, 'Admin hanya memiliki akses lihat (read-only).');
+        }
+
         $this->validate([
             'kode_risiko'      => 'required|string|max:50',
             'peristiwa_risiko' => 'required|string',
@@ -203,8 +207,8 @@ class RisikoForm extends Component
         }
 
         $user = auth()->user();
-        // Gunakan scope reusable untuk availableKonteks
-        $availableKonteks = MrKonteks::accessibleBy($user)
+        
+        $availableKonteks = MrKonteks::where('layanan_id', $this->konteks->layanan_id)
             ->orderByDesc('tahun_penilaian')
             ->get();
 
@@ -222,9 +226,11 @@ class RisikoForm extends Component
             'besaranLabel'        => $besaran ? $calc->label($besaran) : null,
             'besaranResidual'     => $besaranResidual,
             'kategoriSuggestions' => $kategoriSuggestions,
-            'isEditable'          => $this->konteks->isEditableByOperator() || auth()->user()->isAdmin(),
+            'isEditable'          => $this->konteks->isEditableByOperator() && !auth()->user()->isAdmin(),
             'breadcrumb'          => [
-                'Manajemen Risiko' => route('konteks.index'),
+                'Manajemen Risiko' => auth()->user()->isAdmin()
+                    ? route('admin.review.konteks', $this->konteks->layanan_id)
+                    : route('konteks.index'),
                 'Risiko'           => route('risiko.index', $this->konteks),
                 ($this->isNew ? 'Baru' : $this->kode_risiko) => null,
             ],

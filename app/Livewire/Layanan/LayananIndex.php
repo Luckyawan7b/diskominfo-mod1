@@ -9,6 +9,12 @@ use Livewire\Component;
 #[Layout('components.layouts.hub')]
 class LayananIndex extends Component
 {
+    public function mount(): void
+    {
+        if (auth()->user()->isAdmin()) {
+            $this->redirect(route('admin.review.index'), navigate: true);
+        }
+    }
     public function render()
     {
         $user = auth()->user();

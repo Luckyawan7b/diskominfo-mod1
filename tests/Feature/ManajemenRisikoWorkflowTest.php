@@ -57,6 +57,36 @@ class ManajemenRisikoWorkflowTest extends TestCase
         $this->assertAuthenticated();
     }
 
+    public function test_admin_is_redirected_to_review_index_from_dashboard(): void
+    {
+        $admin = User::where('email', 'admin@diskominfo.test')->first();
+        $this->actingAs($admin);
+
+        $response = $this->get('/');
+        $response->assertRedirect(route('admin.review.index'));
+    }
+
+    public function test_admin_is_forbidden_to_mutate_data(): void
+    {
+        $admin = User::where('email', 'admin@diskominfo.test')->first();
+        $this->actingAs($admin);
+
+        $operator = User::where('email', 'operator.diskominfo@diskominfo.test')->first();
+        $layanan = $this->createLayananForOperator($operator);
+
+        $konteks = MrKonteks::create([
+            'layanan_id'        => $layanan->id,
+            'tahun_penilaian'   => 2026,
+            'nama_instansi'     => 'Dinas',
+            'nama_upr'          => 'UPR',
+            'created_by'        => $operator->id,
+        ]);
+
+        Livewire::test(KonteksForm::class, ['konteks' => $konteks])
+            ->call('save')
+            ->assertForbidden();
+    }
+
     public function test_operator_without_layanan_is_redirected_to_create_layanan(): void
     {
         $role = Role::where('name', 'operator')->first();
@@ -226,8 +256,7 @@ class ManajemenRisikoWorkflowTest extends TestCase
         $this->actingAs($admin);
 
         Livewire::test(ReviewIndex::class)
-            ->assertSee('UPR Kominfo')
-            ->assertSee('2026');
+            ->assertSee($layanan->nama_layanan);
     }
 
     public function test_admin_user_crud_with_dinas(): void

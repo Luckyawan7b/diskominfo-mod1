@@ -59,8 +59,8 @@ class PetaRisiko extends Component
         }
 
         $user = auth()->user();
-        // Gunakan scope accessibleBy: operator -> layanan miliknya; admin -> semua
-        $availableKonteks = MrKonteks::accessibleBy($user)
+        
+        $availableKonteks = MrKonteks::where('layanan_id', $this->konteks->layanan_id)
             ->orderByDesc('tahun_penilaian')
             ->get();
 
@@ -69,7 +69,9 @@ class PetaRisiko extends Component
             'filteredRisikos' => $filteredRisikos,
             'calc'            => $calc,
             'breadcrumb'      => [
-                'Manajemen Risiko' => route('konteks.index'),
+                'Manajemen Risiko' => auth()->user()->isAdmin()
+                    ? route('admin.review.konteks', $this->konteks->layanan_id)
+                    : route('konteks.index'),
                 'Konteks ' . $this->konteks->tahun_penilaian . ' / ' . $this->konteks->tahun_pelaksanaan => route('konteks.form', $this->konteks),
                 'Peta Risiko' => null,
             ],

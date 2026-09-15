@@ -29,6 +29,10 @@ class KonteksForm extends Component
 
     public function save(): void
     {
+        if (auth()->user()->isAdmin()) {
+            abort(403, 'Admin hanya memiliki akses lihat (read-only).');
+        }
+
         $this->validate([
             'nama_instansi' => 'required|string|max:255',
             'nama_upr'      => 'required|string|max:255',
@@ -53,16 +57,18 @@ class KonteksForm extends Component
         $riskLabel = app(\App\Services\RiskMatrixCalculator::class)->label($this->selera_risiko);
 
         $user = auth()->user();
-        // Gunakan scope accessibleBy: operator -> layanan miliknya; admin -> semua
-        $availableKonteks = MrKonteks::accessibleBy($user)
+        
+        $availableKonteks = MrKonteks::where('layanan_id', $this->konteks->layanan_id)
             ->orderByDesc('tahun_penilaian')
             ->get();
 
         return view('livewire.konteks.form', [
             'riskLabel'   => $riskLabel,
-            'isEditable'  => $this->konteks->isEditableByOperator() || auth()->user()->isAdmin(),
+            'isEditable'  => $this->konteks->isEditableByOperator() && !auth()->user()->isAdmin(),
             'breadcrumb'  => [
-                'Manajemen Risiko' => route('konteks.index'),
+                'Manajemen Risiko' => auth()->user()->isAdmin()
+                    ? route('admin.review.konteks', $this->konteks->layanan_id)
+                    : route('konteks.index'),
                 'Konteks ' . $this->konteks->tahun_penilaian . ' / ' . $this->konteks->tahun_pelaksanaan => null,
             ],
         ])->layout('components.layouts.app', [
