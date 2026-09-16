@@ -29,9 +29,12 @@
         <div class="mb-4 px-4 py-3 rounded-lg bg-success-bg border border-success/30 text-success text-sm">
             {{ session('success') }}
         </div>
-    @endif    <p class="text-sm text-muted mb-5 max-w-2xl">
-        Satu <span class="text-text-strong font-medium">Sasaran Pembangunan Nasional</span> mendukung pencapaian target kinerja
-        <span class="text-text-strong font-medium">Sasaran UPR</span>, dan satu Sasaran UPR dapat memiliki lebih dari satu
+    @endif
+    <p class="text-sm text-muted mb-5 max-w-2xl">
+        Satu <span class="text-text-strong font-medium">Sasaran Pembangunan Nasional</span> mendukung pencapaian target
+        kinerja
+        <span class="text-text-strong font-medium">Sasaran UPR</span>, dan satu Sasaran UPR dapat memiliki lebih dari
+        satu
         pasang Indikator &amp; Target Kinerja.
     </p>
 
@@ -79,7 +82,8 @@
                             2. Sasaran Pembangunan Nasional
                         </label>
                         <p class="text-xs text-muted mb-2">
-                            Diisi dengan sasaran pembangunan nasional yang menjadi target kinerja UPR berdasarkan dokumen perencanaan.
+                            Diisi dengan sasaran pembangunan nasional yang menjadi target kinerja UPR berdasarkan
+                            dokumen perencanaan.
                         </p>
                         <x-textarea-auto wire:model="blocks.{{ $i }}.sasaran_nasional" rows="4"
                             :disabled="!$isEditable"
@@ -143,8 +147,7 @@
                             <div class="pt-2">
                                 <button type="button" wire:click="addIndikator({{ $i }})"
                                     class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-dashed border-border bg-surface text-xs text-accent hover:bg-surface-soft transition-colors cursor-pointer">
-                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M12 4v16m8-8H4" />
                                     </svg>
@@ -183,7 +186,7 @@
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
             </svg>
-            + Tambah Sasaran UPR
+            Tambah Sasaran UPR
         </button>
     @endif
 </div>
