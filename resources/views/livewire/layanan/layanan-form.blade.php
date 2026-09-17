@@ -83,29 +83,32 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                        <label class="block text-sm font-semibold text-text mb-1">Target Pengguna</label>
+                        <label class="block text-sm font-semibold text-text mb-1">Target Pengguna <span class="text-danger">*</span></label>
                         <select wire:model="target_pengguna" class="w-full rounded-lg border border-border bg-field px-4 py-2.5 text-text text-sm focus:outline-none focus:ring-2 focus:ring-accent">
                             <option value="">-- Pilih Target Pengguna --</option>
-                            <option value="Publik/Masyarakat">Publik/Masyarakat</option>
-                            <option value="Internal Pemerintahan">Internal Pemerintahan</option>
+                            <option value="publik/masyarakat">Publik/Masyarakat</option>
+                            <option value="internal pemerintahan">Internal Pemerintahan</option>
                         </select>
+                        @error('target_pengguna') <span class="text-xs text-danger mt-1 block">{{ $message }}</span> @enderror
                     </div>
                     <div>
                         <label class="block text-sm font-semibold text-text mb-1">K/L Terkait</label>
                         <input wire:model="kl_terkait" type="text" class="w-full rounded-lg border border-border bg-field px-4 py-2.5 text-text text-sm focus:outline-none focus:ring-2 focus:ring-accent" placeholder="Contoh: Kemendagri">
+                        @error('kl_terkait') <span class="text-xs text-danger mt-1 block">{{ $message }}</span> @enderror
                     </div>
                     <div>
                         <label class="block text-sm font-semibold text-text mb-1">Supplier Data</label>
                         <input wire:model="supplier_data" type="text" class="w-full rounded-lg border border-border bg-field px-4 py-2.5 text-text text-sm focus:outline-none focus:ring-2 focus:ring-accent" placeholder="Instansi/Bagian penyuplai data">
                     </div>
                     <div>
-                        <label class="block text-sm font-semibold text-text mb-1">Sifat Data</label>
+                        <label class="block text-sm font-semibold text-text mb-1">Sifat Data <span class="text-danger">*</span></label>
                         <select wire:model="sifat_data" class="w-full rounded-lg border border-border bg-field px-4 py-2.5 text-text text-sm focus:outline-none focus:ring-2 focus:ring-accent">
                             <option value="">-- Pilih Sifat Data --</option>
                             <option value="terbuka">Terbuka</option>
                             <option value="terbatas">Terbatas</option>
                             <option value="tertutup">Tertutup</option>
                         </select>
+                        @error('sifat_data') <span class="text-xs text-danger mt-1 block">{{ $message }}</span> @enderror
                     </div>
                     <div>
                         <label class="block text-sm font-semibold text-text mb-1">Jenis Data</label>
@@ -173,6 +176,7 @@
                     <div>
                         <label class="block text-sm font-semibold text-text mb-1">Tahun Pembuatan</label>
                         <input wire:model="tahun_pembuatan" type="number" min="1900" class="w-full rounded-lg border border-border bg-field px-4 py-2.5 text-text text-sm focus:outline-none focus:ring-2 focus:ring-accent" placeholder="Contoh: 2023">
+                        @error('tahun_pembuatan') <span class="text-xs text-danger mt-1 block">{{ $message }}</span> @enderror
                     </div>
                     <div>
                         <label class="block text-sm font-semibold text-text mb-1">Letak Server</label>

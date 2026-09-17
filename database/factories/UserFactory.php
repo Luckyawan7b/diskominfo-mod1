@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
@@ -41,5 +42,29 @@ class UserFactory extends Factory
         return $this->state(fn (array $attributes) => [
             'email_verified_at' => null,
         ]);
+    }
+
+    /**
+     * State: user dengan role admin.
+     */
+    public function admin(): static
+    {
+        return $this->state(function () {
+            $role = Role::firstOrCreate(['name' => 'admin'], ['label' => 'Administrator']);
+
+            return ['role_id' => $role->id];
+        });
+    }
+
+    /**
+     * State: user dengan role operator.
+     */
+    public function operator(): static
+    {
+        return $this->state(function () {
+            $role = Role::firstOrCreate(['name' => 'operator'], ['label' => 'Operator Dinas']);
+
+            return ['role_id' => $role->id];
+        });
     }
 }

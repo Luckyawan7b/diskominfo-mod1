@@ -11,32 +11,32 @@ class LayananForm extends Component
 {
     public ?Layanan $layanan = null;
     
-    public string $bidang_bagian = '';
+    public ?string $bidang_bagian = null;
     public string $status_layanan = 'berjalan';
     public string $nama_layanan = '';
-    public string $deskripsi_layanan = '';
-    public string $target_pengguna = '';
-    public string $kl_terkait = '';
-    public string $supplier_data = '';
-    public string $nama_data_input = '';
-    public string $nama_data_output = '';
-    public string $sifat_data = '';
-    public string $jenis_data = '';
-    public string $validitas_data = '';
+    public ?string $deskripsi_layanan = null;
+    public ?string $target_pengguna = null;
+    public ?string $kl_terkait = null;
+    public ?string $supplier_data = null;
+    public ?string $nama_data_input = null;
+    public ?string $nama_data_output = null;
+    public ?string $sifat_data = null;
+    public ?string $jenis_data = null;
+    public ?string $validitas_data = null;
     public bool $interoperabilitas = false;
-    public string $tujuan_integrasi = '';
-    public string $metode_integrasi = '';
-    public string $link_dokumen_integrasi = '';
-    public string $nama_aplikasi = '';
-    public string $tipe_aplikasi = '';
-    public string $link_aplikasi = '';
-    public string $keluaran_aplikasi = '';
-    public string $letak_server = '';
-    public string $link_dpa = '';
+    public ?string $tujuan_integrasi = null;
+    public ?string $metode_integrasi = null;
+    public ?string $link_dokumen_integrasi = null;
+    public ?string $nama_aplikasi = null;
+    public ?string $tipe_aplikasi = null;
+    public ?string $link_aplikasi = null;
+    public ?string $keluaran_aplikasi = null;
+    public ?string $letak_server = null;
+    public ?string $link_dpa = null;
     public ?int $tahun_pembuatan = null;
-    public string $link_sla = '';
-    public string $link_sop = '';
-    public string $helpdesk = '';
+    public ?string $link_sla = null;
+    public ?string $link_sop = null;
+    public ?string $helpdesk = null;
     public bool $is_prioritas = false;
 
     public function mount(?Layanan $layanan = null)
@@ -80,17 +80,25 @@ class LayananForm extends Component
 
     public function save()
     {
+        // Ubah string kosong menjadi null agar lolos validasi nullable dan tidak error tipe data di DB
+        $properties = ['bidang_bagian', 'deskripsi_layanan', 'target_pengguna', 'kl_terkait', 'supplier_data', 'nama_data_input', 'nama_data_output', 'sifat_data', 'jenis_data', 'validitas_data', 'tujuan_integrasi', 'metode_integrasi', 'link_dokumen_integrasi', 'nama_aplikasi', 'tipe_aplikasi', 'link_aplikasi', 'keluaran_aplikasi', 'letak_server', 'link_dpa', 'tahun_pembuatan', 'link_sla', 'link_sop', 'helpdesk'];
+        foreach ($properties as $prop) {
+            if ($this->$prop === '') {
+                $this->$prop = null;
+            }
+        }
+
         $validatedData = $this->validate([
             'bidang_bagian'         => 'nullable|string|max:255',
             'status_layanan'        => 'required|in:berjalan,direncanakan,dihentikan',
             'nama_layanan'          => 'required|string|max:255',
             'deskripsi_layanan'     => 'nullable|string',
-            'target_pengguna'       => 'nullable|in:publik/masyarakat,internal pemerintahan',
+            'target_pengguna'       => 'required|in:publik/masyarakat,internal pemerintahan',
             'kl_terkait'            => 'nullable|string|max:255',
             'supplier_data'         => 'nullable|string|max:255',
             'nama_data_input'       => 'nullable|string',
             'nama_data_output'      => 'nullable|string',
-            'sifat_data'            => 'nullable|in:terbuka,terbatas,tertutup',
+            'sifat_data'            => 'required|in:terbuka,terbatas,tertutup',
             'jenis_data'            => 'nullable|string|max:255',
             'validitas_data'        => 'nullable|string|max:255',
             'interoperabilitas'     => 'boolean',
@@ -120,7 +128,7 @@ class LayananForm extends Component
         } else {
             $this->layanan->update($validatedData);
             session()->flash('success', 'Layanan berhasil diperbarui.');
-            // return redirect()->route('layanan.index');
+            return redirect()->route('layanan.index');
         }
     }
 

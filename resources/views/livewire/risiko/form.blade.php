@@ -224,16 +224,10 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                     <label class="block text-sm font-medium text-text mb-1.5">Kategori Risiko <span class="text-xs text-muted font-normal ml-2">Ketik bebas, contoh: Risiko Operasional, Risiko Keamanan Informasi</span></label>
-                    <input wire:model="kategori_risiko" type="text" list="kategori-risiko-list"
+                    <input wire:model="kategori_risiko" type="text" 
                         {{ !$isEditable ? 'disabled' : '' }}
                         class="w-full rounded-lg border border-border bg-field px-4 py-2.5 text-text text-sm focus:ring-2 focus:ring-accent focus:outline-none disabled:opacity-50"
                         placeholder="Masukkan kategori risiko...">
-                    {{-- datalist dari histori kategori yang pernah dipakai (UX helper, bukan constraint) --}}
-                    <datalist id="kategori-risiko-list">
-                        @foreach($kategoriSuggestions as $saran)
-                            <option value="{{ $saran }}"></option>
-                        @endforeach
-                    </datalist>
                 </div>
 
                 <div>

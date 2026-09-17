@@ -39,7 +39,7 @@
         <div class="lg:col-span-7 rounded-xl border border-border bg-surface p-6">
             <div class="relative">
                 {{-- Y-Axis Label --}}
-                <div class="absolute -left-7 top-1/2 -translate-y-1/2 -rotate-90 text-xs font-semibold text-muted uppercase tracking-wider">
+                <div class="absolute -left-11 top-1/2 -translate-y-1/2 -rotate-90 text-xs font-semibold text-muted uppercase tracking-wider">
                     Kemungkinan →
                 </div>
 
