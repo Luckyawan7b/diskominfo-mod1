@@ -63,7 +63,20 @@ Dokumen ini memuat catatan arsitektur dan riwayat perubahan penting agar agen AI
 
 ---
 
-## 🗄️ Struktur Migrasi Database (17 File Bersih)
+### 6. Implementasi Modul Manajemen Pengetahuan (MPN)
+- **Latar Belakang**: Aplikasi telah ditambahkan Modul Manajemen Pengetahuan (MPN) yang berfungsi untuk mengelola siklus pengetahuan SPBE.
+- **Struktur Database**:
+  - Modul ini menggunakan tabel referensi baru: `ref_aspek_pemdi`, `ref_indikator_pemdi`, dan `ref_metode_pengolahan`.
+  - Tabel utama terdiri dari: `mpn_konteks`, `mpn_indikator_capaian`, `mpn_evaluasi_indikator`, `mpn_pengetahuan`, dan `mpn_rencana_dokumentasi`.
+  - Tabel transaksi: `mpn_pengumpulan`, `mpn_pemanfaatan`, dan `mpn_alih_pengetahuan`.
+- **Fitur Otomatis (Observers)**:
+  - `MpnPengetahuanObserver`: Otomatis membuat atau menghapus baris di tabel `mpn_rencana_dokumentasi` jika pengetahuan belum/sudah terdokumentasi (berdasarkan field `apakah_terdokumentasi`).
+  - `MpnPemanfaatanObserver`: Secara otomatis menghitung ulang rata-rata (`avg`) dari *rating* pemanfaatan untuk di-update (`updateQuietly`) ke field `rating_pengetahuan` pada tabel `mpn_pengumpulan`.
+- **Integrasi**: `MpnKonteks` kini juga mengimplementasikan kontrak `HasLayananContext` sehingga secara konsisten menggunakan pengecekan middleware akses yang sama dengan modul Manajemen Risiko.
+
+---
+
+## 🗄️ Struktur Migrasi Database (Total 29 File)
 
 Seluruh migrasi tambahan (patch alter table, drop table sementara, placeholder data migrasi) telah dibersihkan dan disusun ulang dari awal (*clean slate*) sesuai urutan dependensi foreign key:
 
@@ -85,10 +98,22 @@ database/migrations/
 ├── 2025_01_01_000010_create_mr_kolom_tambahan_table.php # SPBE Digital (Bagian E)
 ├── 2025_01_01_000011_create_mr_layanan_digital_table.php # MKB (Manajemen Keberlangsungan Bisnis)
 ├── 2025_01_01_000012_create_mr_pemantauan_risiko_table.php # Pemantauan berkala Semester 1 & 2
-└── 2025_01_01_000013_create_mr_lampiran_table.php       # Bukti dukung polimorfik
+├── 2025_01_01_000013_create_mr_lampiran_table.php       # Bukti dukung polimorfik
+├── 2025_01_01_000014_add_unique_constraint_to_mr_konteks_table.php # Unique constraint untuk (layanan_id, tahun_penilaian)
+├── 2025_02_01_000001_create_ref_aspek_pemdi_table.php   # [MPN] Referensi Aspek Pemdi
+├── 2025_02_01_000002_create_ref_indikator_pemdi_table.php # [MPN] Referensi Indikator Pemdi
+├── 2025_02_01_000003_create_ref_metode_pengolahan_table.php # [MPN] Referensi Metode Pengolahan
+├── 2025_02_01_000004_create_mpn_konteks_table.php       # [MPN] Konteks MPN
+├── 2025_02_01_000005_create_mpn_indikator_capaian_table.php # [MPN] Indikator Capaian MPN
+├── 2025_02_01_000006_create_mpn_evaluasi_indikator_table.php # [MPN] Evaluasi Indikator Capaian
+├── 2025_02_01_000007_create_mpn_pengetahuan_table.php   # [MPN] Pengetahuan
+├── 2025_02_01_000008_create_mpn_rencana_dokumentasi_table.php # [MPN] Rencana Dokumentasi
+├── 2025_02_01_000009_create_mpn_pengumpulan_table.php   # [MPN] Pengumpulan Pengetahuan
+├── 2025_02_01_000010_create_mpn_pemanfaatan_table.php   # [MPN] Pemanfaatan Pengetahuan
+└── 2025_02_01_000011_create_mpn_alih_pengetahuan_table.php # [MPN] Alih Pengetahuan
 ```
 
-Skema DDL Oracle/SQL resmi yang identik juga tersimpan di [Schema ERD Data modeler.sql](file:///c:/laragon/www/diskominfo-mod1/Schema%20ERD%20Data%20modeler.sql).
+Skema DDL Oracle/SQL resmi yang identik juga tersimpan di [Schema ERD Data modeler.sql](file:///c:/laragon/www/diskominfo-mod1/Schema%20ERD%20Data%20modeler.sql). Serta [ERD MP.sql](file:///c:/laragon/www/diskominfo-mod1/ERD%20MP.sql) untuk struktur MPN spesifik.
 
 ---
 

@@ -26,5 +26,7 @@ class AppServiceProvider extends ServiceProvider
         \Illuminate\Support\Facades\Schema::defaultStringLength(191);
         MrRisiko::observe(MrRisikoObserver::class);
         MrKolomTambahan::observe(MrKolomTambahanObserver::class);
+        \App\Models\MpnPengetahuan::observe(\App\Observers\MpnPengetahuanObserver::class);
+        \App\Models\MpnPemanfaatan::observe(\App\Observers\MpnPemanfaatanObserver::class);
     }
 }

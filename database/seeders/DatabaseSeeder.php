@@ -15,6 +15,9 @@ class DatabaseSeeder extends Seeder
         // ── Data master (wajib, semua environment) ──────────────────────────
         $this->call([
             RoleSeeder::class,
+            RefAspekPemdiSeeder::class,
+            RefIndikatorPemdiSeeder::class,
+            RefMetodePengolahanSeeder::class,
         ]);
 
         // ── Data dev/testing (jangan jalankan di production) ─────────────────

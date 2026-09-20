@@ -50,6 +50,12 @@ Route::middleware('auth')->group(function () {
                 Route::get('/pemantauan', PemantauanForm::class)->name('pemantauan.form');
             });
         });
+        // Modul Manajemen Pengetahuan (Dummy Awal)
+        Route::prefix('manajemen-pengetahuan')->group(function () {
+            Route::get('/', function () {
+                return 'Halaman Modul Manajemen Pengetahuan sedang dalam tahap pengembangan UI.';
+            })->name('konteks-mpn.index');
+        });
     });
 
     // ─── Admin Only Routes ────────────────────────────────────────────────────

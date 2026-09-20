@@ -2,7 +2,7 @@
 
 namespace App\Http\Middleware;
 
-use App\Models\MrKonteks;
+use App\Contracts\HasLayananContext;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -17,13 +17,13 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class EnsureKonteksEditable
 {
-    public function handle(Request $request, Closure $next): Response
+    public function handle(Request $request, Closure $next, string $modelClass = \App\Models\MrKonteks::class): Response
     {
         $konteks = $request->route('konteks');
 
         // Route model binding: jika string, cari manual
-        if (! $konteks instanceof MrKonteks) {
-            $konteks = MrKonteks::findOrFail($konteks);
+        if (! $konteks instanceof HasLayananContext) {
+            $konteks = $modelClass::findOrFail($konteks);
         }
 
         $user = $request->user();

@@ -5,6 +5,7 @@ namespace App\Livewire;
 use App\Livewire\Konteks\KonteksIndex;
 use App\Models\Layanan;
 use App\Models\MrKonteks;
+use App\Models\MpnKonteks;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 
@@ -27,13 +28,20 @@ class Dashboard extends Component
 
     /**
      * Dipanggil saat user klik kartu Manajemen Risiko.
-     * Mengarahkan ke halaman Daftar Konteks Risiko (KonteksIndex).
      */
     public function openModulMR(): void
     {
-        // Simpan layanan_id ke session agar KonteksIndex tahu layanan apa yang sedang aktif
         session(['active_layanan_id' => $this->layanan->id]);
         $this->redirect(route('konteks.index'), navigate: true);
+    }
+
+    /**
+     * Dipanggil saat user klik kartu Manajemen Pengetahuan.
+     */
+    public function openModulMPN(): void
+    {
+        session(['active_layanan_id' => $this->layanan->id]);
+        $this->redirect(route('konteks-mpn.index'), navigate: true);
     }
 
     public function render()
@@ -41,20 +49,19 @@ class Dashboard extends Component
         $user    = auth()->user();
         $layanan = $this->layanan;
 
-        // Hitung badge: jumlah konteks MR layanan ini yang pending / rejected
         $mrKonteks = MrKonteks::where('layanan_id', $layanan->id)->first();
+        $mpnKonteks = MpnKonteks::where('layanan_id', $layanan->id)->first();
 
-        // Tidak ada lagi alur approval/submit — badge selalu 0
         $badgeCount = 0;
 
         return view('livewire.dashboard', [
             'layanan'    => $layanan,
             'badgeCount' => $badgeCount,
-            'modules'    => $this->getModules($layanan, $mrKonteks),
+            'modules'    => $this->getModules($layanan, $mrKonteks, $mpnKonteks),
         ]);
     }
 
-    private function getModules(Layanan $layanan, ?MrKonteks $mrKonteks): array
+    private function getModules(Layanan $layanan, ?MrKonteks $mrKonteks, ?MpnKonteks $mpnKonteks): array
     {
         $moduleTint = ['module-1', 'module-2', 'module-3', 'module-4', 'module-5'];
 
@@ -74,9 +81,9 @@ class Dashboard extends Component
                 'description' => 'Pengelolaan dan berbagi pengetahuan organisasi',
                 'icon'        => 'book-open',
                 'route'       => null,
-                'wireAction'  => null,
-                'active'      => false,
-                'filled'      => false,
+                'wireAction'  => 'openModulMPN',
+                'active'      => true,
+                'filled'      => (bool) $mpnKonteks,
                 'tint'        => $moduleTint[1],
             ],
             [

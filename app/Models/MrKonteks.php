@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Contracts\HasLayananContext;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -9,7 +10,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class MrKonteks extends Model
+class MrKonteks extends Model implements HasLayananContext
 {
     use HasFactory, SoftDeletes;
 

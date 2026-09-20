@@ -2,7 +2,7 @@
 
 namespace App\Http\Middleware;
 
-use App\Models\MrKonteks;
+use App\Contracts\HasLayananContext;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -14,7 +14,7 @@ class EnsureKonteksAccessible
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
-    public function handle(Request $request, Closure $next): Response
+    public function handle(Request $request, Closure $next, string $modelClass = \App\Models\MrKonteks::class): Response
     {
         $konteks = $request->route('konteks');
 
@@ -22,9 +22,9 @@ class EnsureKonteksAccessible
             return $next($request);
         }
 
-        // Pastikan model sudah di-resolve (route model binding)
-        if (! $konteks instanceof MrKonteks) {
-            $konteks = MrKonteks::with('layanan')->findOrFail($konteks);
+        // Pastikan model sudah di-resolve (route model binding) atau lookup manual via model class
+        if (! $konteks instanceof HasLayananContext) {
+            $konteks = $modelClass::with('layanan')->findOrFail($konteks);
         }
 
         $user = $request->user();
@@ -42,6 +42,6 @@ class EnsureKonteksAccessible
             }
         }
 
-        abort(403, 'Anda tidak memiliki akses ke konteks risiko perangkat daerah lain.');
+        abort(403, 'Anda tidak memiliki akses ke dokumen perangkat daerah lain.');
     }
 }
