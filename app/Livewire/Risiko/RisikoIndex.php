@@ -13,6 +13,20 @@ class RisikoIndex extends Component
 
     public function mount(MrKonteks $konteks): void { $this->konteks = $konteks; }
 
+    public function deleteRisiko(int $id): void
+    {
+        // Admin = read-only untuk data operasional
+        if (auth()->user()->isAdmin()) {
+            abort(403, 'Admin hanya memiliki akses lihat (read-only).');
+        }
+
+        // WAJIB scope ke konteks milik operator ini — cegah IDOR
+        $risiko = MrRisiko::where('mr_konteks_id', $this->konteks->id)->findOrFail($id);
+        $risiko->delete(); // soft delete — hanya baris ini yang terhapus
+
+        session()->flash('success', 'Risiko ' . $risiko->kode_risiko . ' berhasil dihapus.');
+    }
+
     public function render()
     {
         // Hapus filterStatus (kolom tidak ada), hapus kategoriRisiko relasi (sudah jadi teks)

@@ -46,6 +46,11 @@ class MrKonteks extends Model implements HasLayananContext
         return $this->belongsTo(User::class, 'created_by');
     }
 
+    public function deletedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'deleted_by');
+    }
+
     public function sasaranUpr(): HasMany
     {
         return $this->hasMany(MrSasaranUpr::class, 'mr_konteks_id')->orderBy('urutan');
@@ -59,6 +64,18 @@ class MrKonteks extends Model implements HasLayananContext
     public function risiko(): HasMany
     {
         return $this->hasMany(MrRisiko::class);
+    }
+
+    // ─── Lifecycle Hooks ──────────────────────────────────────────────────────
+
+    protected static function booted(): void
+    {
+        static::deleting(function (self $model) {
+            if (auth()->check()) {
+                $model->deleted_by = auth()->id();
+                $model->saveQuietly();
+            }
+        });
     }
 
     // ─── Helpers ─────────────────────────────────────────────────────────────

@@ -22,6 +22,21 @@ class Layanan extends Model
         return $this->belongsTo(User::class, 'created_by');
     }
 
+    public function deletedBy()
+    {
+        return $this->belongsTo(User::class, 'deleted_by');
+    }
+
+    protected static function booted(): void
+    {
+        static::deleting(function (self $model) {
+            if (auth()->check()) {
+                $model->deleted_by = auth()->id();
+                $model->saveQuietly();
+            }
+        });
+    }
+
     public function mrKonteks()
     {
         return $this->hasOne(MrKonteks::class, 'layanan_id');

@@ -15,7 +15,7 @@
     <div class="mb-4 max-w-sm">
         <input wire:model.live.debounce.300ms="search" type="text"
             class="w-full rounded-lg border border-border bg-field text-sm text-text px-4 py-2 focus:outline-none focus:ring-2 focus:ring-accent"
-            placeholder="Cari nama, email, atau nama dinas...">
+            placeholder="Cari nama, email, atau perangkat daerah...">
     </div>
 
     {{-- Table --}}
@@ -33,11 +33,18 @@
             <tbody class="divide-y divide-border">
                 @forelse($users as $u)
                     <tr class="hover:bg-surface-soft transition-colors">
-                        <td class="px-5 py-4 text-text-strong font-medium flex items-center gap-3">
-                            <div class="w-8 h-8 rounded-full bg-surface-soft flex items-center justify-center text-xs font-bold text-muted border border-border">
-                                {{ strtoupper(substr($u->name, 0, 1)) }}
+                        <td class="px-5 py-4">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-full bg-surface-soft flex items-center justify-center text-xs font-bold text-muted border border-border shrink-0">
+                                    {{ strtoupper(substr($u->name, 0, 1)) }}
+                                </div>
+                                <div>
+                                    <div class="text-text-strong font-medium text-sm">{{ $u->name }}</div>
+                                    @if($u->nama_penanggung_jawab)
+                                        <div class="text-xs text-muted mt-0.5">PJ: {{ $u->nama_penanggung_jawab }}</div>
+                                    @endif
+                                </div>
                             </div>
-                            <span>{{ $u->name }}</span>
                         </td>
                         <td class="px-5 py-4 text-text">{{ $u->email }}</td>
                         <td class="px-5 py-4 text-center">
@@ -59,6 +66,9 @@
                                 @endif
                             @else
                                 <span class="opacity-70">{{ $u->isAdmin() ? 'Semua Perangkat Daerah' : '-' }}</span>
+                            @endif
+                            @if($u->no_hp)
+                                <div class="mt-0.5 text-muted">{{ $u->no_hp }}</div>
                             @endif
                         </td>
                         <td class="px-5 py-4 text-right space-x-2">
@@ -128,7 +138,7 @@
                     @if($chosenRole && $chosenRole->name === 'operator')
                         <div>
                             <label class="block text-xs font-medium text-text mb-1">
-                                Nama Perangkat Daerah <span class="text-danger">*</span>
+                                Nama Perangkat Daerah (Unit Pelaksana) <span class="text-danger">*</span>
                             </label>
                             <input wire:model="nama_dinas" type="text"
                                 class="w-full rounded-lg border border-border bg-field px-3 py-2 text-text text-sm focus:ring-2 focus:ring-accent focus:outline-none"
@@ -143,6 +153,24 @@
                                 class="w-full rounded-lg border border-border bg-field px-3 py-2 text-text text-sm focus:ring-2 focus:ring-accent focus:outline-none"
                                 placeholder="Diskominfo" maxlength="50">
                             @error('alias') <p class="mt-1 text-xs text-danger">{{ $message }}</p> @enderror
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-text mb-1">
+                                Nama Penanggung Jawab <span class="text-danger">*</span>
+                            </label>
+                            <input wire:model="nama_penanggung_jawab" type="text"
+                                class="w-full rounded-lg border border-border bg-field px-3 py-2 text-text text-sm focus:ring-2 focus:ring-accent focus:outline-none"
+                                placeholder="Dr. Ir. Budi Santoso, M.T.">
+                            @error('nama_penanggung_jawab') <p class="mt-1 text-xs text-danger">{{ $message }}</p> @enderror
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-text mb-1">
+                                No. HP
+                            </label>
+                            <input wire:model="no_hp" type="text"
+                                class="w-full rounded-lg border border-border bg-field px-3 py-2 text-text text-sm focus:ring-2 focus:ring-accent focus:outline-none"
+                                placeholder="08123456789">
+                            @error('no_hp') <p class="mt-1 text-xs text-danger">{{ $message }}</p> @enderror
                         </div>
                     @endif
 

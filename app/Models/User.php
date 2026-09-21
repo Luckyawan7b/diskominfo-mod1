@@ -16,7 +16,9 @@ class User extends Authenticatable
 
     protected $fillable = [
         'name',
+        'nama_penanggung_jawab',
         'email',
+        'no_hp',
         'password',
         'role_id',
         'nama_dinas',
@@ -38,6 +40,23 @@ class User extends Authenticatable
     public function role(): BelongsTo
     {
         return $this->belongsTo(Role::class);
+    }
+
+    public function deletedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'deleted_by');
+    }
+
+    // ─── Lifecycle Hooks ──────────────────────────────────────────────────────
+
+    protected static function booted(): void
+    {
+        static::deleting(function (self $model) {
+            if (auth()->check()) {
+                $model->deleted_by = auth()->id();
+                $model->saveQuietly();
+            }
+        });
     }
 
     // ─── Helpers ─────────────────────────────────────────────────────────────

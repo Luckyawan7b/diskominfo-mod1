@@ -23,7 +23,7 @@
     <div class="flex flex-wrap gap-3 mb-6">
         @if(auth()->user()->isAdmin() && $dinasList->isNotEmpty())
             <select wire:model.live="filterDinas" class="rounded-lg border border-border bg-field text-sm text-text px-3 py-2 focus:outline-none focus:ring-2 focus:ring-accent">
-                <option value="">Semua Dinas / Instansi</option>
+                <option value="">Semua Perangkat Daerah</option>
                 @foreach($dinasList as $dinas)
                     <option value="{{ $dinas }}">{{ $dinas }}</option>
                 @endforeach

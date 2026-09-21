@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\LogoutController;
 use App\Livewire\Admin\ReviewIndex;
+use App\Livewire\Admin\TrashIndex;
 use App\Livewire\Admin\User\UserIndex;
 use App\Livewire\Auth\Login;
 use App\Livewire\Dashboard;
@@ -63,5 +64,6 @@ Route::middleware('auth')->group(function () {
         Route::get('/review', ReviewIndex::class)->name('review.index');
         Route::get('/review/layanan/{layanan}', KonteksIndex::class)->name('review.konteks');
         Route::get('/user', UserIndex::class)->name('user.index');
+        Route::get('/trash', TrashIndex::class)->name('trash.index');
     });
 });

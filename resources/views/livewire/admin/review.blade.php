@@ -24,7 +24,7 @@
             <thead>
                 <tr class="border-b border-border">
                     <th class="text-left px-5 py-3.5 text-xs font-semibold text-muted uppercase tracking-wider">Nama Layanan</th>
-                    <th class="text-left px-5 py-3.5 text-xs font-semibold text-muted uppercase tracking-wider">Dinas</th>
+                    <th class="text-left px-5 py-3.5 text-xs font-semibold text-muted uppercase tracking-wider">Perangkat Daerah</th>
                     <th class="text-center px-5 py-3.5 text-xs font-semibold text-muted uppercase tracking-wider">Jml Dokumen (Tahun)</th>
                     <th class="text-left px-5 py-3.5 text-xs font-semibold text-muted uppercase tracking-wider">Terakhir Diperbarui</th>
                     <th class="text-right px-5 py-3.5 text-xs font-semibold text-muted uppercase tracking-wider">Aksi</th>

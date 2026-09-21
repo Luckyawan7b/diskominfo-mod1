@@ -15,16 +15,18 @@ class UserIndex extends Component
     public bool   $showModal  = false;
     public ?int   $editingId  = null;
 
-    public string  $name       = '';
-    public string  $email      = '';
-    public string  $password   = '';
-    public ?int    $role_id    = null;
-    public string  $nama_dinas = '';
-    public string  $alias      = '';
+    public string  $name                   = '';
+    public string  $nama_penanggung_jawab   = '';
+    public string  $email                  = '';
+    public string  $no_hp                  = '';
+    public string  $password               = '';
+    public ?int    $role_id                = null;
+    public string  $nama_dinas             = '';
+    public string  $alias                  = '';
 
     public function openCreateModal(): void
     {
-        $this->reset(['editingId', 'name', 'email', 'password', 'role_id', 'nama_dinas', 'alias']);
+        $this->reset(['editingId', 'name', 'nama_penanggung_jawab', 'email', 'no_hp', 'password', 'role_id', 'nama_dinas', 'alias']);
         $operatorRole = Role::where('name', 'operator')->first();
         $this->role_id = $operatorRole?->id;
         $this->showModal = true;
@@ -33,14 +35,16 @@ class UserIndex extends Component
     public function openEditModal(int $id): void
     {
         $user = User::findOrFail($id);
-        $this->editingId  = $user->id;
-        $this->name       = $user->name;
-        $this->email      = $user->email;
-        $this->password   = '';
-        $this->role_id    = $user->role_id;
-        $this->nama_dinas = $user->nama_dinas ?? '';
-        $this->alias      = $user->alias ?? '';
-        $this->showModal  = true;
+        $this->editingId              = $user->id;
+        $this->name                   = $user->name;
+        $this->nama_penanggung_jawab  = $user->nama_penanggung_jawab ?? '';
+        $this->email                  = $user->email;
+        $this->no_hp                  = $user->no_hp ?? '';
+        $this->password               = '';
+        $this->role_id                = $user->role_id;
+        $this->nama_dinas             = $user->nama_dinas ?? '';
+        $this->alias                  = $user->alias ?? '';
+        $this->showModal              = true;
     }
 
     public function save(): void
@@ -49,11 +53,13 @@ class UserIndex extends Component
         $isOperator   = $this->role_id == $operatorRole?->id;
 
         $rules = [
-            'name'      => 'required|string|max:255',
-            'email'     => 'required|email|max:255|unique:users,email,' . $this->editingId,
-            'role_id'   => 'required|exists:roles,id',
-            'nama_dinas'=> $isOperator ? 'required|string|max:255' : 'nullable|string|max:255',
-            'alias'     => 'nullable|string|max:50',
+            'name'                  => 'required|string|max:255',
+            'nama_penanggung_jawab' => $isOperator ? 'required|string|max:255' : 'nullable|string|max:255',
+            'email'                 => 'required|email|max:255|unique:users,email,' . $this->editingId,
+            'no_hp'                 => ['nullable', 'regex:/^(\+62|62|0)8[1-9][0-9]{6,10}$/'],
+            'role_id'               => 'required|exists:roles,id',
+            'nama_dinas'            => $isOperator ? 'required|string|max:255' : 'nullable|string|max:255',
+            'alias'                 => 'nullable|string|max:50',
         ];
 
         if (! $this->editingId) {
@@ -65,16 +71,21 @@ class UserIndex extends Component
         $this->validate($rules);
 
         $selectedRole = Role::find($this->role_id);
-        // Admin tidak perlu nama_dinas/alias
-        $finalNamaDinas = ($selectedRole && $selectedRole->name === 'admin') ? null : ($this->nama_dinas ?: null);
-        $finalAlias     = ($selectedRole && $selectedRole->name === 'admin') ? null : ($this->alias ?: null);
+        // Admin tidak perlu nama_dinas/alias/penanggung_jawab
+        $isAdmin                  = $selectedRole && $selectedRole->name === 'admin';
+        $finalNamaDinas           = $isAdmin ? null : ($this->nama_dinas ?: null);
+        $finalAlias               = $isAdmin ? null : ($this->alias ?: null);
+        $finalNamaPenanggungJawab = $isAdmin ? null : ($this->nama_penanggung_jawab ?: null);
+        $finalNoHp                = $isAdmin ? null : ($this->no_hp ?: null);
 
         $data = [
-            'name'       => $this->name,
-            'email'      => $this->email,
-            'role_id'    => $this->role_id,
-            'nama_dinas' => $finalNamaDinas,
-            'alias'      => $finalAlias,
+            'name'                  => $this->name,
+            'nama_penanggung_jawab' => $finalNamaPenanggungJawab,
+            'email'                 => $this->email,
+            'no_hp'                 => $finalNoHp,
+            'role_id'               => $this->role_id,
+            'nama_dinas'            => $finalNamaDinas,
+            'alias'                 => $finalAlias,
         ];
 
         if (! empty($this->password)) {

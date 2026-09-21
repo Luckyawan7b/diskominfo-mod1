@@ -59,6 +59,11 @@ class MrRisiko extends Model
         return $this->belongsTo(User::class, 'created_by');
     }
 
+    public function deletedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'deleted_by');
+    }
+
     public function perlakuan(): HasOne
     {
         return $this->hasOne(MrRisikoPerlakuan::class);
@@ -88,6 +93,18 @@ class MrRisiko extends Model
     public function lampiran(): MorphMany
     {
         return $this->morphMany(MrLampiran::class, 'lampirable');
+    }
+
+    // ─── Lifecycle Hooks ──────────────────────────────────────────────────────
+
+    protected static function booted(): void
+    {
+        static::deleting(function (self $model) {
+            if (auth()->check()) {
+                $model->deleted_by = auth()->id();
+                $model->saveQuietly();
+            }
+        });
     }
 
     // ─── Helpers ─────────────────────────────────────────────────────────────
