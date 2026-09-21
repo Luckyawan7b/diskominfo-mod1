@@ -94,8 +94,15 @@
                                 <div class="flex items-center gap-2 justify-end">
                                     {{-- Tombol Pulihkan --}}
                                     <button
-                                        wire:click="restore('{{ $activeTab }}', {{ $item->id }})"
-                                        wire:confirm="Yakin ingin memulihkan data ini?"
+                                        @click="$dispatch('confirm-action', {
+                                            wireId: $wire.id,
+                                            action: 'restore',
+                                            params: ['{{ $activeTab }}', {{ $item->id }}],
+                                            title: 'Pulihkan Data',
+                                            message: 'Yakin ingin memulihkan data ini?',
+                                            confirmText: 'Ya, Pulihkan',
+                                            type: 'info'
+                                        })"
                                         class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 border border-emerald-500/20 text-xs font-medium transition-colors cursor-pointer"
                                     >
                                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

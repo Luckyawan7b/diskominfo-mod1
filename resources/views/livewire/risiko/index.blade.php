@@ -69,8 +69,16 @@
                                 </a>
                                 @if($isEditable)
                                     <button
-                                        wire:click="deleteRisiko({{ $r->id }})"
-                                        wire:confirm="Yakin ingin menghapus risiko {{ $r->kode_risiko }}? Item ini akan dipindahkan ke tempat sampah dan bisa dipulihkan oleh admin."
+                                        @click="$dispatch('confirm-action', {
+                                            wireId: $wire.id,
+                                            action: 'deleteRisiko',
+                                            params: [{{ $r->id }}],
+                                            title: 'Hapus Risiko',
+                                            message: 'Yakin ingin menghapus risiko {{ $r->kode_risiko }}?',
+                                            subMessage: 'Item ini akan dipindahkan ke tempat sampah dan bisa dipulihkan oleh admin.',
+                                            confirmText: 'Ya, Hapus',
+                                            type: 'danger'
+                                        })"
                                         class="text-danger hover:text-red-600 transition-colors cursor-pointer"
                                         title="Hapus risiko ini"
                                     >

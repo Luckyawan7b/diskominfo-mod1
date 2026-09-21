@@ -133,7 +133,18 @@
                                     <div class="flex items-center gap-2">
                                         <span class="text-[11px] text-muted">{{ $p->created_at->format('d M Y') }}</span>
                                         @if($isEditable)
-                                            <button wire:click="deletePemantauan({{ $p->id }})" wire:confirm="Hapus catatan pemantauan ini?" class="text-red-400 hover:text-red-300 text-xs cursor-pointer">
+                                            <button
+                                                @click="$dispatch('confirm-action', {
+                                                    wireId: $wire.id,
+                                                    action: 'deletePemantauan',
+                                                    params: [{{ $p->id }}],
+                                                    title: 'Hapus Catatan Pemantauan',
+                                                    message: 'Hapus catatan pemantauan periode {{ $p->periode === "semester_1" ? "Semester 1" : "Semester 2" }} {{ $p->tahun }} ini?',
+                                                    subMessage: 'Catatan akan dipindahkan ke tempat sampah.',
+                                                    confirmText: 'Ya, Hapus',
+                                                    type: 'danger'
+                                                })"
+                                                class="text-red-400 hover:text-red-300 text-xs cursor-pointer">
                                                 Hapus
                                             </button>
                                         @endif

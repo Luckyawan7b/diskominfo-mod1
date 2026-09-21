@@ -50,8 +50,17 @@
                             Ke-{{ $i + 1 }}</span>
                     </div>
                     @if ($isEditable)
-                        <button wire:click="removeBlock({{ $i }})"
-                            wire:confirm="Hapus seluruh Sasaran UPR ini beserta indikatornya?"
+                        <button
+                            @click="$dispatch('confirm-action', {
+                                wireId: $wire.id,
+                                action: 'removeBlock',
+                                params: [{{ $i }}],
+                                title: 'Hapus Sasaran UPR',
+                                message: 'Hapus seluruh Sasaran UPR Ke-{{ $i + 1 }} ini beserta semua indikatornya?',
+                                subMessage: 'Tindakan ini tidak bisa dibatalkan.',
+                                confirmText: 'Ya, Hapus',
+                                type: 'danger'
+                            })"
                             class="text-xs text-danger hover:opacity-80 hover:underline cursor-pointer flex items-center gap-1">
                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -128,8 +137,15 @@
                                 <div class="sm:col-span-1 pt-6 flex justify-center">
                                     @if ($isEditable && count($block['indikator']) > 1)
                                         <button type="button"
-                                            wire:click="removeIndikator({{ $i }}, {{ $j }})"
-                                            wire:confirm="Hapus indikator ini?"
+                                            @click="$dispatch('confirm-action', {
+                                                wireId: $wire.id,
+                                                action: 'removeIndikator',
+                                                params: [{{ $i }}, {{ $j }}],
+                                                title: 'Hapus Indikator',
+                                                message: 'Hapus indikator kinerja ini?',
+                                                confirmText: 'Ya, Hapus',
+                                                type: 'danger'
+                                            })"
                                             class="p-2 rounded-lg text-danger hover:bg-danger-bg transition-colors cursor-pointer"
                                             title="Hapus indikator">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor"

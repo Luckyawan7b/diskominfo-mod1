@@ -225,5 +225,9 @@
             {{ $slot }}
         </main>
     </div>
+
+    {{-- Modal Konfirmasi Global (Alpine.js + Livewire) --}}
+    {{-- Diletakkan di sini agar tidak terpengaruh page-morphing wire:navigate --}}
+    <x-confirm-modal />
 </body>
 </html>

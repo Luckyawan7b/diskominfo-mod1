@@ -76,7 +76,18 @@
                                 Edit
                             </button>
                             @if($u->id !== auth()->id())
-                                <button wire:click="deleteUser({{ $u->id }})" wire:confirm="Hapus pengguna ini?" class="text-danger hover:text-red-600 text-xs font-medium cursor-pointer">
+                                <button
+                                    @click="$dispatch('confirm-action', {
+                                        wireId: $wire.id,
+                                        action: 'deleteUser',
+                                        params: [{{ $u->id }}],
+                                        title: 'Hapus Pengguna',
+                                        message: 'Hapus pengguna {{ $u->name }}?',
+                                        subMessage: 'Pengguna akan dipindahkan ke tempat sampah dan bisa dipulihkan oleh admin.',
+                                        confirmText: 'Ya, Hapus',
+                                        type: 'danger'
+                                    })"
+                                    class="text-danger hover:text-red-600 text-xs font-medium cursor-pointer">
                                     Hapus
                                 </button>
                             @endif
