@@ -112,14 +112,30 @@ class KonteksIndex extends Component
 
         $rules = [
             'newTahunPelaksanaan' => 'required|integer|min:2020|max:2099',
-            'newTahun'            => 'required|integer|min:2020|max:2099',
+            'newTahun'            => [
+                'required',
+                'integer',
+                'min:2020',
+                'max:2099',
+                \Illuminate\Validation\Rule::unique('mr_konteks', 'tahun_penilaian')->where(function ($query) {
+                    $layananId = $this->activeLayanan ? $this->activeLayanan->id : null;
+                    if ($layananId) {
+                        return $query->where('layanan_id', $layananId);
+                    }
+                    return $query->whereNull('layanan_id');
+                }),
+            ],
+        ];
+
+        $messages = [
+            'newTahun.unique' => 'Konteks Manajemen Risiko untuk Tahun Penilaian ini sudah ada.',
         ];
 
         if ($user->isAdmin()) {
             $rules['newNamaInstansi'] = 'required|string|max:255';
         }
 
-        $this->validate($rules);
+        $this->validate($rules, $messages);
 
         if ($user->isOperator() && !$this->activeLayanan) {
             $this->addError('newTahun', 'Silakan pilih layanan terlebih dahulu melalui Dashboard.');
@@ -139,6 +155,9 @@ class KonteksIndex extends Component
                 $data['nama_instansi'] = $this->activeLayanan->creator?->nama_dinas ?? $this->activeLayanan->unit_pelaksana ?? '';
                 $data['nama_upr']      = $this->activeLayanan->nama_layanan;
             } else {
+                if ($this->activeLayanan) {
+                    $data['layanan_id'] = $this->activeLayanan->id;
+                }
                 $data['nama_instansi'] = $this->newNamaInstansi;
                 $data['nama_upr']      = $this->newNamaUpr ?: '';
             }

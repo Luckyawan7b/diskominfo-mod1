@@ -40,14 +40,16 @@
         {{-- Navigation --}}
         <nav class="p-3 space-y-1 overflow-y-auto flex-1">
             {{-- Global Links (Selalu ada) --}}
-            <a href="{{ route('layanan.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-sidebar-muted hover:text-sidebar-text hover:bg-sidebar-hover transition-colors">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 17l-5-5m0 0l5-5m-5 5h12"/>
-                </svg>
-                Daftar Layanan
-            </a>
-            
-            <div class="border-t border-sidebar-border my-2"></div>
+            @if(!auth()->user()->isAdmin())
+                <a href="{{ route('layanan.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-sidebar-muted hover:text-sidebar-text hover:bg-sidebar-hover transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 17l-5-5m0 0l5-5m-5 5h12"/>
+                    </svg>
+                    Daftar Layanan
+                </a>
+                
+                <div class="border-t border-sidebar-border my-2"></div>
+            @endif
 
             @if(isset($konteks) && $konteks)
                 {{-- MODE B: Ada Konteks Aktif --}}
@@ -59,7 +61,7 @@
                         <div class="text-[11px] text-sidebar-muted mt-1">
                             Penilaian {{ $konteks->tahun_penilaian }} / Pelaksanaan {{ $konteks->tahun_pelaksanaan }}
                         </div>
-                        <a href="{{ route('konteks.index') }}" class="inline-block mt-2 text-[10px] text-sidebar-muted hover:text-sidebar-text uppercase tracking-wider font-semibold transition-colors">
+                        <a href="{{ auth()->user()->isAdmin() ? route('admin.review.konteks', $konteks->layanan_id) : route('konteks.index') }}" class="inline-block mt-2 text-[10px] text-sidebar-muted hover:text-sidebar-text uppercase tracking-wider font-semibold transition-colors">
                             &larr; Ganti Konteks
                         </a>
                         
@@ -108,13 +110,15 @@
 
             @else
                 {{-- MODE A: Tidak ada konteks spesifik --}}
-                <a href="{{ route('konteks.index') }}"
-                   class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors {{ request()->routeIs('konteks.*') ? 'bg-sidebar-hover text-sidebar-text font-medium' : 'text-sidebar-muted hover:text-sidebar-text hover:bg-sidebar-hover' }}">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
-                    </svg>
-                    Daftar Konteks
-                </a>
+                @if(!auth()->user()->isAdmin())
+                    <a href="{{ route('konteks.index') }}"
+                       class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors {{ request()->routeIs('konteks.*') ? 'bg-sidebar-hover text-sidebar-text font-medium' : 'text-sidebar-muted hover:text-sidebar-text hover:bg-sidebar-hover' }}">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                        </svg>
+                        Daftar Konteks
+                    </a>
+                @endif
             @endif
 
             @if(auth()->user()->isAdmin())
@@ -150,7 +154,11 @@
 
             {{-- Breadcrumb --}}
             <div class="flex items-center gap-2 text-sm">
-                <a href="{{ route('layanan.index') }}" class="text-topbar-muted hover:text-topbar-text transition-colors">Layanan</a>
+                @if(auth()->user()->isAdmin())
+                    <a href="{{ route('admin.review.index') }}" class="text-topbar-muted hover:text-topbar-text transition-colors">Monitoring</a>
+                @else
+                    <a href="{{ route('layanan.index') }}" class="text-topbar-muted hover:text-topbar-text transition-colors">Layanan</a>
+                @endif
                 @if(isset($layanan) && $layanan)
                     <svg class="w-4 h-4 text-topbar-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                     <span class="text-topbar-text max-w-[140px] truncate" title="{{ $layanan->nama_layanan }}">{{ $layanan->nama_layanan }}</span>
