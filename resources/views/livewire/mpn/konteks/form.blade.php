@@ -6,7 +6,7 @@
                 Konteks Pengetahuan — Penilaian {{ $konteks->tahun_penilaian }} / Pelaksanaan {{ $konteks->tahun_pelaksanaan }}
             </h1>
             <p class="text-sm text-muted mt-1">
-                {{ $konteks->layanan?->creator?->nama_dinas ?? 'Perangkat Daerah' }} &mdash; {{ $konteks->layanan?->nama_layanan ?? '-' }}
+                Ringkasan Konteks &mdash; {{ $konteks->layanan?->creator?->nama_dinas ?? 'Perangkat Daerah' }} &mdash; {{ $konteks->layanan?->nama_layanan ?? '-' }}
             </p>
         </div>
     </div>
@@ -56,7 +56,7 @@
                 <p class="text-sm font-semibold text-text-strong group-hover:text-primary transition-colors">Indikator Capaian</p>
                 <p class="text-xs text-muted mt-0.5">Kelola indikator capaian & evaluasi realisasi</p>
                 <span class="inline-block mt-2 text-[10px] text-muted bg-surface-raised border border-border rounded px-2 py-0.5">
-                    Kelola indikator &amp; evaluasi capaian layanan
+                    Formulir 1 &amp; 4: Kelola indikator &amp; evaluasi capaian layanan
                 </span>
             </div>
         </a>
@@ -73,7 +73,7 @@
                 <p class="text-sm font-semibold text-text-strong group-hover:text-primary transition-colors">Daftar Pengetahuan</p>
                 <p class="text-xs text-muted mt-0.5">Kelola inventarisasi & dokumentasi pengetahuan</p>
                 <span class="inline-block mt-2 text-[10px] text-muted bg-surface-raised border border-border rounded px-2 py-0.5">
-                    Kelola inventarisasi &amp; dokumentasi
+                    Formulir 1 Tabel 1b, 2, dan 3: Kelola inventarisasi &amp; dokumentasi
                 </span>
             </div>
         </a>

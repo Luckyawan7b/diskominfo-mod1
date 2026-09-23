@@ -4,7 +4,7 @@
         <div>
             <h1 class="text-2xl font-bold text-text-strong">Indikator Capaian — {{ $konteks->tahun_penilaian }}</h1>
             <p class="text-sm text-muted mt-1">
-                Kelola indikator capaian layanan beserta evaluasi realisasi & tindak lanjut
+                Formulir 1 (Tabel 1a) & Formulir 4: Indikator capaian beserta evaluasi realisasinya
             </p>
         </div>
         <a href="{{ route('konteks-mpn.form', $konteks) }}"
@@ -62,6 +62,7 @@
                 </div>
 
                 {{-- Seksi A: Definisi Indikator --}}
+                <p class="text-[11px] font-semibold text-primary uppercase tracking-wider mb-2">Formulir 1 — Tabel 1a: Indikator Capaian</p>
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
                     {{-- Deskripsi Indikator --}}
                     <div class="lg:col-span-3">
@@ -134,7 +135,7 @@
 
                 {{-- Seksi B: Evaluasi Indikator --}}
                 <div class="border-t border-border pt-5">
-                    <p class="text-xs font-semibold text-text uppercase tracking-wider mb-4">Evaluasi Realisasi</p>
+                    <p class="text-xs font-semibold text-text uppercase tracking-wider mb-4">Formulir 4 — Evaluasi Realisasi</p>
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                         {{-- Realisasi --}}
                         <div>

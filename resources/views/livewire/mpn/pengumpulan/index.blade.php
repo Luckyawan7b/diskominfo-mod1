@@ -2,7 +2,7 @@
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
         <div>
             <h1 class="text-2xl font-bold text-text-strong">Timeline Riwayat Revisi</h1>
-            <p class="text-sm text-muted mt-1">Pengetahuan: {{ $pengetahuan->nama_pengetahuan }}</p>
+            <p class="text-sm text-muted mt-1">Formulir 2: Timeline Riwayat Pengumpulan & Pengolahan Pengetahuan</p>
         </div>
         <div class="flex gap-3">
             <a href="{{ route('mpn.pengetahuan.form', ['konteks' => $konteks, 'pengetahuan' => $pengetahuan]) }}" wire:navigate

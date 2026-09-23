@@ -171,13 +171,13 @@
                 {{-- Indikator Capaian — Fase 2 --}}
                 <a href="{{ route('mpn.indikator-capaian.form', $mpnKonteks) }}"
                    class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors {{ request()->routeIs('mpn.indikator-capaian.form') ? 'bg-sidebar-hover text-sidebar-text font-medium' : 'text-sidebar-muted hover:text-sidebar-text hover:bg-sidebar-hover' }}">
-                    Indikator Capaian
+                    Indikator Capaian (Formulir 1 & 4)
                 </a>
 
                 {{-- Daftar Pengetahuan — Fase 3 --}}
                 <a href="{{ route('mpn.pengetahuan.index', $mpnKonteks) }}"
                    class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors {{ request()->routeIs('mpn.pengetahuan.*') ? 'bg-sidebar-hover text-sidebar-text font-medium' : 'text-sidebar-muted hover:text-sidebar-text hover:bg-sidebar-hover' }}">
-                    Daftar Pengetahuan
+                    Daftar Pengetahuan (Formulir 1, 2, 3)
                 </a>
             @endif
 

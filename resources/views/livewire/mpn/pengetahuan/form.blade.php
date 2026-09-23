@@ -4,7 +4,7 @@
             <h1 class="text-2xl font-bold text-text-strong">
                 {{ $isNew ? 'Tambah Pengetahuan Baru' : 'Edit Pengetahuan' }}
             </h1>
-            <p class="text-sm text-muted mt-1">Formulir 3: Inventarisasi dan Rencana Dokumentasi</p>
+            <p class="text-sm text-muted mt-1">Formulir 1 (Tabel 1b): Identifikasi dan Rencana Dokumentasi Pengetahuan</p>
         </div>
         <div class="flex gap-3">
             <a href="{{ route('mpn.pengetahuan.index', $konteks) }}" wire:navigate
@@ -22,12 +22,12 @@
         <div class="flex items-center gap-1 mb-6 border-b border-border overflow-x-auto no-scrollbar">
             <button type="button" wire:click="switchTab(1)"
                 class="whitespace-nowrap px-4 py-3 text-sm font-semibold border-b-2 transition-colors {{ $activeTab === 1 ? 'border-primary text-primary' : 'border-transparent text-muted hover:text-text hover:border-border' }}">
-                1. Identifikasi
+                1. Identifikasi (Formulir 1 — Tabel 1b)
             </button>
             <button type="button" wire:click="switchTab(2)"
                 {{ $apakah_terdokumentasi ? 'disabled' : '' }}
                 class="whitespace-nowrap px-4 py-3 text-sm font-semibold border-b-2 transition-colors {{ $apakah_terdokumentasi ? 'opacity-50 cursor-not-allowed border-transparent text-muted' : ($activeTab === 2 ? 'border-primary text-primary' : 'border-transparent text-muted hover:text-text hover:border-border') }}">
-                2. Rencana Dokumentasi
+                2. Rencana Dokumentasi (Formulir 1 — Tabel 1b)
                 @if($apakah_terdokumentasi)
                     <span class="ml-1 text-[10px] font-normal italic">(Otomatis disembunyikan)</span>
                 @endif
@@ -35,7 +35,7 @@
             <button type="button" wire:click="switchTab(3)"
                 {{ $isNew ? 'disabled' : '' }}
                 class="whitespace-nowrap px-4 py-3 text-sm font-semibold border-b-2 transition-colors {{ $isNew ? 'opacity-50 cursor-not-allowed border-transparent text-muted' : ($activeTab === 3 ? 'border-primary text-primary' : 'border-transparent text-muted hover:text-text hover:border-border') }}">
-                3. Pengumpulan & Riwayat
+                3. Pengumpulan & Riwayat (Formulir 2)
                 @if($isNew)
                     <span class="ml-1 text-[10px] font-normal italic">(Simpan data dulu)</span>
                 @endif
@@ -48,7 +48,7 @@
                 <h3 class="text-sm font-bold text-text-strong uppercase tracking-wider mb-5 pb-3 border-b border-border">
                     Bagian A: Identifikasi Pengetahuan
                 </h3>
-                
+
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {{-- Nama Sub Fitur --}}
                     <div>
@@ -64,12 +64,46 @@
                     {{-- Layanan Prioritas --}}
                     <div>
                         <label class="block text-xs font-semibold text-text uppercase tracking-wider mb-1">
-                            Layanan Prioritas (Opsional)
+                            Apakah Layanan Ini Bersifat Prioritas?
                         </label>
-                        <p class="text-xs text-muted mb-2">Tandai jika ini merupakan layanan prioritas atau kritikal.</p>
-                        <input type="text" wire:model="layanan_prioritas" {{ !$isEditable ? 'disabled' : '' }}
-                            class="w-full rounded-lg border border-border bg-field px-4 py-2.5 text-text text-sm focus:outline-none focus:ring-2 focus:ring-accent disabled:opacity-50"
-                            placeholder="Contoh: Layanan Utama Disdukcapil">
+                        <p class="text-xs text-muted mb-2">Pilih <strong>Ya</strong> jika layanan ini merupakan layanan prioritas atau kritikal.</p>
+                        <div class="flex gap-3 mt-1">
+                            {{-- Tombol Ya --}}
+                            <label class="flex-1 flex items-center gap-3 rounded-lg border-2 px-4 py-3 cursor-pointer transition-all duration-150
+                                {{ $layanan_prioritas ? 'border-accent bg-accent/10' : 'border-border bg-field' }}
+                                {{ !$isEditable ? 'opacity-50 pointer-events-none' : 'hover:border-accent/60' }}">
+                                <input type="radio" wire:model.live="layanan_prioritas" value="1" {{ !$isEditable ? 'disabled' : '' }}
+                                    class="sr-only">
+                                <div class="w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 transition-all
+                                    {{ $layanan_prioritas ? 'border-accent' : 'border-border' }}">
+                                    @if($layanan_prioritas)
+                                        <div class="w-2.5 h-2.5 rounded-full bg-accent"></div>
+                                    @endif
+                                </div>
+                                <div>
+                                    <span class="block text-sm font-semibold {{ $layanan_prioritas ? 'text-accent' : 'text-text' }}">Ya</span>
+                                    <span class="block text-xs text-muted">Ini layanan prioritas</span>
+                                </div>
+                            </label>
+
+                            {{-- Tombol Tidak --}}
+                            <label class="flex-1 flex items-center gap-3 rounded-lg border-2 px-4 py-3 cursor-pointer transition-all duration-150
+                                {{ !$layanan_prioritas ? 'border-border bg-field' : 'border-border bg-field' }}
+                                {{ !$isEditable ? 'opacity-50 pointer-events-none' : 'hover:border-border/80' }}">
+                                <input type="radio" wire:model.live="layanan_prioritas" value="0" {{ !$isEditable ? 'disabled' : '' }}
+                                    class="sr-only">
+                                <div class="w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 transition-all
+                                    {{ !$layanan_prioritas ? 'border-accent' : 'border-border' }}">
+                                    @if(!$layanan_prioritas)
+                                        <div class="w-2.5 h-2.5 rounded-full bg-accent"></div>
+                                    @endif
+                                </div>
+                                <div>
+                                    <span class="block text-sm font-semibold {{ !$layanan_prioritas ? 'text-text' : 'text-muted' }}">Tidak</span>
+                                    <span class="block text-xs text-muted">Bukan layanan prioritas</span>
+                                </div>
+                            </label>
+                        </div>
                     </div>
 
                     {{-- Nama Pengetahuan --}}
@@ -193,21 +227,56 @@
                     {{-- Target Tahun Ini --}}
                     <div>
                         <label class="block text-xs font-semibold text-text uppercase tracking-wider mb-1">
-                            Target Tahun Ini
+                            Apakah Ditargetkan Selesai Tahun Ini?
                         </label>
-                        <input type="text" wire:model="target_tahun_ini" {{ !$isEditable ? 'disabled' : '' }}
-                            class="w-full rounded-lg border border-border bg-field px-4 py-2.5 text-text text-sm focus:outline-none focus:ring-2 focus:ring-accent disabled:opacity-50"
-                            placeholder="Contoh: Selesai di-draft Q2">
+                        <p class="text-xs text-muted mb-2">Pilih <strong>Ya</strong> jika dokumentasi ditargetkan selesai pada tahun berjalan ini.</p>
+                        <div class="flex gap-3 mt-1">
+                            {{-- Tombol Ya --}}
+                            <label class="flex-1 flex items-center gap-3 rounded-lg border-2 px-4 py-3 cursor-pointer transition-all duration-150
+                                {{ $target_tahun_ini ? 'border-accent bg-accent/10' : 'border-border bg-field' }}
+                                {{ !$isEditable ? 'opacity-50 pointer-events-none' : 'hover:border-accent/60' }}">
+                                <input type="radio" wire:model.live="target_tahun_ini" value="1" {{ !$isEditable ? 'disabled' : '' }}
+                                    class="sr-only">
+                                <div class="w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 transition-all
+                                    {{ $target_tahun_ini ? 'border-accent' : 'border-border' }}">
+                                    @if($target_tahun_ini)
+                                        <div class="w-2.5 h-2.5 rounded-full bg-accent"></div>
+                                    @endif
+                                </div>
+                                <div>
+                                    <span class="block text-sm font-semibold {{ $target_tahun_ini ? 'text-accent' : 'text-text' }}">Ya</span>
+                                    <span class="block text-xs text-muted">Ditargetkan tahun ini</span>
+                                </div>
+                            </label>
+
+                            {{-- Tombol Tidak --}}
+                            <label class="flex-1 flex items-center gap-3 rounded-lg border-2 px-4 py-3 cursor-pointer transition-all duration-150
+                                {{ !$target_tahun_ini ? 'border-border bg-field' : 'border-border bg-field' }}
+                                {{ !$isEditable ? 'opacity-50 pointer-events-none' : 'hover:border-border/80' }}">
+                                <input type="radio" wire:model.live="target_tahun_ini" value="0" {{ !$isEditable ? 'disabled' : '' }}
+                                    class="sr-only">
+                                <div class="w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 transition-all
+                                    {{ !$target_tahun_ini ? 'border-accent' : 'border-border' }}">
+                                    @if(!$target_tahun_ini)
+                                        <div class="w-2.5 h-2.5 rounded-full bg-accent"></div>
+                                    @endif
+                                </div>
+                                <div>
+                                    <span class="block text-sm font-semibold {{ !$target_tahun_ini ? 'text-text' : 'text-muted' }}">Tidak</span>
+                                    <span class="block text-xs text-muted">Belum ditargetkan tahun ini</span>
+                                </div>
+                            </label>
+                        </div>
                     </div>
 
                     {{-- Pemilik Pengetahuan --}}
                     <div>
                         <label class="block text-xs font-semibold text-text uppercase tracking-wider mb-1">
-                            Pemilik Pengetahuan (Subject Matter Expert)
+                            Pemilik Pengetahuan (Unit Kerja/Instansi Terkait)
                         </label>
                         <input type="text" wire:model="pemilik_pengetahuan" {{ !$isEditable ? 'disabled' : '' }}
                             class="w-full rounded-lg border border-border bg-field px-4 py-2.5 text-text text-sm focus:outline-none focus:ring-2 focus:ring-accent disabled:opacity-50"
-                            placeholder="Contoh: Bpk. Budi (Kasubag Perencanaan)">
+                            placeholder="Contoh: Dispendukcapil Jatim">
                     </div>
 
                     {{-- Tipe Dokumentasi --}}
@@ -246,7 +315,7 @@
                         </label>
                         <input type="text" wire:model="penanggung_jawab" {{ !$isEditable ? 'disabled' : '' }}
                             class="w-full rounded-lg border border-border bg-field px-4 py-2.5 text-text text-sm focus:outline-none focus:ring-2 focus:ring-accent disabled:opacity-50"
-                            placeholder="Contoh: Tim IT">
+                            placeholder="Contoh: Kepala UPT">
                     </div>
 
                     {{-- Target Waktu --}}
@@ -256,7 +325,7 @@
                         </label>
                         <input type="text" wire:model="target_waktu_dokumentasi" {{ !$isEditable ? 'disabled' : '' }}
                             class="w-full rounded-lg border border-border bg-field px-4 py-2.5 text-text text-sm focus:outline-none focus:ring-2 focus:ring-accent disabled:opacity-50"
-                            placeholder="Contoh: Akhir Maret 2025">
+                            placeholder="Contoh: Maret 2025">
                     </div>
                 </div>
             </div>
@@ -294,9 +363,9 @@
                 <h3 class="text-sm font-bold text-text-strong uppercase tracking-wider mb-2 pb-3 border-b border-border">
                     Bagian C: Pengumpulan, Riwayat Revisi & Pemanfaatan
                 </h3>
-                
+
                 <p class="text-sm text-muted mb-6">
-                    Kelola riwayat pembaruan/revisi dokumen pengetahuan ini. 
+                    Kelola riwayat pembaruan/revisi dokumen pengetahuan ini.
                     Setiap revisi dapat memiliki catatan evaluasi, pemanfaatan, dan alih pengetahuan tersendiri.
                 </p>
 
@@ -316,7 +385,7 @@
                     </div>
                 @endif
             </div>
-            
+
             <div class="flex justify-start gap-3 mt-6">
                 <button type="button" wire:click="switchTab(1)"
                     class="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg border border-border text-sm font-semibold text-text hover:bg-surface-soft transition-all">

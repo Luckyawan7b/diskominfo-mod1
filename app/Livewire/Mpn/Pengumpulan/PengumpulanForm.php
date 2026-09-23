@@ -56,12 +56,27 @@ class PengumpulanForm extends Component
             $this->isNew = true;
             $this->tanggal_pengumpulan = date('Y-m-d');
             
-            // Generate Auto ID Pengetahuan based on count
-            $count = $this->pengetahuan->pengumpulan()->count();
-            // Get prefix from instansi
-            $namaInstansi = $konteks->nama_instansi ?: ($konteks->layanan?->creator?->alias ?? 'UPR');
-            $prefix = strtoupper(substr(preg_replace('/[^A-Z0-9]/i', '', $namaInstansi), 0, 4));
-            $this->id_pengetahuan = $prefix . '-P-' . $this->pengetahuan->id . '-' . ($count + 1);
+            // Generate Auto ID Pengetahuan with formula: MRP-{alias}-{tahun}-001
+            $alias = strtoupper(auth()->user()->alias ?: 'USER');
+            $tahun = $this->konteks->tahun_penilaian;
+            $prefix = "MRP-{$alias}-{$tahun}-";
+            
+            // Get the latest sequence for this prefix (including soft-deleted)
+            $latestPengumpulan = MpnPengumpulan::withTrashed()
+                ->where('id_pengetahuan', 'like', $prefix . '%')
+                ->orderBy('id_pengetahuan', 'desc')
+                ->first();
+
+            if ($latestPengumpulan) {
+                // Extract the sequence number from the end
+                $parts = explode('-', $latestPengumpulan->id_pengetahuan);
+                $lastSeq = (int) end($parts);
+                $newSeq = $lastSeq + 1;
+            } else {
+                $newSeq = 1;
+            }
+            
+            $this->id_pengetahuan = $prefix . str_pad($newSeq, 3, '0', STR_PAD_LEFT);
 
             // Auto-select latest revision if exists
             if ($this->revisiList->count() > 0) {

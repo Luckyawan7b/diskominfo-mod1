@@ -19,7 +19,7 @@ class PengetahuanForm extends Component
 
     // Tab 1: Identifikasi Pengetahuan
     public string $nama_sub_fitur = '';
-    public string $layanan_prioritas = '';
+    public bool $layanan_prioritas = false;
     public string $nama_pengetahuan = '';
     public string $sudah_terdokumentasi = '';
     public ?int $ref_aspek_pemdi_id = null;
@@ -27,7 +27,7 @@ class PengetahuanForm extends Component
     public bool $apakah_terdokumentasi = true; 
 
     // Tab 2: Rencana Dokumentasi (Hanya jika apakah_terdokumentasi == false)
-    public ?string $target_tahun_ini = null;
+    public bool $target_tahun_ini = false;
     public ?string $pemilik_pengetahuan = null;
     public bool $tipe_teks = false;
     public bool $tipe_gambar = false;
@@ -62,7 +62,7 @@ class PengetahuanForm extends Component
         $p = $this->pengetahuanModel;
         
         $this->nama_sub_fitur = $p->nama_sub_fitur ?? '';
-        $this->layanan_prioritas = $p->layanan_prioritas ?? '';
+        $this->layanan_prioritas = (bool) ($p->layanan_prioritas ?? false);
         $this->nama_pengetahuan = $p->nama_pengetahuan ?? '';
         $this->sudah_terdokumentasi = $p->sudah_terdokumentasi ?? '';
         $this->ref_aspek_pemdi_id = $p->ref_aspek_pemdi_id;
@@ -75,7 +75,7 @@ class PengetahuanForm extends Component
 
         if ($p->rencanaDokumentasi) {
             $r = $p->rencanaDokumentasi;
-            $this->target_tahun_ini = $r->target_tahun_ini;
+            $this->target_tahun_ini = (bool) ($r->target_tahun_ini ?? false);
             $this->pemilik_pengetahuan = $r->pemilik_pengetahuan;
             $this->tipe_teks = (bool) $r->tipe_teks;
             $this->tipe_gambar = (bool) $r->tipe_gambar;
@@ -140,7 +140,7 @@ class PengetahuanForm extends Component
         $data = [
             'mpn_konteks_id' => $this->konteks->id,
             'nama_sub_fitur' => $this->nama_sub_fitur ?: null,
-            'layanan_prioritas' => $this->layanan_prioritas ?: null,
+            'layanan_prioritas' => $this->layanan_prioritas,
             'nama_pengetahuan' => $this->nama_pengetahuan,
             'sudah_terdokumentasi' => $this->sudah_terdokumentasi ?: null,
             'ref_aspek_pemdi_id' => $this->ref_aspek_pemdi_id,

@@ -2,7 +2,7 @@
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
         <div>
             <h1 class="text-2xl font-bold text-text-strong">Catatan Alih Pengetahuan</h1>
-            <p class="text-sm text-muted mt-1">Dokumen: {{ $pengumpulan->id_pengetahuan }} ({{ \Carbon\Carbon::parse($pengumpulan->tanggal_pengumpulan)->format('d M Y') }})</p>
+            <p class="text-sm text-muted mt-1">Formulir 3: Penggunaan & Alih Pengetahuan — Bagian Alih Pengetahuan</p>
         </div>
         <div class="flex gap-3">
             <a href="{{ route('mpn.pengumpulan.index', ['konteks' => $konteks, 'pengetahuan' => $pengetahuan]) }}" wire:navigate

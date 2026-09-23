@@ -2,7 +2,7 @@
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
         <div>
             <h1 class="text-2xl font-bold text-text-strong">Daftar Pengetahuan — {{ $konteks->tahun_penilaian }}</h1>
-            <p class="text-sm text-muted mt-1">Kelola inventarisasi dan dokumentasi pengetahuan layanan</p>
+            <p class="text-sm text-muted mt-1">Formulir 1 (Tabel 1b): Daftar Perencanaan Pengumpulan Pengetahuan (Critical Knowledge)</p>
         </div>
         <div class="flex gap-3">
             <a href="{{ route('konteks-mpn.form', $konteks) }}"
@@ -25,11 +25,7 @@
         </div>
     </div>
 
-    @if (session('success'))
-        <div class="mb-4 px-4 py-3 rounded-lg bg-success-bg border border-success/30 text-success text-sm">
-            {{ session('success') }}
-        </div>
-    @endif
+
 
     {{-- Table --}}
     <div class="rounded-xl border border-border bg-surface overflow-hidden">

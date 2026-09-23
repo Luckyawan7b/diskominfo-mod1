@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -63,5 +64,10 @@ class MpnPengetahuan extends Model
     public function rencanaDokumentasi(): HasOne
     {
         return $this->hasOne(MpnRencanaDokumentasi::class, 'mpn_pengetahuan_id');
+    }
+
+    public function pengumpulan(): HasMany
+    {
+        return $this->hasMany(MpnPengumpulan::class, 'mpn_pengetahuan_id');
     }
 }

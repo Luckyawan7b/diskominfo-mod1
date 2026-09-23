@@ -11,13 +11,13 @@ class RefAspekPemdiSeeder extends Seeder
     {
         // TODO: Sesuaikan dengan 7 Aspek di Tabel 1b
         $aspek = [
-            'Kebijakan Internal Terkait Tata Kelola SPBE',
-            'Perencanaan Strategis SPBE',
-            'Teknologi Informasi dan Komunikasi',
-            'Penyelenggaraan SPBE',
-            'Penerapan Manajemen SPBE',
-            'Audit TIK',
-            'Layanan SPBE',
+            'Tata Kelola dan Manajemen',
+            'Penyelenggara',
+            'Data',
+            'Keamanan Siber',
+            'Teknologi Digital',
+            'Keterpaduan Layanan Digital Pemerintah',
+            'Kepuasan Pengguna Layanan Digital Pemerintah',
         ];
 
         foreach ($aspek as $nama) {

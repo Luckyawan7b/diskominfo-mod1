@@ -4,7 +4,7 @@
             <h1 class="text-2xl font-bold text-text-strong">
                 {{ $isNew ? 'Tambah Riwayat Pengumpulan' : 'Edit Pengumpulan' }}
             </h1>
-            <p class="text-sm text-muted mt-1">Pengetahuan: {{ $pengetahuan->nama_pengetahuan }}</p>
+            <p class="text-sm text-muted mt-1">Formulir 2: Database Pengumpulan & Pengolahan Pengetahuan</p>
         </div>
         <div class="flex gap-3">
             <a href="{{ route('mpn.pengumpulan.index', ['konteks' => $konteks, 'pengetahuan' => $pengetahuan]) }}" wire:navigate
@@ -51,7 +51,7 @@
             {{-- Bagian A: Metadata Utama --}}
             <div class="rounded-xl border border-border bg-surface p-6">
                 <h3 class="text-sm font-bold text-text-strong uppercase tracking-wider mb-5 pb-3 border-b border-border">
-                    Bagian A: Metadata Utama
+                    Bagian A (Formulir 2): Metadata Utama
                 </h3>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
