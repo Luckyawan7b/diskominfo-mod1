@@ -112,13 +112,73 @@
                 {{-- MODE A: Tidak ada konteks spesifik --}}
                 @if(!auth()->user()->isAdmin())
                     <a href="{{ route('konteks.index') }}"
-                       class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors {{ request()->routeIs('konteks.*') ? 'bg-sidebar-hover text-sidebar-text font-medium' : 'text-sidebar-muted hover:text-sidebar-text hover:bg-sidebar-hover' }}">
+                       class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors {{ request()->routeIs('konteks.*') && !request()->routeIs('konteks-mpn.*') ? 'bg-sidebar-hover text-sidebar-text font-medium' : 'text-sidebar-muted hover:text-sidebar-text hover:bg-sidebar-hover' }}">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
                         </svg>
-                        Daftar Konteks
+                        Daftar Konteks MR
+                    </a>
+                    <a href="{{ route('konteks-mpn.index') }}"
+                       class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors {{ request()->routeIs('konteks-mpn.*') ? 'bg-sidebar-hover text-sidebar-text font-medium' : 'text-sidebar-muted hover:text-sidebar-text hover:bg-sidebar-hover' }}">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                        </svg>
+                        Daftar Konteks MPN
                     </a>
                 @endif
+            @endif
+
+            {{-- MPN Sidebar (ketika di dalam konteks MPN) --}}
+            @if(isset($mpnKonteks) && $mpnKonteks)
+                <div class="border-t border-sidebar-border my-2"></div>
+                <div class="mb-3">
+                    <div class="px-3 py-2 mx-1 rounded-lg bg-black/20 dark:bg-black/30 border border-white/10">
+                        <div class="text-sm font-semibold text-sidebar-text leading-tight">
+                            {{ $mpnKonteks->layanan?->creator?->nama_dinas ?? 'Perangkat Daerah' }}
+                        </div>
+                        <div class="text-[11px] text-sidebar-muted mt-1">
+                            MPN — Penilaian {{ $mpnKonteks->tahun_penilaian }} / Pelaksanaan {{ $mpnKonteks->tahun_pelaksanaan }}
+                        </div>
+                        <a href="{{ auth()->user()->isAdmin() ? route('admin.review.mpn.konteks', $mpnKonteks->layanan_id) : route('konteks-mpn.index') }}" class="inline-block mt-2 text-[10px] text-sidebar-muted hover:text-sidebar-text uppercase tracking-wider font-semibold transition-colors">
+                            &larr; Ganti Konteks
+                        </a>
+
+                        @if(isset($availableKonteks) && $availableKonteks->count() > 1)
+                            <div class="mt-2 pt-2 border-t border-sidebar-border" x-data="{ openMpn: false }">
+                                <button @click="openMpn = !openMpn" class="flex items-center justify-between w-full text-left text-xs text-sidebar-muted hover:text-sidebar-text transition-colors cursor-pointer">
+                                    <span>Context Switcher</span>
+                                    <svg :class="openMpn ? 'rotate-180' : ''" class="w-3 h-3 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                                </button>
+                                <div x-show="openMpn" x-cloak class="mt-2 space-y-1">
+                                    @foreach($availableKonteks as $ak)
+                                        <a href="{{ route('konteks-mpn.form', $ak) }}" class="block px-2 py-1.5 rounded-md text-[11px] {{ $ak->id === $mpnKonteks->id ? 'bg-sidebar-hover text-sidebar-text font-medium' : 'text-sidebar-muted hover:bg-sidebar-hover hover:text-sidebar-text' }}">
+                                            Pnl. {{ $ak->tahun_penilaian }} / Plk. {{ $ak->tahun_pelaksanaan }}
+                                        </a>
+                                    @endforeach
+                                </div>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+
+                <p class="px-4 py-1 text-[10px] font-semibold text-sidebar-muted uppercase tracking-widest">Modul Pengetahuan</p>
+
+                <a href="{{ route('konteks-mpn.form', $mpnKonteks) }}"
+                   class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors {{ request()->routeIs('konteks-mpn.form') ? 'bg-sidebar-hover text-sidebar-text font-medium' : 'text-sidebar-muted hover:text-sidebar-text hover:bg-sidebar-hover' }}">
+                    Hub Konteks MPN
+                </a>
+
+                {{-- Indikator Capaian — Fase 2 --}}
+                <a href="{{ route('mpn.indikator-capaian.form', $mpnKonteks) }}"
+                   class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors {{ request()->routeIs('mpn.indikator-capaian.form') ? 'bg-sidebar-hover text-sidebar-text font-medium' : 'text-sidebar-muted hover:text-sidebar-text hover:bg-sidebar-hover' }}">
+                    Indikator Capaian
+                </a>
+
+                {{-- Daftar Pengetahuan — Fase 3 --}}
+                <a href="{{ route('mpn.pengetahuan.index', $mpnKonteks) }}"
+                   class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors {{ request()->routeIs('mpn.pengetahuan.*') ? 'bg-sidebar-hover text-sidebar-text font-medium' : 'text-sidebar-muted hover:text-sidebar-text hover:bg-sidebar-hover' }}">
+                    Daftar Pengetahuan
+                </a>
             @endif
 
             @if(auth()->user()->isAdmin())

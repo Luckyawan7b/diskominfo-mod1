@@ -66,9 +66,9 @@
                        class="group relative rounded-2xl border border-border bg-module-bg p-6 transition-all duration-300 hover:scale-[1.03] hover:shadow-2xl cursor-pointer text-left w-full">
 
                         {{-- Badge count --}}
-                        @if($index === 0 && $badgeCount > 0)
-                            <div class="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-danger text-white text-xs font-bold flex items-center justify-center shadow-lg animate-pulse">
-                                {{ $badgeCount }}
+                        @if(isset($module['badge_count']) && $module['badge_count'] > 0)
+                            <div class="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-danger text-white text-xs font-bold flex items-center justify-center shadow-lg animate-pulse" title="{{ $module['badge_count'] }} item butuh perhatian">
+                                {{ $module['badge_count'] }}
                             </div>
                         @endif
 

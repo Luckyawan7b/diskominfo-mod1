@@ -8,6 +8,15 @@ use App\Livewire\Auth\Login;
 use App\Livewire\Dashboard;
 use App\Livewire\Konteks\KonteksForm;
 use App\Livewire\Konteks\KonteksIndex;
+use App\Livewire\Mpn\Konteks\KonteksMpnIndex;
+use App\Livewire\Mpn\Konteks\KonteksMpnForm;
+use App\Livewire\Mpn\IndikatorCapaian\IndikatorCapaianForm;
+use App\Livewire\Mpn\Pengetahuan\PengetahuanIndex;
+use App\Livewire\Mpn\Pengetahuan\PengetahuanForm;
+use App\Livewire\Mpn\Pengumpulan\PengumpulanIndex;
+use App\Livewire\Mpn\Pengumpulan\PengumpulanForm;
+use App\Livewire\Mpn\Pemanfaatan\PemanfaatanForm;
+use App\Livewire\Mpn\AlihPengetahuan\AlihPengetahuanForm;
 use App\Livewire\Pemantauan\PemantauanForm;
 use App\Livewire\Risiko\PetaRisiko;
 use App\Livewire\Risiko\RisikoForm;
@@ -51,11 +60,25 @@ Route::middleware('auth')->group(function () {
                 Route::get('/pemantauan', PemantauanForm::class)->name('pemantauan.form');
             });
         });
-        // Modul Manajemen Pengetahuan (Dummy Awal)
+        // Modul Manajemen Pengetahuan
         Route::prefix('manajemen-pengetahuan')->group(function () {
-            Route::get('/', function () {
-                return 'Halaman Modul Manajemen Pengetahuan sedang dalam tahap pengembangan UI.';
-            })->name('konteks-mpn.index');
+            Route::get('/', KonteksMpnIndex::class)->name('konteks-mpn.index');
+
+            Route::prefix('konteks/{konteks}')
+                ->middleware('konteks.access:App\Models\MpnKonteks')
+                ->group(function () {
+                    Route::get('/', KonteksMpnForm::class)->name('konteks-mpn.form');
+                    Route::get('/indikator-capaian', IndikatorCapaianForm::class)->name('mpn.indikator-capaian.form');
+                    
+                    Route::get('/pengetahuan', PengetahuanIndex::class)->name('mpn.pengetahuan.index');
+                    Route::get('/pengetahuan/{pengetahuan}', PengetahuanForm::class)->name('mpn.pengetahuan.form');
+                    
+                    Route::get('/pengetahuan/{pengetahuan}/pengumpulan', PengumpulanIndex::class)->name('mpn.pengumpulan.index');
+                    Route::get('/pengetahuan/{pengetahuan}/pengumpulan/{pengumpulan}', PengumpulanForm::class)->name('mpn.pengumpulan.form');
+                    
+                    Route::get('/pengetahuan/{pengetahuan}/pengumpulan/{pengumpulan}/pemanfaatan', PemanfaatanForm::class)->name('mpn.pemanfaatan.form');
+                    Route::get('/pengetahuan/{pengetahuan}/pengumpulan/{pengumpulan}/alih-pengetahuan', AlihPengetahuanForm::class)->name('mpn.alih-pengetahuan.form');
+                });
         });
     });
 
@@ -63,6 +86,7 @@ Route::middleware('auth')->group(function () {
     Route::middleware('role:admin')->prefix('admin')->name('admin.')->group(function () {
         Route::get('/review', ReviewIndex::class)->name('review.index');
         Route::get('/review/layanan/{layanan}', KonteksIndex::class)->name('review.konteks');
+        Route::get('/review/mpn/layanan/{layanan}', KonteksMpnIndex::class)->name('review.mpn.konteks');
         Route::get('/user', UserIndex::class)->name('user.index');
         Route::get('/trash', TrashIndex::class)->name('trash.index');
     });

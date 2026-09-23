@@ -52,16 +52,16 @@ class Dashboard extends Component
         $mrKonteks = MrKonteks::where('layanan_id', $layanan->id)->first();
         $mpnKonteks = MpnKonteks::where('layanan_id', $layanan->id)->first();
 
-        $badgeCount = 0;
+        $mrBadgeCount = 0; // Replace with actual logic for MR if needed
+        $mpnBadgeCount = $mpnKonteks ? $mpnKonteks->pengetahuan()->where('apakah_terdokumentasi', false)->count() : 0;
 
         return view('livewire.dashboard', [
             'layanan'    => $layanan,
-            'badgeCount' => $badgeCount,
-            'modules'    => $this->getModules($layanan, $mrKonteks, $mpnKonteks),
+            'modules'    => $this->getModules($layanan, $mrKonteks, $mpnKonteks, $mrBadgeCount, $mpnBadgeCount),
         ]);
     }
 
-    private function getModules(Layanan $layanan, ?MrKonteks $mrKonteks, ?MpnKonteks $mpnKonteks): array
+    private function getModules(Layanan $layanan, ?MrKonteks $mrKonteks, ?MpnKonteks $mpnKonteks, int $mrBadgeCount, int $mpnBadgeCount): array
     {
         $moduleTint = ['module-1', 'module-2', 'module-3', 'module-4', 'module-5'];
 
@@ -75,6 +75,7 @@ class Dashboard extends Component
                 'active'      => true,
                 'filled'      => (bool) $mrKonteks,
                 'tint'        => $moduleTint[0],
+                'badge_count' => $mrBadgeCount,
             ],
             [
                 'name'        => 'Manajemen Pengetahuan',
@@ -85,6 +86,7 @@ class Dashboard extends Component
                 'active'      => true,
                 'filled'      => (bool) $mpnKonteks,
                 'tint'        => $moduleTint[1],
+                'badge_count' => $mpnBadgeCount,
             ],
             [
                 'name'        => 'Manajemen Perubahan',
