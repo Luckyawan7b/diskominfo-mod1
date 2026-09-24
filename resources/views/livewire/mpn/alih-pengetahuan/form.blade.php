@@ -15,11 +15,7 @@
         </div>
     </div>
 
-    @if (session('success'))
-        <div class="mb-4 px-4 py-3 rounded-lg bg-success-bg border border-success/30 text-success text-sm">
-            {{ session('success') }}
-        </div>
-    @endif
+
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         

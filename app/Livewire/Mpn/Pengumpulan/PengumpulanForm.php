@@ -17,6 +17,16 @@ class PengumpulanForm extends Component
     public ?MpnPengumpulan $pengumpulanModel = null;
     public bool $isNew = false;
 
+    // Dropdown options untuk Lokasi Penyimpanan Lain (sumber kebenaran dari dokumen Excel)
+    public array $lokasiPenyimpananOptions = [
+        'Database Manajemen Risiko',
+        'Database Manajemen Keberlangsungan',
+        'Database Manajemen Relasi Pengguna',
+        'Database Manajemen Perubahan',
+        'SIMPAN',
+        'Lainnya',
+    ];
+
     // Fields
     public ?int $revisi_dari_id = null;
     public string $id_pengetahuan = '';
@@ -24,7 +34,8 @@ class PengumpulanForm extends Component
     public string $unit_pengumpulan = '';
     public string $lokasi_penyimpanan_lain = '';
     public string $keterangan_lokasi_lainnya = '';
-    public string $status_publikasi_simpan = 'Disimpan';
+    public string $status_publikasi_simpan = 'Draft';       // Alur kerja SIMPAN
+    public ?string $visibilitas_dokumen = null;              // Audiens/visibilitas dokumen
     public ?int $ref_metode_pengolahan_id = null;
     public string $deskripsi_pengolahan = '';
     public string $tanggal_update_terakhir = '';
@@ -41,7 +52,7 @@ class PengumpulanForm extends Component
         $this->konteks = $konteks;
         $this->pengetahuan = $pengetahuan;
         $this->metodeList = RefMetodePengolahan::all();
-        
+
         $this->revisiList = $this->pengetahuan->pengumpulan()
             ->latest()
             ->get();
@@ -55,32 +66,69 @@ class PengumpulanForm extends Component
         } else {
             $this->isNew = true;
             $this->tanggal_pengumpulan = date('Y-m-d');
-            
+
+            // Auto-select latest revision if exists
+            if ($this->revisiList->count() > 0) {
+                $this->revisi_dari_id = $this->revisiList->first()->id;
+            }
+
+            $this->generateIdPengetahuan($this->revisi_dari_id);
+        }
+    }
+
+    public function updatedRevisiDariId($value): void
+    {
+        if ($this->isNew) {
+            $this->generateIdPengetahuan($value);
+        }
+    }
+
+    private function generateIdPengetahuan($revisiId = null): void
+    {
+        if (empty($revisiId)) {
             // Generate Auto ID Pengetahuan with formula: MRP-{alias}-{tahun}-001
             $alias = strtoupper(auth()->user()->alias ?: 'USER');
             $tahun = $this->konteks->tahun_penilaian;
             $prefix = "MRP-{$alias}-{$tahun}-";
-            
-            // Get the latest sequence for this prefix (including soft-deleted)
+
+            // Get the latest sequence for this prefix (including soft-deleted) that is NOT a revision
             $latestPengumpulan = MpnPengumpulan::withTrashed()
                 ->where('id_pengetahuan', 'like', $prefix . '%')
+                ->where('id_pengetahuan', 'not like', '%-REV%')
                 ->orderBy('id_pengetahuan', 'desc')
                 ->first();
 
             if ($latestPengumpulan) {
-                // Extract the sequence number from the end
                 $parts = explode('-', $latestPengumpulan->id_pengetahuan);
                 $lastSeq = (int) end($parts);
                 $newSeq = $lastSeq + 1;
             } else {
                 $newSeq = 1;
             }
-            
             $this->id_pengetahuan = $prefix . str_pad($newSeq, 3, '0', STR_PAD_LEFT);
+        } else {
+            // Ini adalah dokumen revisi, gunakan ID dasar dokumen asli ditambah -REV
+            $revisiTarget = MpnPengumpulan::withTrashed()->find($revisiId);
+            if ($revisiTarget) {
+                // Ekstrak ID dasar (buang teks -REV jika ada)
+                $baseId = explode('-REV', $revisiTarget->id_pengetahuan)[0];
 
-            // Auto-select latest revision if exists
-            if ($this->revisiList->count() > 0) {
-                $this->revisi_dari_id = $this->revisiList->first()->id;
+                // Cari semua dokumen yang berawalan BaseID-REV
+                $latestRev = MpnPengumpulan::withTrashed()
+                    ->where('id_pengetahuan', 'like', $baseId . '-REV%')
+                    ->orderByRaw("LENGTH(id_pengetahuan) DESC, id_pengetahuan DESC") // Agar -REV10 > -REV9
+                    ->first();
+
+                if ($latestRev) {
+                    // Ekstrak angka revisi terakhir
+                    $parts = explode('-REV', $latestRev->id_pengetahuan);
+                    $lastRevNum = (int) end($parts);
+                    $newRevNum = $lastRevNum + 1;
+                } else {
+                    $newRevNum = 1;
+                }
+                
+                $this->id_pengetahuan = $baseId . '-REV' . $newRevNum;
             }
         }
     }
@@ -94,7 +142,8 @@ class PengumpulanForm extends Component
         $this->unit_pengumpulan = $p->unit_pengumpulan ?? '';
         $this->lokasi_penyimpanan_lain = $p->lokasi_penyimpanan_lain ?? '';
         $this->keterangan_lokasi_lainnya = $p->keterangan_lokasi_lainnya ?? '';
-        $this->status_publikasi_simpan = $p->status_publikasi_simpan ?? 'Disimpan';
+        $this->status_publikasi_simpan = $p->status_publikasi_simpan ?? 'Draft';
+        $this->visibilitas_dokumen = $p->visibilitas_dokumen ?? null;
         $this->ref_metode_pengolahan_id = $p->ref_metode_pengolahan_id;
         $this->deskripsi_pengolahan = $p->deskripsi_pengolahan ?? '';
         $this->tanggal_update_terakhir = $p->tanggal_update_terakhir ?? '';
@@ -104,6 +153,17 @@ class PengumpulanForm extends Component
         $this->url = $p->url ?? '';
     }
 
+    /**
+     * Lifecycle hook: otomatis hapus keterangan jika pilihan bukan "Lainnya".
+     * Ini mencegah data lama/nyangkut tersimpan saat pengguna mengganti pilihan dropdown.
+     */
+    public function updatedLokasiPenyimpananLain(string $value): void
+    {
+        if ($value !== 'Lainnya') {
+            $this->keterangan_lokasi_lainnya = '';
+        }
+    }
+
     public function save(): void
     {
         if (auth()->user()->isAdmin()) {
@@ -111,9 +171,13 @@ class PengumpulanForm extends Component
         }
 
         $this->validate([
-            'id_pengetahuan' => 'required|string|max:100',
-            'tanggal_pengumpulan' => 'required|date',
-            'unit_pengumpulan' => 'required|string|max:191',
+            'id_pengetahuan'            => 'required|string|max:100',
+            'tanggal_pengumpulan'       => 'required|date',
+            'unit_pengumpulan'          => 'required|string|max:191',
+            'lokasi_penyimpanan_lain'   => ['nullable', 'in:' . implode(',', $this->lokasiPenyimpananOptions)],
+            'keterangan_lokasi_lainnya' => 'required_if:lokasi_penyimpanan_lain,Lainnya|nullable|string|max:500',
+            'status_publikasi_simpan'   => 'required|in:Draft,Ditolak,Dipublikasikan,Diarsipkan',
+            'visibilitas_dokumen'       => 'nullable|in:Publik,Internal',
         ]);
 
         $data = [
@@ -122,9 +186,13 @@ class PengumpulanForm extends Component
             'id_pengetahuan' => $this->id_pengetahuan,
             'tanggal_pengumpulan' => $this->tanggal_pengumpulan,
             'unit_pengumpulan' => $this->unit_pengumpulan,
-            'lokasi_penyimpanan_lain' => $this->lokasi_penyimpanan_lain ?: null,
-            'keterangan_lokasi_lainnya' => $this->keterangan_lokasi_lainnya ?: null,
+            'lokasi_penyimpanan_lain'   => $this->lokasi_penyimpanan_lain ?: null,
+            // Proteksi ganda: pastikan keterangan tidak tersimpan jika pilihan bukan "Lainnya"
+            'keterangan_lokasi_lainnya' => ($this->lokasi_penyimpanan_lain === 'Lainnya')
+                ? ($this->keterangan_lokasi_lainnya ?: null)
+                : null,
             'status_publikasi_simpan' => $this->status_publikasi_simpan,
+            'visibilitas_dokumen'     => $this->visibilitas_dokumen ?: null,
             'ref_metode_pengolahan_id' => $this->ref_metode_pengolahan_id ?: null,
             'deskripsi_pengolahan' => $this->deskripsi_pengolahan ?: null,
             'tanggal_update_terakhir' => $this->tanggal_update_terakhir ?: null,
@@ -147,7 +215,7 @@ class PengumpulanForm extends Component
     public function render()
     {
         $user = auth()->user();
-        
+
         $availableKonteks = MpnKonteks::where('layanan_id', $this->konteks->layanan_id)
             ->orderByDesc('tahun_penilaian')
             ->get();

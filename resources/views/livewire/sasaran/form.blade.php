@@ -25,11 +25,7 @@
     </div>
 
 
-    @if (session('success'))
-        <div class="mb-4 px-4 py-3 rounded-lg bg-success-bg border border-success/30 text-success text-sm">
-            {{ session('success') }}
-        </div>
-    @endif
+
     <p class="text-sm text-muted mb-5 max-w-2xl">
         Satu <span class="text-text-strong font-medium">Sasaran Pembangunan Nasional</span> mendukung pencapaian target
         kinerja

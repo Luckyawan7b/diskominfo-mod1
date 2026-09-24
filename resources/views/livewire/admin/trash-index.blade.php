@@ -30,17 +30,7 @@
         </div>
     </div>
 
-    {{-- Flash messages --}}
-    @if(session('success'))
-        <div class="mb-4 rounded-lg bg-emerald-500/10 border border-emerald-500/20 p-4 text-emerald-400 text-sm">
-            {{ session('success') }}
-        </div>
-    @endif
-    @if(session('error'))
-        <div class="mb-4 rounded-lg bg-red-500/10 border border-red-500/20 p-4 text-red-400 text-sm">
-            {{ session('error') }}
-        </div>
-    @endif
+
 
     {{-- Tabel Data Terhapus --}}
     <div class="rounded-xl border border-border bg-surface overflow-hidden">

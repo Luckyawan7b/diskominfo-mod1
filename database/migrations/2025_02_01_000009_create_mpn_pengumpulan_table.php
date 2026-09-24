@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('unit_pengumpulan')->nullable();
             $table->string('lokasi_penyimpanan_lain')->nullable();
             $table->text('keterangan_lokasi_lainnya')->nullable();
-            $table->enum('status_publikasi_simpan', ['Draft','Ditolak', 'Dipublikasikan','Diarsipkan'])->nullable();
+            $table->enum('status_publikasi_simpan', ['Draft', 'Ditolak', 'Dipublikasikan', 'Diarsipkan'])->nullable();
             $table->foreignId('ref_metode_pengolahan_id')->nullable()->constrained('ref_metode_pengolahan')->nullOnDelete();
             $table->text('deskripsi_pengolahan')->nullable();
             $table->date('tanggal_update_terakhir')->nullable();

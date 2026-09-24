@@ -7,10 +7,12 @@
             <p class="text-sm text-muted mt-1">Formulir 2: Database Pengumpulan & Pengolahan Pengetahuan</p>
         </div>
         <div class="flex gap-3">
-            <a href="{{ route('mpn.pengumpulan.index', ['konteks' => $konteks, 'pengetahuan' => $pengetahuan]) }}" wire:navigate
+            <a href="{{ route('mpn.pengumpulan.index', ['konteks' => $konteks, 'pengetahuan' => $pengetahuan]) }}"
+                wire:navigate
                 class="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg border border-border text-sm text-text hover:bg-surface-soft transition-colors">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                 </svg>
                 Batal
             </a>
@@ -20,15 +22,18 @@
     <form wire:submit.prevent="save">
         {{-- Tabs Navigation (Simulated) --}}
         <div class="flex items-center gap-1 mb-6 border-b border-border overflow-x-auto no-scrollbar">
-            <button type="button" class="whitespace-nowrap px-4 py-3 text-sm font-semibold border-b-2 border-primary text-primary transition-colors">
+            <button type="button"
+                class="whitespace-nowrap px-4 py-3 text-sm font-semibold border-b-2 border-primary text-primary transition-colors">
                 1. Detail Dokumen & Revisi
             </button>
-            @if(!$isNew)
-                <a href="{{ route('mpn.pemanfaatan.form', ['konteks' => $konteks, 'pengetahuan' => $pengetahuan, 'pengumpulan' => $pengumpulanModel]) }}" wire:navigate
+            @if (!$isNew)
+                <a href="{{ route('mpn.pemanfaatan.form', ['konteks' => $konteks, 'pengetahuan' => $pengetahuan, 'pengumpulan' => $pengumpulanModel]) }}"
+                    wire:navigate
                     class="whitespace-nowrap px-4 py-3 text-sm font-semibold border-b-2 border-transparent text-muted hover:text-text hover:border-border transition-colors">
                     2. Pemanfaatan & Rating
                 </a>
-                <a href="{{ route('mpn.alih-pengetahuan.form', ['konteks' => $konteks, 'pengetahuan' => $pengetahuan, 'pengumpulan' => $pengumpulanModel]) }}" wire:navigate
+                <a href="{{ route('mpn.alih-pengetahuan.form', ['konteks' => $konteks, 'pengetahuan' => $pengetahuan, 'pengumpulan' => $pengumpulanModel]) }}"
+                    wire:navigate
                     class="whitespace-nowrap px-4 py-3 text-sm font-semibold border-b-2 border-transparent text-muted hover:text-text hover:border-border transition-colors">
                     3. Alih Pengetahuan
                 </a>
@@ -47,10 +52,11 @@
         </div>
 
         <div class="space-y-6">
-            
+
             {{-- Bagian A: Metadata Utama --}}
             <div class="rounded-xl border border-border bg-surface p-6">
-                <h3 class="text-sm font-bold text-text-strong uppercase tracking-wider mb-5 pb-3 border-b border-border">
+                <h3
+                    class="text-sm font-bold text-text-strong uppercase tracking-wider mb-5 pb-3 border-b border-border">
                     Bagian A (Formulir 2): Metadata Utama
                 </h3>
 
@@ -60,9 +66,12 @@
                         <label class="block text-xs font-semibold text-text uppercase tracking-wider mb-1">
                             ID Pengetahuan <span class="text-danger">*</span>
                         </label>
-                        <input type="text" wire:model="id_pengetahuan" {{ !$isEditable ? 'disabled' : '' }}
-                            class="w-full rounded-lg border border-border bg-field px-4 py-2.5 text-text text-sm focus:outline-none focus:ring-2 focus:ring-accent disabled:opacity-50">
-                        @error('id_pengetahuan') <p class="mt-1 text-sm text-danger">{{ $message }}</p> @enderror
+                        <input type="text" wire:model="id_pengetahuan" 
+                            {{ (!$isEditable || $revisi_dari_id) ? 'readonly' : '' }}
+                            class="w-full rounded-lg border border-border bg-field px-4 py-2.5 text-text text-sm focus:outline-none focus:ring-2 focus:ring-accent disabled:opacity-50 read-only:opacity-70 read-only:bg-surface-soft read-only:cursor-not-allowed">
+                        @error('id_pengetahuan')
+                            <p class="mt-1 text-sm text-danger">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     {{-- Tanggal Pengumpulan --}}
@@ -72,7 +81,9 @@
                         </label>
                         <input type="date" wire:model="tanggal_pengumpulan" {{ !$isEditable ? 'disabled' : '' }}
                             class="w-full rounded-lg border border-border bg-field px-4 py-2.5 text-text text-sm focus:outline-none focus:ring-2 focus:ring-accent disabled:opacity-50">
-                        @error('tanggal_pengumpulan') <p class="mt-1 text-sm text-danger">{{ $message }}</p> @enderror
+                        @error('tanggal_pengumpulan')
+                            <p class="mt-1 text-sm text-danger">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     {{-- Unit Pengumpulan --}}
@@ -83,30 +94,82 @@
                         <input type="text" wire:model="unit_pengumpulan" {{ !$isEditable ? 'disabled' : '' }}
                             class="w-full rounded-lg border border-border bg-field px-4 py-2.5 text-text text-sm focus:outline-none focus:ring-2 focus:ring-accent disabled:opacity-50"
                             placeholder="Contoh: Bidang E-Gov">
-                        @error('unit_pengumpulan') <p class="mt-1 text-sm text-danger">{{ $message }}</p> @enderror
+                        @error('unit_pengumpulan')
+                            <p class="mt-1 text-sm text-danger">{{ $message }}</p>
+                        @enderror
                     </div>
 
-                    {{-- Status Publikasi --}}
-                    <div>
-                        <label class="block text-xs font-semibold text-text uppercase tracking-wider mb-1">
-                            Status <span class="text-danger">*</span>
-                        </label>
-                        <select wire:model="status_publikasi_simpan" {{ !$isEditable ? 'disabled' : '' }}
-                            class="w-full rounded-lg border border-border bg-field px-4 py-2.5 text-text text-sm focus:outline-none focus:ring-2 focus:ring-accent disabled:opacity-50">
-                            <option value="Disimpan">Disimpan Saja</option>
-                            <option value="Publikasi">Publikasi (Tersedia Umum)</option>
-                        </select>
+                    {{-- Status SIMPAN & Visibilitas (2 field sejajar) --}}
+                    <div class="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                        {{-- Status Alur Kerja SIMPAN --}}
+                        <div>
+                            <label class="block text-xs font-semibold text-text uppercase tracking-wider mb-1">
+                                Status di SIMPAN PemDi <span class="text-danger">*</span>
+                            </label>
+                            <select wire:model="status_publikasi_simpan" {{ !$isEditable ? 'disabled' : '' }}
+                                class="w-full rounded-lg border border-border bg-field px-4 py-2.5 text-text text-sm focus:outline-none focus:ring-2 focus:ring-accent disabled:opacity-50">
+                                <option value="Draft">Draft / Belum Dipublikasikan</option>
+                                <option value="Ditolak">Ditolak</option>
+                                <option value="Dipublikasikan">Dipublikasikan</option>
+                                <option value="Diarsipkan">Diarsipkan</option>
+                            </select>
+                            @error('status_publikasi_simpan')
+                                <p class="mt-1 text-sm text-danger">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        {{-- Visibilitas / Audiens Dokumen --}}
+                        <div>
+                            <label class="block text-xs font-semibold text-text uppercase tracking-wider mb-1">
+                                Visibilitas Dokumen
+                            </label>
+                            <select wire:model="visibilitas_dokumen" {{ !$isEditable ? 'disabled' : '' }}
+                                class="w-full rounded-lg border border-border bg-field px-4 py-2.5 text-text text-sm focus:outline-none focus:ring-2 focus:ring-accent disabled:opacity-50">
+                                <option value="">-- Pilih Visibilitas --</option>
+                                <option value="Publik">Publik (Tersedia Umum)</option>
+                                <option value="Internal">Internal (Terbatas)</option>
+                            </select>
+                            @error('visibilitas_dokumen')
+                                <p class="mt-1 text-sm text-danger">{{ $message }}</p>
+                            @enderror
+                        </div>
+
                     </div>
+
 
                     {{-- Lokasi Penyimpanan Lain --}}
                     <div>
                         <label class="block text-xs font-semibold text-text uppercase tracking-wider mb-1">
                             Lokasi Penyimpanan Lain
                         </label>
-                        <input type="text" wire:model="lokasi_penyimpanan_lain" {{ !$isEditable ? 'disabled' : '' }}
-                            class="w-full rounded-lg border border-border bg-field px-4 py-2.5 text-text text-sm focus:outline-none focus:ring-2 focus:ring-accent disabled:opacity-50"
-                            placeholder="Contoh: Rak Buku A2">
+                        <select wire:model.live="lokasi_penyimpanan_lain" {{ !$isEditable ? 'disabled' : '' }}
+                            class="w-full rounded-lg border border-border bg-field px-4 py-2.5 text-text text-sm focus:outline-none focus:ring-2 focus:ring-accent disabled:opacity-50">
+                            <option value="">-- Pilih Lokasi --</option>
+                            @foreach ($lokasiPenyimpananOptions as $opt)
+                                <option value="{{ $opt }}">{{ $opt }}</option>
+                            @endforeach
+                        </select>
+                        @error('lokasi_penyimpanan_lain')
+                            <span class="text-xs text-danger mt-1 block">{{ $message }}</span>
+                        @enderror
                     </div>
+
+                    {{-- Keterangan Lokasi Lainnya (muncul kondisional saat pilihan = "Lainnya") --}}
+                    @if ($lokasi_penyimpanan_lain === 'Lainnya')
+                        <div>
+                            <label class="block text-xs font-semibold text-text uppercase tracking-wider mb-1">
+                                Keterangan Lokasi Lainnya <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" wire:model="keterangan_lokasi_lainnya"
+                                {{ !$isEditable ? 'disabled' : '' }}
+                                class="w-full rounded-lg border border-border bg-field px-4 py-2.5 text-text text-sm focus:outline-none focus:ring-2 focus:ring-accent disabled:opacity-50"
+                                placeholder="Contoh: Rak Buku A2, Lemari Arsip Lantai 3, dll.">
+                            @error('keterangan_lokasi_lainnya')
+                                <span class="text-xs text-danger mt-1 block">{{ $message }}</span>
+                            @enderror
+                        </div>
+                    @endif
 
                     {{-- URL/Link Dokumen --}}
                     <div>
@@ -122,7 +185,8 @@
 
             {{-- Bagian B: Detail Konten & Revisi --}}
             <div class="rounded-xl border border-border bg-surface p-6">
-                <h3 class="text-sm font-bold text-text-strong uppercase tracking-wider mb-5 pb-3 border-b border-border">
+                <h3
+                    class="text-sm font-bold text-text-strong uppercase tracking-wider mb-5 pb-3 border-b border-border">
                     Bagian B: Detail Konten & Revisi
                 </h3>
 
@@ -132,13 +196,16 @@
                         <label class="block text-xs font-semibold text-text uppercase tracking-wider mb-1">
                             Revisi Dari (Opsional)
                         </label>
-                        <p class="text-xs text-muted mb-2">Pilih riwayat pengumpulan sebelumnya jika ini adalah versi pembaruan.</p>
-                        <select wire:model="revisi_dari_id" {{ !$isEditable ? 'disabled' : '' }}
+                        <p class="text-xs text-muted mb-2">Pilih riwayat pengumpulan sebelumnya jika ini adalah versi
+                            pembaruan.</p>
+                        <select wire:model.live="revisi_dari_id" {{ !$isEditable ? 'disabled' : '' }}
                             class="w-full rounded-lg border border-border bg-field px-4 py-2.5 text-text text-sm focus:outline-none focus:ring-2 focus:ring-accent disabled:opacity-50">
                             <option value="">-- Versi Awal (Bukan Revisi) --</option>
-                            @foreach($revisiList as $rev)
-                                @if($isNew || $rev->id !== $pengumpulanModel->id)
-                                    <option value="{{ $rev->id }}">{{ $rev->id_pengetahuan }} ({{ \Carbon\Carbon::parse($rev->tanggal_pengumpulan)->format('d/m/Y') }})</option>
+                            @foreach ($revisiList as $rev)
+                                @if ($isNew || $rev->id !== $pengumpulanModel->id)
+                                    <option value="{{ $rev->id }}">{{ $rev->id_pengetahuan }}
+                                        ({{ \Carbon\Carbon::parse($rev->tanggal_pengumpulan)->format('d/m/Y') }})
+                                    </option>
                                 @endif
                             @endforeach
                         </select>
@@ -146,21 +213,24 @@
 
                     {{-- Penulis --}}
                     <div>
-                        <label class="block text-xs font-semibold text-text uppercase tracking-wider mb-1">Penulis</label>
+                        <label
+                            class="block text-xs font-semibold text-text uppercase tracking-wider mb-1">Penulis</label>
                         <input type="text" wire:model="penulis" {{ !$isEditable ? 'disabled' : '' }}
                             class="w-full rounded-lg border border-border bg-field px-4 py-2.5 text-text text-sm focus:outline-none focus:ring-2 focus:ring-accent disabled:opacity-50">
                     </div>
 
                     {{-- Kontributor --}}
                     <div>
-                        <label class="block text-xs font-semibold text-text uppercase tracking-wider mb-1">Kontributor</label>
+                        <label
+                            class="block text-xs font-semibold text-text uppercase tracking-wider mb-1">Kontributor</label>
                         <input type="text" wire:model="kontributor" {{ !$isEditable ? 'disabled' : '' }}
                             class="w-full rounded-lg border border-border bg-field px-4 py-2.5 text-text text-sm focus:outline-none focus:ring-2 focus:ring-accent disabled:opacity-50">
                     </div>
 
                     {{-- Label Tags --}}
                     <div class="md:col-span-2">
-                        <label class="block text-xs font-semibold text-text uppercase tracking-wider mb-1">Label / Tags</label>
+                        <label class="block text-xs font-semibold text-text uppercase tracking-wider mb-1">Label /
+                            Tags</label>
                         <p class="text-xs text-muted mb-2">Pisahkan dengan koma.</p>
                         <input type="text" wire:model="label_tags" {{ !$isEditable ? 'disabled' : '' }}
                             class="w-full rounded-lg border border-border bg-field px-4 py-2.5 text-text text-sm focus:outline-none focus:ring-2 focus:ring-accent disabled:opacity-50"
@@ -169,11 +239,12 @@
 
                     {{-- Metode Pengolahan --}}
                     <div>
-                        <label class="block text-xs font-semibold text-text uppercase tracking-wider mb-1">Metode Pengolahan (Opsional)</label>
+                        <label class="block text-xs font-semibold text-text uppercase tracking-wider mb-1">Metode
+                            Pengolahan (Opsional)</label>
                         <select wire:model="ref_metode_pengolahan_id" {{ !$isEditable ? 'disabled' : '' }}
                             class="w-full rounded-lg border border-border bg-field px-4 py-2.5 text-text text-sm focus:outline-none focus:ring-2 focus:ring-accent disabled:opacity-50">
                             <option value="">-- Pilih Metode --</option>
-                            @foreach($metodeList as $metode)
+                            @foreach ($metodeList as $metode)
                                 <option value="{{ $metode->id }}">{{ $metode->nama }}</option>
                             @endforeach
                         </select>
@@ -181,20 +252,22 @@
 
                     {{-- Tanggal Update Terakhir --}}
                     <div>
-                        <label class="block text-xs font-semibold text-text uppercase tracking-wider mb-1">Tanggal Update Terakhir (Pada Dokumen Asli)</label>
-                        <input type="date" wire:model="tanggal_update_terakhir" {{ !$isEditable ? 'disabled' : '' }}
+                        <label class="block text-xs font-semibold text-text uppercase tracking-wider mb-1">Tanggal
+                            Update Terakhir (Pada Dokumen Asli)</label>
+                        <input type="date" wire:model="tanggal_update_terakhir"
+                            {{ !$isEditable ? 'disabled' : '' }}
                             class="w-full rounded-lg border border-border bg-field px-4 py-2.5 text-text text-sm focus:outline-none focus:ring-2 focus:ring-accent disabled:opacity-50">
                     </div>
                 </div>
             </div>
 
-            @if($isEditable)
+            @if ($isEditable)
                 <div class="flex justify-end gap-3 mt-6">
-                    <button type="submit"
-                        wire:loading.attr="disabled"
+                    <button type="submit" wire:loading.attr="disabled"
                         class="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-primary hover:bg-primary-dark text-sm font-semibold text-white shadow-lg transition-all disabled:opacity-50">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M5 13l4 4L19 7" />
                         </svg>
                         Simpan Data
                     </button>

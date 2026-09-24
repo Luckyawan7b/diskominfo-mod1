@@ -22,6 +22,7 @@ class MpnPengumpulan extends Model
         'lokasi_penyimpanan_lain',
         'keterangan_lokasi_lainnya',
         'status_publikasi_simpan',
+        'visibilitas_dokumen',
         'ref_metode_pengolahan_id',
         'deskripsi_pengolahan',
         'tanggal_update_terakhir',

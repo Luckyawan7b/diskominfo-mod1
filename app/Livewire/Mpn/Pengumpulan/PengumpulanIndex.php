@@ -42,7 +42,7 @@ class PengumpulanIndex extends Component
     {
         // Get all pengumpulan for this pengetahuan, order by latest
         $pengumpulanList = $this->pengetahuan->pengumpulan()
-            ->with(['revisiDari', 'creator', 'metodePengolahan'])
+            ->with(['revisiDari', 'metodePengolahan'])
             ->latest()
             ->get();
 

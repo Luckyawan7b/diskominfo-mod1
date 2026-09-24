@@ -53,7 +53,8 @@ class Dashboard extends Component
         $mpnKonteks = MpnKonteks::where('layanan_id', $layanan->id)->first();
 
         $mrBadgeCount = 0; // Replace with actual logic for MR if needed
-        $mpnBadgeCount = $mpnKonteks ? $mpnKonteks->pengetahuan()->where('apakah_terdokumentasi', false)->count() : 0;
+        $mpnBadgeCount = 0;
+        // $mpnBadgeCount = $mpnKonteks ? $mpnKonteks->pengetahuan()->where('apakah_terdokumentasi', false)->count() : 0;
 
         return view('livewire.dashboard', [
             'layanan'    => $layanan,

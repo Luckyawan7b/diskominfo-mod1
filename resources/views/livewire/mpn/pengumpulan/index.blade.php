@@ -24,16 +24,7 @@
         </div>
     </div>
 
-    @if (session('success'))
-        <div class="mb-4 px-4 py-3 rounded-lg bg-success-bg border border-success/30 text-success text-sm">
-            {{ session('success') }}
-        </div>
-    @endif
-    @if (session('error'))
-        <div class="mb-4 px-4 py-3 rounded-lg bg-danger-bg border border-danger/30 text-danger text-sm">
-            {{ session('error') }}
-        </div>
-    @endif
+
 
     {{-- Timeline Riwayat --}}
     <div class="relative border-l-2 border-border ml-4 md:ml-6 py-4 space-y-8">
@@ -50,10 +41,22 @@
                                 <h3 class="text-sm font-bold text-text-strong">
                                     {{ \Carbon\Carbon::parse($item->tanggal_pengumpulan)->translatedFormat('d F Y') }}
                                 </h3>
-                                @if($item->status_publikasi_simpan === 'Publikasi')
-                                    <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-success-bg text-success border border-success/30">Publikasi</span>
-                                @else
-                                    <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-warning-bg text-warning border border-warning/30">Disimpan</span>
+                                {{-- Badge: Status Alur Kerja SIMPAN (4 state) --}}
+                                @if($item->status_publikasi_simpan === 'Dipublikasikan')
+                                    <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-success-bg text-success border border-success/30">Dipublikasikan</span>
+                                @elseif($item->status_publikasi_simpan === 'Draft')
+                                    <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-warning-bg text-warning border border-warning/30">Draft</span>
+                                @elseif($item->status_publikasi_simpan === 'Ditolak')
+                                    <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-danger-bg text-danger border border-danger/30">Ditolak</span>
+                                @elseif($item->status_publikasi_simpan === 'Diarsipkan')
+                                    <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-surface-soft text-muted border border-border">Diarsipkan</span>
+                                @endif
+
+                                {{-- Badge: Visibilitas Dokumen --}}
+                                @if($item->visibilitas_dokumen === 'Publik')
+                                    <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-success-bg text-success border border-success/30">Publik</span>
+                                @elseif($item->visibilitas_dokumen === 'Internal')
+                                    <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-surface-soft text-muted border border-border">Internal</span>
                                 @endif
                                 
                                 @if($i === 0)

@@ -16,11 +16,7 @@
         </a>
     </div>
 
-    @if(session('success'))
-        <div class="mb-4 px-4 py-3 rounded-lg bg-success/10 border border-success/30 text-success text-sm">
-            {{ session('success') }}
-        </div>
-    @endif
+
 
     <p class="text-sm text-muted mb-5 max-w-2xl">
         Setiap <span class="text-text-strong font-medium">Indikator Capaian</span> merekam kondisi <em>as-is</em> dan target
