@@ -30,6 +30,7 @@ class PengumpulanForm extends Component
     // Fields
     public ?int $revisi_dari_id = null;
     public string $id_pengetahuan = '';
+    public string $nama_pengetahuan = '';
     public string $tanggal_pengumpulan = '';
     public string $unit_pengumpulan = '';
     public string $lokasi_penyimpanan_lain = '';
@@ -65,7 +66,6 @@ class PengumpulanForm extends Component
             $this->fillForm();
         } else {
             $this->isNew = true;
-            $this->tanggal_pengumpulan = date('Y-m-d');
 
             // Auto-select latest revision if exists
             if ($this->revisiList->count() > 0) {
@@ -73,6 +73,18 @@ class PengumpulanForm extends Component
             }
 
             $this->generateIdPengetahuan($this->revisi_dari_id);
+
+            // Auto-fill semua field: dari versi induk jika REV, atau dari default kosong
+            if ($this->revisi_dari_id) {
+                $induk = MpnPengumpulan::find($this->revisi_dari_id);
+                if ($induk) {
+                    $this->fillFromInduk($induk);
+                } else {
+                    $this->resetFieldsToDefault();
+                }
+            } else {
+                $this->resetFieldsToDefault();
+            }
         }
     }
 
@@ -80,7 +92,71 @@ class PengumpulanForm extends Component
     {
         if ($this->isNew) {
             $this->generateIdPengetahuan($value);
+
+            // Saat NEW: auto-fill semua field dari versi induk, atau reset ke default
+            if ($value) {
+                $induk = MpnPengumpulan::find($value);
+                if ($induk) {
+                    $this->fillFromInduk($induk);
+                } else {
+                    $this->resetFieldsToDefault();
+                }
+            } else {
+                $this->resetFieldsToDefault();
+            }
+        } else {
+            // Saat EDIT: hanya perbarui nama_pengetahuan (field lain bebas diedit)
+            if ($value) {
+                $induk = MpnPengumpulan::find($value);
+                $this->nama_pengetahuan = $induk?->nama_pengetahuan
+                    ?? $this->pengetahuan->nama_pengetahuan
+                    ?? '';
+            } else {
+                $this->nama_pengetahuan = $this->pengetahuan->nama_pengetahuan ?? '';
+            }
         }
+    }
+
+    /**
+     * Isi semua field dari versi induk (sumber: revisi_dari_id).
+     * Dipanggil hanya saat membuat data baru (isNew = true).
+     */
+    private function fillFromInduk(MpnPengumpulan $induk): void
+    {
+        $this->nama_pengetahuan          = $induk->nama_pengetahuan ?? $this->pengetahuan->nama_pengetahuan ?? '';
+        $this->unit_pengumpulan          = $induk->unit_pengumpulan ?? '';
+        $this->tanggal_pengumpulan       = $induk->tanggal_pengumpulan ?? date('Y-m-d');
+        $this->status_publikasi_simpan   = $induk->status_publikasi_simpan ?? 'Draft';
+        $this->visibilitas_dokumen       = $induk->visibilitas_dokumen;
+        $this->lokasi_penyimpanan_lain   = $induk->lokasi_penyimpanan_lain ?? '';
+        $this->keterangan_lokasi_lainnya = $induk->keterangan_lokasi_lainnya ?? '';
+        $this->ref_metode_pengolahan_id  = $induk->ref_metode_pengolahan_id;
+        $this->tanggal_update_terakhir   = $induk->tanggal_update_terakhir ?? '';
+        $this->penulis                   = $induk->penulis ?? '';
+        $this->label_tags                = $induk->label_tags ?? '';
+        $this->kontributor               = $induk->kontributor ?? '';
+        $this->url                       = $induk->url ?? '';
+    }
+
+    /**
+     * Reset semua field ke nilai kosong/default.
+     * Dipanggil saat dropdown "Revisi Dari" dikosongkan pada data baru.
+     */
+    private function resetFieldsToDefault(): void
+    {
+        $this->nama_pengetahuan          = $this->pengetahuan->nama_pengetahuan ?? '';
+        $this->unit_pengumpulan          = '';
+        $this->tanggal_pengumpulan       = date('Y-m-d');
+        $this->status_publikasi_simpan   = 'Draft';
+        $this->visibilitas_dokumen       = null;
+        $this->lokasi_penyimpanan_lain   = '';
+        $this->keterangan_lokasi_lainnya = '';
+        $this->ref_metode_pengolahan_id  = null;
+        $this->tanggal_update_terakhir   = '';
+        $this->penulis                   = '';
+        $this->label_tags                = '';
+        $this->kontributor               = '';
+        $this->url                       = '';
     }
 
     private function generateIdPengetahuan($revisiId = null): void
@@ -154,6 +230,10 @@ class PengumpulanForm extends Component
         $p = $this->pengumpulanModel;
         $this->revisi_dari_id = $p->revisi_dari_id;
         $this->id_pengetahuan = $p->id_pengetahuan ?? '';
+        // Fallback ke nama Form 1 untuk data lama yang belum ter-backfill
+        $this->nama_pengetahuan = $p->nama_pengetahuan
+            ?? $this->pengetahuan->nama_pengetahuan
+            ?? '';
         $this->tanggal_pengumpulan = $p->tanggal_pengumpulan ?? '';
         $this->unit_pengumpulan = $p->unit_pengumpulan ?? '';
         $this->lokasi_penyimpanan_lain = $p->lokasi_penyimpanan_lain ?? '';
@@ -197,20 +277,25 @@ class PengumpulanForm extends Component
                     ->whereNull('deleted_at')
                     ->ignore($this->pengumpulanModel?->id),
             ],
+            'nama_pengetahuan'          => 'required|string|max:255',
             'tanggal_pengumpulan'       => 'required|date',
             'unit_pengumpulan'          => 'required|string|max:191',
             'lokasi_penyimpanan_lain'   => ['nullable', 'in:' . implode(',', $this->lokasiPenyimpananOptions)],
             'keterangan_lokasi_lainnya' => 'required_if:lokasi_penyimpanan_lain,Lainnya|nullable|string|max:500',
             'status_publikasi_simpan'   => 'required|in:Draft,Ditolak,Dipublikasikan,Diarsipkan',
             'visibilitas_dokumen'       => 'nullable|in:Publik,Internal',
+            'tanggal_update_terakhir'   => 'required|date',
         ], [
-            'id_pengetahuan.unique' => 'ID Pengetahuan ini sudah digunakan oleh data aktif lain. Silakan generate ulang.',
+            'id_pengetahuan.unique'         => 'ID Pengetahuan ini sudah digunakan oleh data aktif lain. Silakan generate ulang.',
+            'nama_pengetahuan.required'     => 'Nama pengetahuan wajib diisi.',
+            'tanggal_update_terakhir.required' => 'Tanggal update terakhir (pada dokumen asli) wajib diisi.',
         ]);
 
         $data = [
             'mpn_pengetahuan_id' => $this->pengetahuan->id,
             'revisi_dari_id' => $this->revisi_dari_id ?: null,
             'id_pengetahuan' => $this->id_pengetahuan,
+            'nama_pengetahuan' => $this->nama_pengetahuan,
             'tanggal_pengumpulan' => $this->tanggal_pengumpulan,
             'unit_pengumpulan' => $this->unit_pengumpulan,
             'lokasi_penyimpanan_lain'   => $this->lokasi_penyimpanan_lain ?: null,

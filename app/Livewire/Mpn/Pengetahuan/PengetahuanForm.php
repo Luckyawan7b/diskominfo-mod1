@@ -100,7 +100,7 @@ class PengetahuanForm extends Component
     {
         // Jika diubah menjadi "Ya", reset form rencana dokumentasi
         if ($value) {
-            $this->target_tahun_ini = null;
+            $this->target_tahun_ini = false;
             $this->pemilik_pengetahuan = null;
             $this->tipe_teks = false;
             $this->tipe_gambar = false;

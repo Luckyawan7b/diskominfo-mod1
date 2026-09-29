@@ -17,6 +17,7 @@ class MpnPengumpulan extends Model
         'mpn_pengetahuan_id',
         'revisi_dari_id',
         'id_pengetahuan',
+        'nama_pengetahuan',
         'tanggal_pengumpulan',
         'unit_pengumpulan',
         'lokasi_penyimpanan_lain',

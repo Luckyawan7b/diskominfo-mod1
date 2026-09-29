@@ -18,7 +18,7 @@
 
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        
+
         {{-- Form Tambah Pemanfaatan --}}
         @if($isEditable)
             <div class="lg:col-span-1">
@@ -26,42 +26,42 @@
                     <h3 class="text-sm font-bold text-text-strong uppercase tracking-wider mb-4 pb-3 border-b border-border">
                         Catat Pemanfaatan Baru
                     </h3>
-                    
+
                     <form wire:submit.prevent="savePemanfaatan" class="space-y-4">
                         <div>
                             <label class="block text-xs font-semibold text-text uppercase tracking-wider mb-1">Tanggal <span class="text-danger">*</span></label>
                             <input type="date" wire:model="tanggal_pemanfaatan" required
                                 class="w-full rounded-lg border border-border bg-field px-3 py-2 text-text text-sm focus:outline-none focus:ring-2 focus:ring-accent">
                         </div>
-                        
+
                         <div>
                             <label class="block text-xs font-semibold text-text uppercase tracking-wider mb-1">Jenis Pengguna <span class="text-danger">*</span></label>
                             <select wire:model="jenis_pengguna" required
                                 class="w-full rounded-lg border border-border bg-field px-3 py-2 text-text text-sm focus:outline-none focus:ring-2 focus:ring-accent">
                                 <option value="Internal">Internal (Pegawai/Tim)</option>
-                                <option value="Eksternal">Eksternal (Masyarakat/Instansi Lain)</option>
+                                <option value="Publik">Publik (Masyarakat/Instansi Lain)</option>
                             </select>
                         </div>
-                        
+
                         <div>
                             <label class="block text-xs font-semibold text-text uppercase tracking-wider mb-1">Nama/Unit Pengguna <span class="text-danger">*</span></label>
                             <input type="text" wire:model="unit_pengguna" required placeholder="Contoh: Bidang Aptika"
                                 class="w-full rounded-lg border border-border bg-field px-3 py-2 text-text text-sm focus:outline-none focus:ring-2 focus:ring-accent">
                         </div>
-                        
+
                         <div>
                             <label class="block text-xs font-semibold text-text uppercase tracking-wider mb-1">Tujuan Pemanfaatan <span class="text-danger">*</span></label>
                             <x-textarea-auto wire:model="tujuan_pemanfaatan" required rows="2" placeholder="Contoh: Referensi pembuatan laporan" />
                         </div>
-                        
+
                         <div>
                             <label class="block text-xs font-semibold text-text uppercase tracking-wider mb-1">Rating (1-5)</label>
                             <div class="flex items-center gap-2" x-data="{ hoverRating: 0 }">
                                 @for($i = 1; $i <= 5; $i++)
                                     <label class="cursor-pointer" @mouseenter="hoverRating = {{ $i }}" @mouseleave="hoverRating = 0">
                                         <input type="radio" wire:model="rating" value="{{ $i }}" class="sr-only">
-                                        <svg class="w-7 h-7 transition-colors" 
-                                             :class="($wire.rating >= {{ $i }} || hoverRating >= {{ $i }}) ? 'text-warning' : 'text-border'" 
+                                        <svg class="w-7 h-7 transition-colors"
+                                             :class="($wire.rating >= {{ $i }} || hoverRating >= {{ $i }}) ? 'text-warning' : 'text-border'"
                                              fill="currentColor" viewBox="0 0 20 20">
                                             <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
                                         </svg>
@@ -71,7 +71,7 @@
                             </div>
                             <p class="text-[10px] text-muted mt-1">Rating digunakan untuk mengukur tingkat kebermanfaatan pengetahuan.</p>
                         </div>
-                        
+
                         <div class="pt-2">
                             <button type="submit"
                                 wire:loading.attr="disabled"
@@ -130,7 +130,7 @@
                                             @endfor
                                         </div>
                                     @endif
-                                    
+
                                     @if($isEditable)
                                         <button type="button"
                                             @click="$dispatch('confirm-action', {

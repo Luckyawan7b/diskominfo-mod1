@@ -39,7 +39,7 @@
                         <div>
                             <div class="flex items-center gap-2 mb-1">
                                 <h3 class="text-sm font-bold text-text-strong">
-                                    {{ \Carbon\Carbon::parse($item->tanggal_pengumpulan)->translatedFormat('d F Y') }}
+                                    {{ $item->nama_pengetahuan ?: $pengetahuan->nama_pengetahuan }}
                                 </h3>
                                 {{-- Badge: Status Alur Kerja SIMPAN (4 state) --}}
                                 @if($item->status_publikasi_simpan === 'Dipublikasikan')
@@ -63,7 +63,11 @@
                                     <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-info-bg text-info border border-info/30">Versi Terbaru</span>
                                 @endif
                             </div>
-                            <p class="text-xs text-muted">ID: {{ $item->id_pengetahuan }} | Unit: {{ $item->unit_pengumpulan }}</p>
+                            <p class="text-xs text-muted">
+                                {{ \Carbon\Carbon::parse($item->tanggal_pengumpulan)->translatedFormat('d F Y') }}
+                                &nbsp;·&nbsp; ID: {{ $item->id_pengetahuan }}
+                                &nbsp;·&nbsp; Unit: {{ $item->unit_pengumpulan }}
+                            </p>
                         </div>
                         <div class="flex gap-2">
                             <a href="{{ route('mpn.pengumpulan.form', ['konteks' => $konteks, 'pengetahuan' => $pengetahuan, 'pengumpulan' => $item->id]) }}" wire:navigate

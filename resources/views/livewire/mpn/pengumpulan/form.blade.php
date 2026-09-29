@@ -74,13 +74,39 @@
                         @enderror
                     </div>
 
+                    {{-- Nama Pengetahuan --}}
+                    <div>
+                        <label class="block text-xs font-semibold text-text uppercase tracking-wider mb-1">
+                            Nama Pengetahuan <span class="text-danger">*</span>
+                        </label>
+                        <input type="text" wire:model="nama_pengetahuan"
+                            {{ (!$isEditable || !$revisi_dari_id) ? 'readonly' : '' }}
+                            class="w-full rounded-lg border border-border bg-field px-4 py-2.5 text-text text-sm focus:outline-none focus:ring-2 focus:ring-accent disabled:opacity-50 read-only:opacity-70 read-only:bg-surface-soft read-only:cursor-not-allowed"
+                            placeholder="Nama pengetahuan pada versi ini">
+                        @error('nama_pengetahuan')
+                            <p class="mt-1 text-sm text-danger">{{ $message }}</p>
+                        @enderror
+                        {{-- Hint: referensi nama Form 1 --}}
+                        <p class="mt-1.5 text-[11px] text-muted">
+                            Nama pada Formulir 1:
+                            <span class="font-medium text-text">{{ $pengetahuan->nama_pengetahuan }}</span>
+                            @if ($revisi_dari_id && $nama_pengetahuan && $nama_pengetahuan !== $pengetahuan->nama_pengetahuan)
+                                <span class="ml-1.5 inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] font-bold bg-warning-bg text-warning border border-warning/30">
+                                    ✎ Diubah pada revisi ini
+                                </span>
+                            @endif
+                        </p>
+                    </div>
+
                     {{-- Tanggal Pengumpulan --}}
                     <div>
+
                         <label class="block text-xs font-semibold text-text uppercase tracking-wider mb-1">
                             Tanggal Pengumpulan <span class="text-danger">*</span>
                         </label>
-                        <input type="date" wire:model="tanggal_pengumpulan" {{ !$isEditable ? 'disabled' : '' }}
-                            class="w-full rounded-lg border border-border bg-field px-4 py-2.5 text-text text-sm focus:outline-none focus:ring-2 focus:ring-accent disabled:opacity-50">
+                        <input type="date" wire:model="tanggal_pengumpulan"
+                            {{ !$isEditable ? 'disabled' : (($isNew && $revisi_dari_id) ? 'readonly' : '') }}
+                            class="w-full rounded-lg border border-border bg-field px-4 py-2.5 text-text text-sm focus:outline-none focus:ring-2 focus:ring-accent disabled:opacity-50 read-only:opacity-70 read-only:bg-surface-soft read-only:cursor-not-allowed">
                         @error('tanggal_pengumpulan')
                             <p class="mt-1 text-sm text-danger">{{ $message }}</p>
                         @enderror
@@ -91,8 +117,9 @@
                         <label class="block text-xs font-semibold text-text uppercase tracking-wider mb-1">
                             Unit Pengumpulan <span class="text-danger">*</span>
                         </label>
-                        <input type="text" wire:model="unit_pengumpulan" {{ !$isEditable ? 'disabled' : '' }}
-                            class="w-full rounded-lg border border-border bg-field px-4 py-2.5 text-text text-sm focus:outline-none focus:ring-2 focus:ring-accent disabled:opacity-50"
+                        <input type="text" wire:model="unit_pengumpulan"
+                            {{ !$isEditable ? 'disabled' : (($isNew && $revisi_dari_id) ? 'readonly' : '') }}
+                            class="w-full rounded-lg border border-border bg-field px-4 py-2.5 text-text text-sm focus:outline-none focus:ring-2 focus:ring-accent disabled:opacity-50 read-only:opacity-70 read-only:bg-surface-soft read-only:cursor-not-allowed"
                             placeholder="Contoh: Bidang E-Gov">
                         @error('unit_pengumpulan')
                             <p class="mt-1 text-sm text-danger">{{ $message }}</p>
@@ -107,7 +134,8 @@
                             <label class="block text-xs font-semibold text-text uppercase tracking-wider mb-1">
                                 Status di SIMPAN PemDi <span class="text-danger">*</span>
                             </label>
-                            <select wire:model="status_publikasi_simpan" {{ !$isEditable ? 'disabled' : '' }}
+                            <select wire:model="status_publikasi_simpan"
+                                {{ (!$isEditable || ($isNew && $revisi_dari_id)) ? 'disabled' : '' }}
                                 class="w-full rounded-lg border border-border bg-field px-4 py-2.5 text-text text-sm focus:outline-none focus:ring-2 focus:ring-accent disabled:opacity-50">
                                 <option value="Draft">Draft / Belum Dipublikasikan</option>
                                 <option value="Ditolak">Ditolak</option>
@@ -124,7 +152,8 @@
                             <label class="block text-xs font-semibold text-text uppercase tracking-wider mb-1">
                                 Visibilitas Dokumen
                             </label>
-                            <select wire:model="visibilitas_dokumen" {{ !$isEditable ? 'disabled' : '' }}
+                            <select wire:model="visibilitas_dokumen"
+                                {{ (!$isEditable || ($isNew && $revisi_dari_id)) ? 'disabled' : '' }}
                                 class="w-full rounded-lg border border-border bg-field px-4 py-2.5 text-text text-sm focus:outline-none focus:ring-2 focus:ring-accent disabled:opacity-50">
                                 <option value="">-- Pilih Visibilitas --</option>
                                 <option value="Publik">Publik (Tersedia Umum)</option>
@@ -143,7 +172,8 @@
                         <label class="block text-xs font-semibold text-text uppercase tracking-wider mb-1">
                             Lokasi Penyimpanan Lain
                         </label>
-                        <select wire:model.live="lokasi_penyimpanan_lain" {{ !$isEditable ? 'disabled' : '' }}
+                        <select wire:model.live="lokasi_penyimpanan_lain"
+                            {{ (!$isEditable || ($isNew && $revisi_dari_id)) ? 'disabled' : '' }}
                             class="w-full rounded-lg border border-border bg-field px-4 py-2.5 text-text text-sm focus:outline-none focus:ring-2 focus:ring-accent disabled:opacity-50">
                             <option value="">-- Pilih Lokasi --</option>
                             @foreach ($lokasiPenyimpananOptions as $opt)
@@ -162,8 +192,8 @@
                                 Keterangan Lokasi Lainnya <span class="text-danger">*</span>
                             </label>
                             <input type="text" wire:model="keterangan_lokasi_lainnya"
-                                {{ !$isEditable ? 'disabled' : '' }}
-                                class="w-full rounded-lg border border-border bg-field px-4 py-2.5 text-text text-sm focus:outline-none focus:ring-2 focus:ring-accent disabled:opacity-50"
+                                {{ !$isEditable ? 'disabled' : (($isNew && $revisi_dari_id) ? 'readonly' : '') }}
+                                class="w-full rounded-lg border border-border bg-field px-4 py-2.5 text-text text-sm focus:outline-none focus:ring-2 focus:ring-accent disabled:opacity-50 read-only:opacity-70 read-only:bg-surface-soft read-only:cursor-not-allowed"
                                 placeholder="Contoh: Rak Buku A2, Lemari Arsip Lantai 3, dll.">
                             @error('keterangan_lokasi_lainnya')
                                 <span class="text-xs text-danger mt-1 block">{{ $message }}</span>
@@ -176,8 +206,9 @@
                         <label class="block text-xs font-semibold text-text uppercase tracking-wider mb-1">
                             URL / Tautan Akses
                         </label>
-                        <input type="url" wire:model="url" {{ !$isEditable ? 'disabled' : '' }}
-                            class="w-full rounded-lg border border-border bg-field px-4 py-2.5 text-text text-sm focus:outline-none focus:ring-2 focus:ring-accent disabled:opacity-50"
+                        <input type="url" wire:model="url"
+                            {{ !$isEditable ? 'disabled' : (($isNew && $revisi_dari_id) ? 'readonly' : '') }}
+                            class="w-full rounded-lg border border-border bg-field px-4 py-2.5 text-text text-sm focus:outline-none focus:ring-2 focus:ring-accent disabled:opacity-50 read-only:opacity-70 read-only:bg-surface-soft read-only:cursor-not-allowed"
                             placeholder="Contoh: https://drive.google.com/...">
                     </div>
                 </div>
@@ -215,16 +246,18 @@
                     <div>
                         <label
                             class="block text-xs font-semibold text-text uppercase tracking-wider mb-1">Penulis</label>
-                        <input type="text" wire:model="penulis" {{ !$isEditable ? 'disabled' : '' }}
-                            class="w-full rounded-lg border border-border bg-field px-4 py-2.5 text-text text-sm focus:outline-none focus:ring-2 focus:ring-accent disabled:opacity-50">
+                        <input type="text" wire:model="penulis"
+                            {{ !$isEditable ? 'disabled' : (($isNew && $revisi_dari_id) ? 'readonly' : '') }}
+                            class="w-full rounded-lg border border-border bg-field px-4 py-2.5 text-text text-sm focus:outline-none focus:ring-2 focus:ring-accent disabled:opacity-50 read-only:opacity-70 read-only:bg-surface-soft read-only:cursor-not-allowed">
                     </div>
 
                     {{-- Kontributor --}}
                     <div>
                         <label
                             class="block text-xs font-semibold text-text uppercase tracking-wider mb-1">Kontributor</label>
-                        <input type="text" wire:model="kontributor" {{ !$isEditable ? 'disabled' : '' }}
-                            class="w-full rounded-lg border border-border bg-field px-4 py-2.5 text-text text-sm focus:outline-none focus:ring-2 focus:ring-accent disabled:opacity-50">
+                        <input type="text" wire:model="kontributor"
+                            {{ !$isEditable ? 'disabled' : (($isNew && $revisi_dari_id) ? 'readonly' : '') }}
+                            class="w-full rounded-lg border border-border bg-field px-4 py-2.5 text-text text-sm focus:outline-none focus:ring-2 focus:ring-accent disabled:opacity-50 read-only:opacity-70 read-only:bg-surface-soft read-only:cursor-not-allowed">
                     </div>
 
                     {{-- Label Tags --}}
@@ -232,8 +265,9 @@
                         <label class="block text-xs font-semibold text-text uppercase tracking-wider mb-1">Label /
                             Tags</label>
                         <p class="text-xs text-muted mb-2">Pisahkan dengan koma.</p>
-                        <input type="text" wire:model="label_tags" {{ !$isEditable ? 'disabled' : '' }}
-                            class="w-full rounded-lg border border-border bg-field px-4 py-2.5 text-text text-sm focus:outline-none focus:ring-2 focus:ring-accent disabled:opacity-50"
+                        <input type="text" wire:model="label_tags"
+                            {{ !$isEditable ? 'disabled' : (($isNew && $revisi_dari_id) ? 'readonly' : '') }}
+                            class="w-full rounded-lg border border-border bg-field px-4 py-2.5 text-text text-sm focus:outline-none focus:ring-2 focus:ring-accent disabled:opacity-50 read-only:opacity-70 read-only:bg-surface-soft read-only:cursor-not-allowed"
                             placeholder="Contoh: panduan, sop, administrasi">
                     </div>
 
@@ -241,7 +275,8 @@
                     <div>
                         <label class="block text-xs font-semibold text-text uppercase tracking-wider mb-1">Metode
                             Pengolahan (Opsional)</label>
-                        <select wire:model="ref_metode_pengolahan_id" {{ !$isEditable ? 'disabled' : '' }}
+                        <select wire:model="ref_metode_pengolahan_id"
+                            {{ (!$isEditable || ($isNew && $revisi_dari_id)) ? 'disabled' : '' }}
                             class="w-full rounded-lg border border-border bg-field px-4 py-2.5 text-text text-sm focus:outline-none focus:ring-2 focus:ring-accent disabled:opacity-50">
                             <option value="">-- Pilih Metode --</option>
                             @foreach ($metodeList as $metode)
@@ -252,11 +287,15 @@
 
                     {{-- Tanggal Update Terakhir --}}
                     <div>
-                        <label class="block text-xs font-semibold text-text uppercase tracking-wider mb-1">Tanggal
-                            Update Terakhir (Pada Dokumen Asli)</label>
+                        <label class="block text-xs font-semibold text-text uppercase tracking-wider mb-1">
+                            Tanggal Update Terakhir (Pada Dokumen Asli) <span class="text-danger">*</span>
+                        </label>
                         <input type="date" wire:model="tanggal_update_terakhir"
                             {{ !$isEditable ? 'disabled' : '' }}
                             class="w-full rounded-lg border border-border bg-field px-4 py-2.5 text-text text-sm focus:outline-none focus:ring-2 focus:ring-accent disabled:opacity-50">
+                        @error('tanggal_update_terakhir')
+                            <p class="mt-1 text-sm text-danger">{{ $message }}</p>
+                        @enderror
                     </div>
                 </div>
             </div>
