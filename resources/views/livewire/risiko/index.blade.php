@@ -34,7 +34,7 @@
                     <th class="text-center px-4 py-3 text-xs font-semibold text-muted uppercase">D</th>
                     <th class="text-center px-4 py-3 text-xs font-semibold text-muted uppercase">Besaran</th>
                     <th class="text-center px-4 py-3 text-xs font-semibold text-muted uppercase">Prioritas</th>
-                    <th class="px-4 py-3 w-16"></th>
+                    <th class="text-right px-4 py-3 text-xs font-semibold text-muted uppercase">Aksi</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-border">
@@ -63,12 +63,13 @@
                         </td>
                         <td class="px-4 py-3 text-center text-text">{{ $r->prioritas_risiko ?? '-' }}</td>
                         <td class="px-4 py-3">
-                            <div class="flex items-center gap-3 justify-end">
-                                <a href="{{ route('risiko.form', [$konteks, $r]) }}" class="text-accent hover:text-primary transition-colors">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                            <div class="flex items-center gap-1 justify-end whitespace-nowrap">
+                                <a href="{{ route('risiko.form', [$konteks, $r]) }}" class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded text-accent hover:bg-accent/10 text-sm font-medium transition-colors">
+                                    {{ $isEditable ? 'Edit' : 'Lihat' }}
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                                 </a>
                                 @if($isEditable)
-                                    <button
+                                    <button type="button"
                                         @click="$dispatch('confirm-action', {
                                             wireId: $wire.id,
                                             action: 'deleteRisiko',
@@ -79,10 +80,9 @@
                                             confirmText: 'Ya, Hapus',
                                             type: 'danger'
                                         })"
-                                        class="text-danger hover:text-red-600 transition-colors cursor-pointer"
-                                        title="Hapus risiko ini"
+                                        class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded text-danger hover:bg-danger/10 text-sm font-medium transition-colors cursor-pointer"
                                     >
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                                        Hapus
                                     </button>
                                 @endif
                             </div>

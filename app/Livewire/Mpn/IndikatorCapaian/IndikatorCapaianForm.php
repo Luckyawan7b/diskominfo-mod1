@@ -119,10 +119,16 @@ class IndikatorCapaianForm extends Component
             return;
         }
 
-        $this->validateOnly("blocks.{$index}.indikator", [
+        $this->validate([
             "blocks.{$index}.indikator" => 'required|string|max:500',
+            "blocks.{$index}.kondisi_as_is" => 'nullable|numeric',
+            "blocks.{$index}.kondisi_to_be" => 'nullable|numeric',
+            "blocks.{$index}.evaluasi.realisasi" => 'nullable|numeric',
         ], [
             "blocks.{$index}.indikator.required" => 'Deskripsi indikator wajib diisi.',
+            "blocks.{$index}.kondisi_as_is.numeric" => 'Kondisi As-Is harus berupa angka.',
+            "blocks.{$index}.kondisi_to_be.numeric" => 'Kondisi To-Be harus berupa angka.',
+            "blocks.{$index}.evaluasi.realisasi.numeric" => 'Nilai Realisasi harus berupa angka.',
         ]);
 
         // Simpan indikator capaian

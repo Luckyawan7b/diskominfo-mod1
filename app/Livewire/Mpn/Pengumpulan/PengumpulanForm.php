@@ -91,7 +91,7 @@ class PengumpulanForm extends Component
             $tahun = $this->konteks->tahun_penilaian;
             $prefix = "MRP-{$alias}-{$tahun}-";
 
-            // Get the latest sequence for this prefix (including soft-deleted) that is NOT a revision
+            // Ambil sequence tertinggi yang pernah ada (aktif maupun soft-deleted, bukan revisi)
             $latestPengumpulan = MpnPengumpulan::withTrashed()
                 ->where('id_pengetahuan', 'like', $prefix . '%')
                 ->where('id_pengetahuan', 'not like', '%-REV%')
@@ -105,7 +105,16 @@ class PengumpulanForm extends Component
             } else {
                 $newSeq = 1;
             }
-            $this->id_pengetahuan = $prefix . str_pad($newSeq, 3, '0', STR_PAD_LEFT);
+
+            // Pastikan ID yang dihasilkan belum pernah dipakai (termasuk soft-deleted)
+            // agar tidak ada kemungkinan konflik apapun.
+            $candidate = $prefix . str_pad($newSeq, 3, '0', STR_PAD_LEFT);
+            while (MpnPengumpulan::withTrashed()->where('id_pengetahuan', $candidate)->exists()) {
+                $newSeq++;
+                $candidate = $prefix . str_pad($newSeq, 3, '0', STR_PAD_LEFT);
+            }
+
+            $this->id_pengetahuan = $candidate;
         } else {
             // Ini adalah dokumen revisi, gunakan ID dasar dokumen asli ditambah -REV
             $revisiTarget = MpnPengumpulan::withTrashed()->find($revisiId);
@@ -113,7 +122,7 @@ class PengumpulanForm extends Component
                 // Ekstrak ID dasar (buang teks -REV jika ada)
                 $baseId = explode('-REV', $revisiTarget->id_pengetahuan)[0];
 
-                // Cari semua dokumen yang berawalan BaseID-REV
+                // Cari semua dokumen revisi yang berawalan BaseID-REV (aktif maupun deleted)
                 $latestRev = MpnPengumpulan::withTrashed()
                     ->where('id_pengetahuan', 'like', $baseId . '-REV%')
                     ->orderByRaw("LENGTH(id_pengetahuan) DESC, id_pengetahuan DESC") // Agar -REV10 > -REV9
@@ -127,8 +136,15 @@ class PengumpulanForm extends Component
                 } else {
                     $newRevNum = 1;
                 }
-                
-                $this->id_pengetahuan = $baseId . '-REV' . $newRevNum;
+
+                // Pastikan ID revisi pun belum pernah dipakai
+                $candidate = $baseId . '-REV' . $newRevNum;
+                while (MpnPengumpulan::withTrashed()->where('id_pengetahuan', $candidate)->exists()) {
+                    $newRevNum++;
+                    $candidate = $baseId . '-REV' . $newRevNum;
+                }
+
+                $this->id_pengetahuan = $candidate;
             }
         }
     }
@@ -171,13 +187,24 @@ class PengumpulanForm extends Component
         }
 
         $this->validate([
-            'id_pengetahuan'            => 'required|string|max:100',
+            'id_pengetahuan'            => [
+                'required',
+                'string',
+                'max:100',
+                // Hanya periksa keunikan pada baris yang AKTIF (tidak soft-deleted),
+                // sehingga ID yang pernah dihapus dapat digunakan kembali.
+                \Illuminate\Validation\Rule::unique('mpn_pengumpulan', 'id_pengetahuan')
+                    ->whereNull('deleted_at')
+                    ->ignore($this->pengumpulanModel?->id),
+            ],
             'tanggal_pengumpulan'       => 'required|date',
             'unit_pengumpulan'          => 'required|string|max:191',
             'lokasi_penyimpanan_lain'   => ['nullable', 'in:' . implode(',', $this->lokasiPenyimpananOptions)],
             'keterangan_lokasi_lainnya' => 'required_if:lokasi_penyimpanan_lain,Lainnya|nullable|string|max:500',
             'status_publikasi_simpan'   => 'required|in:Draft,Ditolak,Dipublikasikan,Diarsipkan',
             'visibilitas_dokumen'       => 'nullable|in:Publik,Internal',
+        ], [
+            'id_pengetahuan.unique' => 'ID Pengetahuan ini sudah digunakan oleh data aktif lain. Silakan generate ulang.',
         ]);
 
         $data = [

@@ -63,7 +63,7 @@
                     @endphp
                     {{-- Active module card --}}
                     <{{ $tag }} {!! $attrStr !!}
-                       class="group relative rounded-2xl border border-border bg-module-bg p-6 transition-all duration-300 hover:scale-[1.03] hover:shadow-2xl cursor-pointer text-left w-full">
+                       class="group relative rounded-2xl border p-6 transition-all duration-300 hover:scale-[1.02] hover:shadow-xl cursor-pointer text-left w-full card-tint-{{ $module['tint'] }} card-border-{{ $module['tint'] }}">
 
                         {{-- Badge count --}}
                         @if(isset($module['badge_count']) && $module['badge_count'] > 0)
@@ -82,8 +82,8 @@
                         @endif
 
                         {{-- Icon --}}
-                        <div class="w-14 h-14 rounded-xl bg-{{ $module['tint'] }} flex items-center justify-center shadow-lg mb-4 group-hover:scale-110 transition-transform duration-300">
-                            @include('partials.icons.' . $module['icon'], ['class' => 'w-7 h-7 text-white'])
+                        <div class="w-14 h-14 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-all duration-300 icon-gradient-{{ $module['tint'] }} icon-shadow-{{ $module['tint'] }}">
+                            @include('partials.icons.' . $module['icon'], ['class' => 'w-7 h-7 text-white drop-shadow-sm'])
                         </div>
 
                         <h3 class="text-lg font-semibold text-text-strong mb-1">{{ $module['name'] }}</h3>

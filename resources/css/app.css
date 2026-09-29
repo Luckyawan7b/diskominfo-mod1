@@ -10,6 +10,12 @@
  * bg-module-1 bg-module-2 bg-module-3 bg-module-4 bg-module-5
  * text-module-1 text-module-2 text-module-3 text-module-4 text-module-5
  *
+ * Module card enhancements (light theme) — dipakai via PHP interpolasi:
+ * icon-gradient-module-1 icon-gradient-module-2 icon-gradient-module-3 icon-gradient-module-4 icon-gradient-module-5
+ * icon-shadow-module-1  icon-shadow-module-2  icon-shadow-module-3  icon-shadow-module-4  icon-shadow-module-5
+ * card-tint-module-1    card-tint-module-2    card-tint-module-3    card-tint-module-4    card-tint-module-5
+ * card-border-module-1  card-border-module-2  card-border-module-3  card-border-module-4  card-border-module-5
+ *
  * Kelas badge risiko dari RiskMatrixCalculator::colorClass() — dibangun via PHP string
  * bg-risk-low-bg text-risk-low border-risk-low/30
  * bg-risk-medium-bg text-risk-medium border-risk-medium/30
@@ -143,4 +149,148 @@
     --color-topbar-text: var(--color-text-strong);
     --color-topbar-muted: var(--color-muted);
     --color-topbar-hover: var(--color-surface-raised);
+}
+
+/* ============================================================
+ * MODULE CARD ENHANCEMENTS
+ * Icon gradient, colored shadow, card tinted bg & border
+ * Satu set per tint (module-1 … module-5)
+ * Light theme menggunakan CSS custom properties dari @theme.
+ * Dark theme di-override di dalam [data-theme="dark"].
+ * ============================================================ */
+
+/* --- module-1 (#293681 light / #5b6ae0 dark) --- */
+.icon-gradient-module-1 {
+    background: linear-gradient(135deg, #4d5db8 0%, #1e2a6b 100%);
+}
+.icon-shadow-module-1 {
+    box-shadow: 0 8px 20px -4px rgba(41, 54, 129, 0.45);
+}
+.card-tint-module-1 {
+    background: linear-gradient(160deg, rgba(41, 54, 129, 0.05) 0%, rgba(238, 241, 251, 1) 60%);
+}
+.card-border-module-1 {
+    border-color: rgba(41, 54, 129, 0.25);
+}
+
+/* --- module-2 (#3b4aa0 light / #7c89ea dark) --- */
+.icon-gradient-module-2 {
+    background: linear-gradient(135deg, #5f70cf 0%, #293681 100%);
+}
+.icon-shadow-module-2 {
+    box-shadow: 0 8px 20px -4px rgba(59, 74, 160, 0.45);
+}
+.card-tint-module-2 {
+    background: linear-gradient(160deg, rgba(59, 74, 160, 0.05) 0%, rgba(238, 241, 251, 1) 60%);
+}
+.card-border-module-2 {
+    border-color: rgba(59, 74, 160, 0.25);
+}
+
+/* --- module-3 (#4d5db8 light / #8b97ee dark) --- */
+.icon-gradient-module-3 {
+    background: linear-gradient(135deg, #7183e0 0%, #3b4aa0 100%);
+}
+.icon-shadow-module-3 {
+    box-shadow: 0 8px 20px -4px rgba(77, 93, 184, 0.45);
+}
+.card-tint-module-3 {
+    background: linear-gradient(160deg, rgba(77, 93, 184, 0.05) 0%, rgba(238, 241, 251, 1) 60%);
+}
+.card-border-module-3 {
+    border-color: rgba(77, 93, 184, 0.25);
+}
+
+/* --- module-4 (#5f70cf light / #9aa4f2 dark) --- */
+.icon-gradient-module-4 {
+    background: linear-gradient(135deg, #8393f0 0%, #4d5db8 100%);
+}
+.icon-shadow-module-4 {
+    box-shadow: 0 8px 20px -4px rgba(95, 112, 207, 0.45);
+}
+.card-tint-module-4 {
+    background: linear-gradient(160deg, rgba(95, 112, 207, 0.05) 0%, rgba(238, 241, 251, 1) 60%);
+}
+.card-border-module-4 {
+    border-color: rgba(95, 112, 207, 0.25);
+}
+
+/* --- module-5 (#7183e0 light / #a9b2f5 dark) --- */
+.icon-gradient-module-5 {
+    background: linear-gradient(135deg, #95a0f5 0%, #5f70cf 100%);
+}
+.icon-shadow-module-5 {
+    box-shadow: 0 8px 20px -4px rgba(113, 131, 224, 0.45);
+}
+.card-tint-module-5 {
+    background: linear-gradient(160deg, rgba(113, 131, 224, 0.05) 0%, rgba(238, 241, 251, 1) 60%);
+}
+.card-border-module-5 {
+    border-color: rgba(113, 131, 224, 0.25);
+}
+
+/* Dark theme overrides — keep gradients vibrant, soften shadows */
+[data-theme="dark"] .icon-gradient-module-1 {
+    background: linear-gradient(135deg, #7c89ea 0%, #4a58c9 100%);
+}
+[data-theme="dark"] .icon-shadow-module-1 {
+    box-shadow: 0 8px 20px -4px rgba(91, 106, 224, 0.5);
+}
+[data-theme="dark"] .card-tint-module-1 {
+    background: linear-gradient(160deg, rgba(91, 106, 224, 0.10) 0%, rgba(28, 35, 64, 1) 60%);
+}
+[data-theme="dark"] .card-border-module-1 {
+    border-color: rgba(91, 106, 224, 0.35);
+}
+
+[data-theme="dark"] .icon-gradient-module-2 {
+    background: linear-gradient(135deg, #9aa4f2 0%, #5b6ae0 100%);
+}
+[data-theme="dark"] .icon-shadow-module-2 {
+    box-shadow: 0 8px 20px -4px rgba(124, 137, 234, 0.5);
+}
+[data-theme="dark"] .card-tint-module-2 {
+    background: linear-gradient(160deg, rgba(124, 137, 234, 0.10) 0%, rgba(28, 35, 64, 1) 60%);
+}
+[data-theme="dark"] .card-border-module-2 {
+    border-color: rgba(124, 137, 234, 0.35);
+}
+
+[data-theme="dark"] .icon-gradient-module-3 {
+    background: linear-gradient(135deg, #a9b2f5 0%, #7c89ea 100%);
+}
+[data-theme="dark"] .icon-shadow-module-3 {
+    box-shadow: 0 8px 20px -4px rgba(139, 151, 238, 0.5);
+}
+[data-theme="dark"] .card-tint-module-3 {
+    background: linear-gradient(160deg, rgba(139, 151, 238, 0.10) 0%, rgba(28, 35, 64, 1) 60%);
+}
+[data-theme="dark"] .card-border-module-3 {
+    border-color: rgba(139, 151, 238, 0.35);
+}
+
+[data-theme="dark"] .icon-gradient-module-4 {
+    background: linear-gradient(135deg, #b8bef8 0%, #8b97ee 100%);
+}
+[data-theme="dark"] .icon-shadow-module-4 {
+    box-shadow: 0 8px 20px -4px rgba(154, 164, 242, 0.5);
+}
+[data-theme="dark"] .card-tint-module-4 {
+    background: linear-gradient(160deg, rgba(154, 164, 242, 0.10) 0%, rgba(28, 35, 64, 1) 60%);
+}
+[data-theme="dark"] .card-border-module-4 {
+    border-color: rgba(154, 164, 242, 0.35);
+}
+
+[data-theme="dark"] .icon-gradient-module-5 {
+    background: linear-gradient(135deg, #c4c9fa 0%, #9aa4f2 100%);
+}
+[data-theme="dark"] .icon-shadow-module-5 {
+    box-shadow: 0 8px 20px -4px rgba(169, 178, 245, 0.5);
+}
+[data-theme="dark"] .card-tint-module-5 {
+    background: linear-gradient(160deg, rgba(169, 178, 245, 0.10) 0%, rgba(28, 35, 64, 1) 60%);
+}
+[data-theme="dark"] .card-border-module-5 {
+    border-color: rgba(169, 178, 245, 0.35);
 }

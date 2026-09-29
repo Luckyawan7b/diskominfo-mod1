@@ -128,10 +128,12 @@ class PengetahuanForm extends Component
         }
 
         $this->validate([
+            'nama_sub_fitur' => 'required|string|max:255',
             'nama_pengetahuan' => 'required|string|max:255',
             'ref_aspek_pemdi_id' => 'required|exists:ref_aspek_pemdi,id',
             'ref_indikator_pemdi_id' => 'required|exists:ref_indikator_pemdi,id',
         ], [
+            'nama_sub_fitur.required' => 'Nama sub-fitur wajib diisi.',
             'nama_pengetahuan.required' => 'Nama pengetahuan wajib diisi.',
             'ref_aspek_pemdi_id.required' => 'Aspek PEMDI wajib dipilih.',
             'ref_indikator_pemdi_id.required' => 'Indikator PEMDI wajib dipilih.',

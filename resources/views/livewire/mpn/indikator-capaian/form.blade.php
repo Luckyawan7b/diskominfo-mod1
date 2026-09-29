@@ -79,10 +79,11 @@
                         <label class="block text-xs font-semibold text-text uppercase tracking-wider mb-1">
                             Kondisi <em>As-Is</em> (Saat Ini)
                         </label>
-                        <p class="text-xs text-muted mb-2">Nilai/kondisi yang ada saat ini (angka atau deskripsi).</p>
-                        <x-textarea-auto wire:model="blocks.{{ $i }}.kondisi_as_is" rows="2"
-                            :disabled="!$isEditable"
-                            placeholder="Contoh: 40% atau 'Belum ada sistem dokumentasi'"/>
+                        <p class="text-xs text-muted mb-2">Nilai kondisi awal sebelum evaluasi (angka numerik).</p>
+                        <input type="number" step="any" wire:model="blocks.{{ $i }}.kondisi_as_is"
+                            {{ !$isEditable ? 'disabled' : '' }}
+                            class="w-full rounded-lg border border-border bg-field px-4 py-2.5 text-text text-sm focus:outline-none focus:ring-2 focus:ring-accent disabled:opacity-50 disabled:cursor-not-allowed"
+                            placeholder="Contoh: 40">
                     </div>
 
                     {{-- Kondisi To-Be --}}
