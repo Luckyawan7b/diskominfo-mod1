@@ -5,12 +5,12 @@
             <p class="text-sm text-muted mt-1">Formulir 3: Penggunaan & Alih Pengetahuan — Bagian Alih Pengetahuan</p>
         </div>
         <div class="flex gap-3">
-            <a href="{{ route('mpn.pengumpulan.index', ['konteks' => $konteks, 'pengetahuan' => $pengetahuan]) }}" wire:navigate
+            <a href="{{ route('mpn.pengumpulan.form', ['konteks' => $konteks, 'pengetahuan' => $pengetahuan, 'pengumpulan' => $pengumpulan]) }}" wire:navigate
                 class="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg border border-border text-sm text-text hover:bg-surface-soft transition-colors">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                 </svg>
-                Kembali ke Timeline
+                Kembali
             </a>
         </div>
     </div>

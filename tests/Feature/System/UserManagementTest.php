@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature;
+namespace Tests\Feature\System;
 
 use App\Livewire\Admin\User\UserIndex;
 use App\Models\Role;

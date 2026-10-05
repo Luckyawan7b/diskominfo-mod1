@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature;
+namespace Tests\Feature\Mr;
 
 use App\Models\Layanan;
 use App\Models\MrKonteks;

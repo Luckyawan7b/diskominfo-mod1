@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Unit;
+namespace Tests\Unit\Mr;
 
 use App\Services\RiskMatrixCalculator;
 use PHPUnit\Framework\TestCase;

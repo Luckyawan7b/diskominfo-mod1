@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature;
+namespace Tests\Feature\Mr;
 
 use App\Livewire\StrukturPelaksana\StrukturPelaksanaForm;
 use App\Models\Layanan;
