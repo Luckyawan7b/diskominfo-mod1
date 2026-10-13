@@ -5,6 +5,9 @@ namespace App\Livewire\Admin;
 use App\Models\Layanan;
 use App\Models\MpnKonteks;
 use App\Models\MpnPengetahuan;
+use App\Models\MprAnalisisRisiko;
+use App\Models\MprKonteks;
+use App\Models\MprPerubahan;
 use App\Models\MrKonteks;
 use App\Models\MrRisiko;
 use App\Models\User;
@@ -34,6 +37,9 @@ class TrashIndex extends Component
             'mr_risiko'     => MrRisiko::class,
             'mpn_konteks'   => MpnKonteks::class,
             'mpn_pengetahuan' => MpnPengetahuan::class,
+            'mpr_konteks'   => MprKonteks::class,
+            'mpr_perubahan' => MprPerubahan::class,
+            'mpr_analisis_risiko' => MprAnalisisRisiko::class,
             'user'          => User::class,
         ];
     }
@@ -117,6 +123,9 @@ class TrashIndex extends Component
             'mr_risiko'       => MrRisiko::onlyTrashed()->with(['deletedBy', 'konteks'])->latest('deleted_at')->get(),
             'mpn_konteks'     => MpnKonteks::onlyTrashed()->with(['deletedBy', 'layanan'])->latest('deleted_at')->get(),
             'mpn_pengetahuan' => MpnPengetahuan::onlyTrashed()->with(['deletedBy', 'konteks'])->latest('deleted_at')->get(),
+            'mpr_konteks'     => MprKonteks::onlyTrashed()->with(['deletedBy', 'layanan'])->latest('deleted_at')->get(),
+            'mpr_perubahan'   => MprPerubahan::onlyTrashed()->with('deletedBy')->latest('deleted_at')->get(),
+            'mpr_analisis_risiko' => MprAnalisisRisiko::onlyTrashed()->with('deletedBy')->latest('deleted_at')->get(),
             'user'            => User::onlyTrashed()->with('deletedBy')->latest('deleted_at')->get(),
             default           => collect(),
         };

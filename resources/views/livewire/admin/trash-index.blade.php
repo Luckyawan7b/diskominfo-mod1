@@ -15,6 +15,9 @@
                 'mr_risiko'       => 'Risiko',
                 'mpn_konteks'     => 'Konteks MPN',
                 'mpn_pengetahuan' => 'Pengetahuan',
+                'mpr_konteks'     => 'Konteks MPR',
+                'mpr_perubahan'   => 'Perubahan',
+                'mpr_analisis_risiko' => 'Risiko MPR',
                 'user'            => 'User',
             ] as $key => $label)
                 <button
@@ -63,6 +66,9 @@
                                 'mr_risiko'       => $item->kode_risiko . ' — ' . \Illuminate\Support\Str::limit($item->peristiwa_risiko ?? '', 50),
                                 'mpn_konteks'     => ($item->layanan->nama_layanan ?? 'Layanan?') . ' (' . $item->tahun_penilaian . ')',
                                 'mpn_pengetahuan' => \Illuminate\Support\Str::limit($item->nama_pengetahuan ?? '-', 60),
+                                'mpr_konteks'     => ($item->layanan->nama_layanan ?? 'Layanan?') . ' (' . $item->tahun_penilaian . ')',
+                                'mpr_perubahan'   => $item->id_perubahan . ' - ' . \Illuminate\Support\Str::limit($item->detail_perubahan ?? '', 50),
+                                'mpr_analisis_risiko' => $item->kode_risiko . ' - ' . \Illuminate\Support\Str::limit($item->risiko ?? '', 50),
                                 'user'            => $item->name . ' (' . $item->email . ')',
                                 default           => 'Item #' . $item->id,
                             };

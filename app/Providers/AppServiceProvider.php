@@ -28,5 +28,6 @@ class AppServiceProvider extends ServiceProvider
         MrKolomTambahan::observe(MrKolomTambahanObserver::class);
         \App\Models\MpnPengetahuan::observe(\App\Observers\MpnPengetahuanObserver::class);
         \App\Models\MpnPemanfaatan::observe(\App\Observers\MpnPemanfaatanObserver::class);
+        \App\Models\MprAnalisisRisiko::observe(\App\Observers\MprAnalisisRisikoObserver::class);
     }
 }

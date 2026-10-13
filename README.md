@@ -76,7 +76,23 @@ Dokumen ini memuat catatan arsitektur dan riwayat perubahan penting agar agen AI
 
 ---
 
-## 🗄️ Struktur Migrasi Database (Total 29 File)
+### 7. Modul Manajemen Perubahan (MPR)
+- **Lingkup saat ini**: migrasi database, seeder referensi, model, factory, observer/service/rule pendukung, tab Tempat Sampah, dan ERD. **Routing & komponen Livewire MPR belum dibuat.** Sumber: Excel `24072026_PEMDA_MPR-Manajemen Perubahan Layanan Digital Formulir` (sheet MPR01–MPR05), salinannya di `plan/excel/`. Rencana & status pengerjaan: `plan/MPR_MIGRATION_PLAN.md` dan `plan/MPR_TASKS.md`.
+- **Struktur Database** (prefix `mpr_`, referensi `ref_`; 30 migrasi `2025_03_01_000001`–`000030`):
+  - Referensi (11): `ref_klasifikasi_perubahan`, `ref_lingkup_perubahan`, `ref_area_dampak_org`, `ref_indikator_area_dampak`, `ref_ukuran_kompleksitas`, `ref_strategi_it`, `ref_strategi_organisasi`, `ref_kegiatan_strategi_organisasi`, `ref_kategori_stakeholder`, `ref_jenis_resistensi`, `ref_tingkat_resistensi`. `ref_aspek_pemdi` & `ref_indikator_pemdi` dipakai ulang dari MPN.
+  - Inti: `mpr_konteks` (per layanan, unique `layanan_id`+`tahun_penilaian`), `mpr_analisis_prioritas` (+ pivot `mpr_prioritas_aspek`, `mpr_prioritas_indikator`), `mpr_perubahan` (induk semua formulir), `mpr_analisis_risiko` (2A), `mpr_analisis_organisasi` + `mpr_org_area` + `mpr_org_area_indikator` (2B), `mpr_persetujuan`.
+  - Formulir 3–5: `mpr_implementasi`, `mpr_sumber_daya`, `mpr_indikator_keberhasilan`, `mpr_strategi`, `mpr_stakeholder`, `mpr_komunikasi`, `mpr_pelatihan`, `mpr_evaluasi`, `mpr_logbook` (bukti pelaksanaan memakai `mr_lampiran` polimorfik).
+- **Soft delete** hanya pada `mpr_konteks`, `mpr_perubahan`, `mpr_analisis_risiko` (lengkap dengan `deleted_by`, tampil di Tempat Sampah). Tabel anak tidak soft delete: soft delete induk **tidak menyentuh anak** (hanya tersembunyi, restore mengembalikan semuanya); anak baru terhapus saat induk di-*force delete* (cascade FK).
+- **ID Perubahan**: format `MPR-{ALIAS}-{TAHUN}-{NNN}` (mis. `MPR-DISKOMINFO-2025-001`), dibuat `App\Services\MprIdGenerator` (nomor dicari termasuk data soft-deleted sehingga tidak pernah dipakai ulang; transaksi + retry sekali). Catatan: kode MPN memakai prefix `MRP-`, jangan disamakan.
+- **Kode risiko 2A**: `App\Rules\KodeRisikoMprUnik` menolak kode yang sudah ada pada `mr_risiko` atau `mpr_analisis_risiko` layanan yang sama (data soft-deleted diabaikan). Bukan unique DB (unique MySQL tidak mengabaikan soft-deleted), melainkan index biasa `(layanan_id, kode_risiko)`.
+- **Skala label risiko berbeda**: MPR memakai **3 level** (`RiskMatrixCalculator::labelMpr()`: 1–5 Rendah, 6–16 Sedang, ≥17 Tinggi), sedangkan MR memakai **4 level** (`label()`: 1–4 / 5–9 / 10–16 / 17–25). Jangan mencampur keduanya.
+- **Fitur Otomatis**: `MprAnalisisRisikoObserver` (hitung `besaran_risiko`; `layanan_id` selalu ditimpa dari `perubahan→konteks→layanan_id`); `MprAnalisisPrioritas` mengisi `nama_layanan_prioritas` otomatis dari nama layanan yang sedang diakses (snapshot); `MprKesimpulanOrganisasi` (kesimpulan 2B sesuai formula Excel); `MprAlurResolver` (menentukan formulir wajib dari flag klasifikasi & lingkup, tanpa menyimpan status alur).
+- **Persetujuan** hanyalah data isian (`mpr_persetujuan`: status + teks PIC), bukan alur approval dengan akun approver.
+- **Data referensi yang belum lengkap** (lihat `// TODO` di seeder): Strategi IT (Tabel 3b, hanya Canary/Rolling/Serverless dan hanya Serverless yang punya uraian) dan Tingkat Resistensi (Tabel 3e, hanya Champion & Floating Voter).
+
+---
+
+## 🗄️ Struktur Migrasi Database (Total 65 File)
 
 Seluruh migrasi tambahan (patch alter table, drop table sementara, placeholder data migrasi) telah dibersihkan dan disusun ulang dari awal (*clean slate*) sesuai urutan dependensi foreign key:
 
@@ -110,10 +126,18 @@ database/migrations/
 ├── 2025_02_01_000008_create_mpn_rencana_dokumentasi_table.php # [MPN] Rencana Dokumentasi
 ├── 2025_02_01_000009_create_mpn_pengumpulan_table.php   # [MPN] Pengumpulan Pengetahuan
 ├── 2025_02_01_000010_create_mpn_pemanfaatan_table.php   # [MPN] Pemanfaatan Pengetahuan
-└── 2025_02_01_000011_create_mpn_alih_pengetahuan_table.php # [MPN] Alih Pengetahuan
+├── 2025_02_01_000011_create_mpn_alih_pengetahuan_table.php # [MPN] Alih Pengetahuan
+├── 2025_03_01_000001..000011_create_ref_*_table.php       # [MPR] 11 tabel referensi (klasifikasi, lingkup, area dampak, indikator area dampak, ukuran kompleksitas, strategi IT/organisasi, kegiatan strategi, kategori stakeholder, jenis & tingkat resistensi)
+├── 2025_03_01_000012_create_mpr_konteks_table.php       # [MPR] Konteks MPR (soft delete)
+├── 2025_03_01_000013..000015_*                          # [MPR] Analisis prioritas + pivot aspek & indikator
+├── 2025_03_01_000016_create_mpr_perubahan_table.php     # [MPR] Perubahan (induk semua formulir, soft delete)
+├── 2025_03_01_000017_create_mpr_analisis_risiko_table.php # [MPR] Analisis risiko 2A (soft delete)
+├── 2025_03_01_000018..000020_*                          # [MPR] Analisis organisasi 2B (header, area, indikator)
+├── 2025_03_01_000021_create_mpr_persetujuan_table.php   # [MPR] Persetujuan per tahap
+└── 2025_03_01_000022..000030_*                          # [MPR] Formulir 3–5: implementasi, sumber daya, indikator keberhasilan, strategi, stakeholder, komunikasi, pelatihan, evaluasi, logbook
 ```
 
-Skema DDL Oracle/SQL resmi yang identik juga tersimpan di [Schema ERD Data modeler.sql](file:///c:/laragon/www/diskominfo-mod1/Schema%20ERD%20Data%20modeler.sql). Serta [ERD MP.sql](file:///c:/laragon/www/diskominfo-mod1/ERD%20MP.sql) untuk struktur MPN spesifik.
+Skema DDL Oracle/SQL resmi yang identik (termasuk modul MPR) tersimpan di [Schema ERD Data modeler.sql](plan/Schema%20ERD%20Data%20modeler.sql). Serta [ERD MP.sql](ERD%20MP.sql) untuk struktur MPN spesifik.
 
 ---
 

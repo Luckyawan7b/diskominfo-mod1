@@ -18,6 +18,15 @@ class DatabaseSeeder extends Seeder
             RefAspekPemdiSeeder::class,
             RefIndikatorPemdiSeeder::class,
             RefMetodePengolahanSeeder::class,
+            RefKlasifikasiPerubahanSeeder::class,
+            RefLingkupPerubahanSeeder::class,
+            RefAreaDampakOrgSeeder::class,
+            RefUkuranKompleksitasSeeder::class,
+            RefStrategiItSeeder::class,
+            RefStrategiOrganisasiSeeder::class,
+            RefKategoriStakeholderSeeder::class,
+            RefJenisResistensiSeeder::class,
+            RefTingkatResistensiSeeder::class,
         ]);
 
         // ── Data dev/testing (jangan jalankan di production) ─────────────────

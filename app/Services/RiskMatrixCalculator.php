@@ -72,6 +72,30 @@ class RiskMatrixCalculator
     }
 
     /**
+     * Label risiko MPR (3 level, formula Excel MPR02A!L). BERBEDA dari label() MR (4 level).
+     *
+     *   1–5  → Rendah
+     *   6–16 → Sedang
+     *   ≥17  → Tinggi
+     */
+    public function labelMpr(int $besaran): string
+    {
+        return match (true) {
+            $besaran <= 5  => 'Rendah',
+            $besaran <= 16 => 'Sedang',
+            default        => 'Tinggi',
+        };
+    }
+
+    /**
+     * Class token badge untuk label MPR (memakai token warna yang sama dengan colorClass()).
+     */
+    public function colorClassMpr(string $label): string
+    {
+        return $this->colorClass($label);
+    }
+
+    /**
      * Apakah risiko ini melampaui selera risiko (appetit) instansi?
      *
      * @param  int  $besaran         Nilai besaran risiko (1–25)
