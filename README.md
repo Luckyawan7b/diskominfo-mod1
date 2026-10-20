@@ -77,7 +77,7 @@ Dokumen ini memuat catatan arsitektur dan riwayat perubahan penting agar agen AI
 ---
 
 ### 7. Modul Manajemen Perubahan (MPR)
-- **Lingkup saat ini**: migrasi database, seeder referensi, model, factory, observer/service/rule pendukung, tab Tempat Sampah, dan ERD. **Routing & komponen Livewire MPR belum dibuat.** Sumber: Excel `24072026_PEMDA_MPR-Manajemen Perubahan Layanan Digital Formulir` (sheet MPR01–MPR05), salinannya di `plan/excel/`. Rencana & status pengerjaan: `plan/MPR_MIGRATION_PLAN.md` dan `plan/MPR_TASKS.md`.
+- **Lingkup saat ini**: migrasi database, seeder referensi & data demo, model, factory, observer/service/rule pendukung, tab Tempat Sampah, ERD, serta routing & seluruh komponen Livewire MPR (F0–F5, Hub Perubahan, dan Monitoring Admin). Sumber: Excel `24072026_PEMDA_MPR-Manajemen Perubahan Layanan Digital Formulir` (sheet MPR01–MPR05), salinannya di `plan/excel/`. Rencana & status pengerjaan: `plan/MPR_MIGRATION_PLAN.md` dan `plan/MPR_TASKS.md`.
 - **Struktur Database** (prefix `mpr_`, referensi `ref_`; 30 migrasi `2025_03_01_000001`–`000030`):
   - Referensi (11): `ref_klasifikasi_perubahan`, `ref_lingkup_perubahan`, `ref_area_dampak_org`, `ref_indikator_area_dampak`, `ref_ukuran_kompleksitas`, `ref_strategi_it`, `ref_strategi_organisasi`, `ref_kegiatan_strategi_organisasi`, `ref_kategori_stakeholder`, `ref_jenis_resistensi`, `ref_tingkat_resistensi`. `ref_aspek_pemdi` & `ref_indikator_pemdi` dipakai ulang dari MPN.
   - Inti: `mpr_konteks` (per layanan, unique `layanan_id`+`tahun_penilaian`), `mpr_analisis_prioritas` (+ pivot `mpr_prioritas_aspek`, `mpr_prioritas_indikator`), `mpr_perubahan` (induk semua formulir), `mpr_analisis_risiko` (2A), `mpr_analisis_organisasi` + `mpr_org_area` + `mpr_org_area_indikator` (2B), `mpr_persetujuan`.
@@ -88,7 +88,8 @@ Dokumen ini memuat catatan arsitektur dan riwayat perubahan penting agar agen AI
 - **Skala label risiko berbeda**: MPR memakai **3 level** (`RiskMatrixCalculator::labelMpr()`: 1–5 Rendah, 6–16 Sedang, ≥17 Tinggi), sedangkan MR memakai **4 level** (`label()`: 1–4 / 5–9 / 10–16 / 17–25). Jangan mencampur keduanya.
 - **Fitur Otomatis**: `MprAnalisisRisikoObserver` (hitung `besaran_risiko`; `layanan_id` selalu ditimpa dari `perubahan→konteks→layanan_id`); `MprAnalisisPrioritas` mengisi `nama_layanan_prioritas` otomatis dari nama layanan yang sedang diakses (snapshot); `MprKesimpulanOrganisasi` (kesimpulan 2B sesuai formula Excel); `MprAlurResolver` (menentukan formulir wajib dari flag klasifikasi & lingkup, tanpa menyimpan status alur).
 - **Persetujuan** hanyalah data isian (`mpr_persetujuan`: status + teks PIC), bukan alur approval dengan akun approver.
-- **Data referensi yang belum lengkap** (lihat `// TODO` di seeder): Strategi IT (Tabel 3b, hanya Canary/Rolling/Serverless dan hanya Serverless yang punya uraian) dan Tingkat Resistensi (Tabel 3e, hanya Champion & Floating Voter).
+- **Data referensi**: Strategi IT (Tabel 3b: 8 strategi, uraian hanya pada Serverless sesuai Excel) dan Tingkat Resistensi (Tabel 3e: Champion, Floating Voter, Blocker).
+- **Pembersihan lampiran Logbook**: Bukti dukung pada `mpr_logbook` disimpan ke `mr_lampiran` (polimorfik tanpa FK). Berkas fisik dan baris `mr_lampiran` dibersihkan lewat event `deleting` saat *force delete* serta dijamin oleh command Artisan `php artisan lampiran:bersihkan-orphan`.
 
 ---
 

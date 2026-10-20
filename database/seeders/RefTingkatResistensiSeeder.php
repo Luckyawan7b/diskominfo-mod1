@@ -19,7 +19,8 @@ class RefTingkatResistensiSeeder extends Seeder
             ['nama' => 'Champion', 'deskripsi' => null],
             // Pada data contoh Excel tertulis "Floating  Voter" (spasi ganda); dinormalkan.
             ['nama' => 'Floating Voter', 'deskripsi' => null],
-            // TODO: lengkapi tingkat resistensi lain (dan deskripsi) dari Tabel 3e.
+            ['nama' => 'Blocker', 'deskripsi' => null],
+            // Daftar 3 opsi dikonfirmasi lengkap oleh pemilik formulir, tanpa deskripsi penjelas.
         ];
 
         foreach ($data as $item) {

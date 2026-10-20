@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Support\Facades\Storage;
 
 class MprLogbook extends Model
 {
@@ -34,5 +35,27 @@ class MprLogbook extends Model
     public function lampiran(): MorphMany
     {
         return $this->morphMany(MrLampiran::class, 'lampirable');
+    }
+
+    public function bersihkanLampiran(): void
+    {
+        $lampiranList = MrLampiran::withTrashed()
+            ->where('lampirable_type', self::class)
+            ->where('lampirable_id', $this->id)
+            ->get();
+
+        foreach ($lampiranList as $lampiran) {
+            if ($lampiran->path_file) {
+                Storage::disk('public')->delete($lampiran->path_file);
+            }
+            $lampiran->forceDelete();
+        }
+    }
+
+    protected static function booted(): void
+    {
+        static::deleting(function (self $model) {
+            $model->bersihkanLampiran();
+        });
     }
 }

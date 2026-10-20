@@ -56,6 +56,20 @@ class MprKonteks extends Model implements HasLayananContext
     protected static function booted(): void
     {
         static::deleting(function (self $model) {
+            if ($model->isForceDeleting()) {
+                $perubahanIds = MprPerubahan::withTrashed()
+                    ->where('mpr_konteks_id', $model->id)
+                    ->pluck('id');
+
+                if ($perubahanIds->isNotEmpty()) {
+                    MprLogbook::whereIn('mpr_perubahan_id', $perubahanIds)
+                        ->get()
+                        ->each(fn (MprLogbook $logbook) => $logbook->bersihkanLampiran());
+                }
+
+                return;
+            }
+
             if (auth()->check()) {
                 $model->deleted_by = auth()->id();
                 $model->saveQuietly();

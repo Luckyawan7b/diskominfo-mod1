@@ -10,6 +10,18 @@ use App\Livewire\Konteks\KonteksForm;
 use App\Livewire\Konteks\KonteksIndex;
 use App\Livewire\Mpn\Konteks\KonteksMpnIndex;
 use App\Livewire\Mpn\Konteks\KonteksMpnForm;
+use App\Livewire\Mpr\AnalisisOrganisasi\AnalisisOrganisasiForm;
+use App\Livewire\Mpr\AnalisisPrioritas\AnalisisPrioritasForm;
+use App\Livewire\Mpr\AnalisisRisiko\AnalisisRisikoForm;
+use App\Livewire\Mpr\Evaluasi\EvaluasiForm;
+use App\Livewire\Mpr\Konteks\KonteksMprForm;
+use App\Livewire\Mpr\Konteks\KonteksMprIndex;
+use App\Livewire\Mpr\Logbook\LogbookForm;
+use App\Livewire\Mpr\Perencanaan\PerencanaanForm;
+use App\Livewire\Mpr\Persetujuan\PersetujuanForm;
+use App\Livewire\Mpr\Perubahan\PerubahanForm;
+use App\Livewire\Mpr\Perubahan\PerubahanHub;
+use App\Livewire\Mpr\Perubahan\PerubahanIndex;
 use App\Livewire\Mpn\IndikatorCapaian\IndikatorCapaianForm;
 use App\Livewire\Mpn\Pengetahuan\PengetahuanIndex;
 use App\Livewire\Mpn\Pengetahuan\PengetahuanForm;
@@ -80,6 +92,28 @@ Route::middleware('auth')->group(function () {
                     Route::get('/pengetahuan/{pengetahuan}/pengumpulan/{pengumpulan}/alih-pengetahuan', AlihPengetahuanForm::class)->name('mpn.alih-pengetahuan.form');
                 });
         });
+        // Modul Manajemen Perubahan
+        Route::prefix('manajemen-perubahan')->group(function () {
+            Route::get('/', KonteksMprIndex::class)->name('konteks-mpr.index');
+
+            Route::prefix('konteks/{konteks}')
+                ->middleware('konteks.access:App\Models\MprKonteks')
+                ->group(function () {
+                    Route::get('/', KonteksMprForm::class)->name('konteks-mpr.form');
+                    Route::get('/analisis-prioritas', AnalisisPrioritasForm::class)->name('mpr.analisis-prioritas.form');
+
+                    Route::get('/perubahan', PerubahanIndex::class)->name('mpr.perubahan.index');
+                    Route::get('/perubahan/baru', PerubahanForm::class)->name('mpr.perubahan.create');
+                    Route::get('/perubahan/{perubahan}', PerubahanForm::class)->name('mpr.perubahan.form');
+                    Route::get('/perubahan/{perubahan}/hub', PerubahanHub::class)->name('mpr.perubahan.hub');
+                    Route::get('/perubahan/{perubahan}/analisis-risiko', AnalisisRisikoForm::class)->name('mpr.analisis-risiko.form');
+                    Route::get('/perubahan/{perubahan}/analisis-organisasi', AnalisisOrganisasiForm::class)->name('mpr.analisis-organisasi.form');
+                    Route::get('/perubahan/{perubahan}/persetujuan', PersetujuanForm::class)->name('mpr.persetujuan.form');
+                    Route::get('/perubahan/{perubahan}/perencanaan', PerencanaanForm::class)->name('mpr.perencanaan.form');
+                    Route::get('/perubahan/{perubahan}/logbook', LogbookForm::class)->name('mpr.logbook.form');
+                    Route::get('/perubahan/{perubahan}/evaluasi', EvaluasiForm::class)->name('mpr.evaluasi.form');
+                });
+        });
     });
 
     // ─── Admin Only Routes ────────────────────────────────────────────────────
@@ -87,6 +121,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/review', ReviewIndex::class)->name('review.index');
         Route::get('/review/layanan/{layanan}', KonteksIndex::class)->name('review.konteks');
         Route::get('/review/mpn/layanan/{layanan}', KonteksMpnIndex::class)->name('review.mpn.konteks');
+        Route::get('/review/mpr/layanan/{layanan}', KonteksMprIndex::class)->name('review.mpr.konteks');
         Route::get('/user', UserIndex::class)->name('user.index');
         Route::get('/trash', TrashIndex::class)->name('trash.index');
     });

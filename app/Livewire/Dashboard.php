@@ -6,6 +6,7 @@ use App\Livewire\Konteks\KonteksIndex;
 use App\Models\Layanan;
 use App\Models\MrKonteks;
 use App\Models\MpnKonteks;
+use App\Models\MprKonteks;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 
@@ -44,6 +45,15 @@ class Dashboard extends Component
         $this->redirect(route('konteks-mpn.index'), navigate: true);
     }
 
+    /**
+     * Dipanggil saat user klik kartu Manajemen Perubahan.
+     */
+    public function openModulMPR(): void
+    {
+        session(['active_layanan_id' => $this->layanan->id]);
+        $this->redirect(route('konteks-mpr.index'), navigate: true);
+    }
+
     public function render()
     {
         $user    = auth()->user();
@@ -51,6 +61,7 @@ class Dashboard extends Component
 
         $mrKonteks = MrKonteks::where('layanan_id', $layanan->id)->first();
         $mpnKonteks = MpnKonteks::where('layanan_id', $layanan->id)->first();
+        $mprKonteks = MprKonteks::where('layanan_id', $layanan->id)->first();
 
         $mrBadgeCount = 0; // Replace with actual logic for MR if needed
         $mpnBadgeCount = 0;
@@ -58,11 +69,11 @@ class Dashboard extends Component
 
         return view('livewire.dashboard', [
             'layanan'    => $layanan,
-            'modules'    => $this->getModules($layanan, $mrKonteks, $mpnKonteks, $mrBadgeCount, $mpnBadgeCount),
+            'modules'    => $this->getModules($layanan, $mrKonteks, $mpnKonteks, $mprKonteks, $mrBadgeCount, $mpnBadgeCount),
         ]);
     }
 
-    private function getModules(Layanan $layanan, ?MrKonteks $mrKonteks, ?MpnKonteks $mpnKonteks, int $mrBadgeCount, int $mpnBadgeCount): array
+    private function getModules(Layanan $layanan, ?MrKonteks $mrKonteks, ?MpnKonteks $mpnKonteks, ?MprKonteks $mprKonteks, int $mrBadgeCount, int $mpnBadgeCount): array
     {
         $moduleTint = ['module-1', 'module-2', 'module-3', 'module-4', 'module-5'];
 
@@ -94,9 +105,9 @@ class Dashboard extends Component
                 'description' => 'Perencanaan dan pelaksanaan perubahan organisasi',
                 'icon'        => 'arrows-right-left',
                 'route'       => null,
-                'wireAction'  => null,
-                'active'      => false,
-                'filled'      => false,
+                'wireAction'  => 'openModulMPR',
+                'active'      => true,
+                'filled'      => (bool) $mprKonteks,
                 'tint'        => $moduleTint[2],
             ],
             [
@@ -106,11 +117,7 @@ class Dashboard extends Component
                 'route'       => null,
                 'active'      => false,
                 'filled'      => false,
-                'gradient'    => 'from-violet-500 to-purple-600',
-                'shadow'      => 'shadow-violet-500/25',
-                'bg'          => 'bg-violet-500/10',
-                'text'        => 'text-violet-400',
-                'border'      => 'border-violet-500/20',
+                'tint'        => $moduleTint[3],
             ],
             [
                 'name'        => 'Manajemen Relasi',
@@ -119,11 +126,7 @@ class Dashboard extends Component
                 'route'       => null,
                 'active'      => false,
                 'filled'      => false,
-                'gradient'    => 'from-rose-500 to-pink-600',
-                'shadow'      => 'shadow-rose-500/25',
-                'bg'          => 'bg-rose-500/10',
-                'text'        => 'text-rose-400',
-                'border'      => 'border-rose-500/20',
+                'tint'        => $moduleTint[4],
             ],
         ];
 

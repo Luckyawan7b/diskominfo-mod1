@@ -125,6 +125,11 @@ class MprPerubahan extends Model
     protected static function booted(): void
     {
         static::deleting(function (self $model) {
+            if ($model->isForceDeleting()) {
+                $model->logbook()->first()?->bersihkanLampiran();
+                return;
+            }
+
             if (auth()->check()) {
                 $model->deleted_by = auth()->id();
                 $model->saveQuietly();

@@ -1,7 +1,12 @@
 @php
-    // Hitung progres 5 modul: saat ini hanya MR yang sudah ada
+    // Hitung progres 5 modul: saat ini MR, MPN, dan MPR yang sudah ada
     $totalModul     = 5;
-    $modulTerisi    = $layanan->mr_konteks_count > 0 ? 1 : 0;
+    $modulFilled    = [
+        'MR'  => ($layanan->mr_konteks_count ?? 0) > 0,
+        'MPN' => ($layanan->mpn_konteks_count ?? 0) > 0,
+        'MPR' => ($layanan->mpr_konteks_count ?? 0) > 0,
+    ];
+    $modulTerisi    = collect($modulFilled)->filter()->count();
     $progressPersen = ($modulTerisi / $totalModul) * 100;
 
     $statusLabel = match($layanan->status_layanan) {
@@ -69,9 +74,9 @@
         <div class="flex items-center gap-1.5 mt-2">
             @php
                 $modulList = [
-                    ['label' => 'MR', 'filled' => $layanan->mr_konteks_count > 0],
-                    ['label' => 'MP', 'filled' => false],
-                    ['label' => 'MPR', 'filled' => false],
+                    ['label' => 'MR', 'filled' => $modulFilled['MR']],
+                    ['label' => 'MPN', 'filled' => $modulFilled['MPN']],
+                    ['label' => 'MPR', 'filled' => $modulFilled['MPR']],
                     ['label' => 'MK', 'filled' => false],
                     ['label' => 'MRL', 'filled' => false],
                 ];
@@ -81,7 +86,7 @@
                     {{ $m['label'] }}
                 </span>
             @endforeach
-            <span class="text-[10px] text-muted ml-1">MR = Manajemen Risiko</span>
+            <span class="text-[10px] text-muted ml-1">MR = Risiko · MPN = Pengetahuan · MPR = Perubahan</span>
         </div>
     </div>
 

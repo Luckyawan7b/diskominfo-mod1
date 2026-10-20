@@ -125,6 +125,13 @@
                         </svg>
                         Daftar Konteks MPN
                     </a>
+                    <a href="{{ route('konteks-mpr.index') }}"
+                       class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors {{ request()->routeIs('konteks-mpr.*') ? 'bg-sidebar-hover text-sidebar-text font-medium' : 'text-sidebar-muted hover:text-sidebar-text hover:bg-sidebar-hover' }}">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/>
+                        </svg>
+                        Daftar Konteks MPR
+                    </a>
                 @endif
             @endif
 
@@ -178,6 +185,57 @@
                 <a href="{{ route('mpn.pengetahuan.index', $mpnKonteks) }}"
                    class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors {{ request()->routeIs('mpn.pengetahuan.*') ? 'bg-sidebar-hover text-sidebar-text font-medium' : 'text-sidebar-muted hover:text-sidebar-text hover:bg-sidebar-hover' }}">
                     Daftar Pengetahuan (Formulir 1, 2, 3)
+                </a>
+            @endif
+
+            {{-- MPR Sidebar (ketika di dalam konteks MPR) --}}
+            @if(isset($mprKonteks) && $mprKonteks)
+                <div class="border-t border-sidebar-border my-2"></div>
+                <div class="mb-3">
+                    <div class="px-3 py-2 mx-1 rounded-lg bg-black/20 dark:bg-black/30 border border-white/10">
+                        <div class="text-sm font-semibold text-sidebar-text leading-tight">
+                            {{ $mprKonteks->nama_instansi ?: ($mprKonteks->layanan?->creator?->nama_dinas ?? 'Perangkat Daerah') }}
+                        </div>
+                        <div class="text-[11px] text-sidebar-muted mt-1">
+                            MPR — Penilaian {{ $mprKonteks->tahun_penilaian }}
+                        </div>
+                        <a href="{{ auth()->user()->isAdmin() ? route('admin.review.mpr.konteks', $mprKonteks->layanan_id) : route('konteks-mpr.index') }}" class="inline-block mt-2 text-[10px] text-sidebar-muted hover:text-sidebar-text uppercase tracking-wider font-semibold transition-colors">
+                            &larr; Ganti Konteks
+                        </a>
+
+                        @if(isset($availableKonteks) && $availableKonteks->count() > 1)
+                            <div class="mt-2 pt-2 border-t border-sidebar-border" x-data="{ openMpr: false }">
+                                <button @click="openMpr = !openMpr" class="flex items-center justify-between w-full text-left text-xs text-sidebar-muted hover:text-sidebar-text transition-colors cursor-pointer">
+                                    <span>Context Switcher</span>
+                                    <svg :class="openMpr ? 'rotate-180' : ''" class="w-3 h-3 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                                </button>
+                                <div x-show="openMpr" x-cloak class="mt-2 space-y-1">
+                                    @foreach($availableKonteks as $ak)
+                                        <a href="{{ route('konteks-mpr.form', $ak) }}" class="block px-2 py-1.5 rounded-md text-[11px] {{ $ak->id === $mprKonteks->id ? 'bg-sidebar-hover text-sidebar-text font-medium' : 'text-sidebar-muted hover:bg-sidebar-hover hover:text-sidebar-text' }}">
+                                            Pnl. {{ $ak->tahun_penilaian }}
+                                        </a>
+                                    @endforeach
+                                </div>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+
+                <p class="px-4 py-1 text-[10px] font-semibold text-sidebar-muted uppercase tracking-widest">Modul Perubahan</p>
+
+                <a href="{{ route('konteks-mpr.form', $mprKonteks) }}"
+                   class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors {{ request()->routeIs('konteks-mpr.form') ? 'bg-sidebar-hover text-sidebar-text font-medium' : 'text-sidebar-muted hover:text-sidebar-text hover:bg-sidebar-hover' }}">
+                    Hub Konteks MPR
+                </a>
+
+                <a href="{{ route('mpr.analisis-prioritas.form', $mprKonteks) }}"
+                   class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors {{ request()->routeIs('mpr.analisis-prioritas.*') ? 'bg-sidebar-hover text-sidebar-text font-medium' : 'text-sidebar-muted hover:text-sidebar-text hover:bg-sidebar-hover' }}">
+                    Analisis Prioritas (F0)
+                </a>
+
+                <a href="{{ route('mpr.perubahan.index', $mprKonteks) }}"
+                   class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors {{ request()->routeIs('mpr.perubahan.*') || request()->routeIs('mpr.analisis-risiko.*') || request()->routeIs('mpr.analisis-organisasi.*') || request()->routeIs('mpr.persetujuan.*') || request()->routeIs('mpr.perencanaan.*') || request()->routeIs('mpr.logbook.*') || request()->routeIs('mpr.evaluasi.*') ? 'bg-sidebar-hover text-sidebar-text font-medium' : 'text-sidebar-muted hover:text-sidebar-text hover:bg-sidebar-hover' }}">
+                    Daftar Perubahan (F1)
                 </a>
             @endif
 

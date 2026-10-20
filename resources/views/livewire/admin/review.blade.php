@@ -50,11 +50,23 @@
                             {{ $item->mr_konteks_history_max_updated_at ? \Carbon\Carbon::parse($item->mr_konteks_history_max_updated_at)->format('d M Y, H:i') : '-' }}
                         </td>
                         <td class="px-5 py-4 text-right">
-                            <a href="{{ route('admin.review.konteks', $item) }}"
-                               class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface-soft text-text hover:bg-border border border-border text-xs font-medium transition-colors">
-                                Lihat Detail
-                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-                            </a>
+                            <div class="inline-flex items-center gap-1.5">
+                                <a href="{{ route('admin.review.konteks', $item) }}"
+                                   id="review-mr-{{ $item->id }}"
+                                   class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-surface-soft text-text hover:bg-border border border-border text-xs font-medium transition-colors">
+                                    MR
+                                </a>
+                                <a href="{{ route('admin.review.mpn.konteks', $item) }}"
+                                   id="review-mpn-{{ $item->id }}"
+                                   class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-surface-soft text-text hover:bg-border border border-border text-xs font-medium transition-colors">
+                                    MPN
+                                </a>
+                                <a href="{{ route('admin.review.mpr.konteks', $item) }}"
+                                   id="review-mpr-{{ $item->id }}"
+                                   class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-surface-soft text-text hover:bg-border border border-border text-xs font-medium transition-colors">
+                                    MPR
+                                </a>
+                            </div>
                         </td>
                     </tr>
                 @empty
