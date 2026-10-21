@@ -12,6 +12,63 @@
         </a>
     </div>
 
+    {{-- Toast Notification (Melayang di kanan atas) --}}
+    <div
+        x-data="{
+            show: false,
+            message: '',
+            title: 'Berhasil Disimpan',
+            timeout: null,
+            init() {
+                @if(session('success'))
+                    this.notify(@js(session('success')));
+                @endif
+            },
+            notify(msg, customTitle = 'Berhasil Disimpan') {
+                this.message = msg;
+                this.title = customTitle;
+                this.show = true;
+                clearTimeout(this.timeout);
+                this.timeout = setTimeout(() => { this.show = false; }, 4000);
+            }
+        }"
+        x-on:perencanaan-saved.window="notify($event.detail.message, 'Berhasil Disimpan')"
+        x-on:perencanaan-deleted.window="notify($event.detail.message, 'Berhasil Dihapus')"
+        x-on:notify.window="notify($event.detail.message, $event.detail.title ?? 'Notifikasi')"
+        x-show="show"
+        x-cloak
+        x-transition:enter="transition ease-out duration-300 transform"
+        x-transition:enter-start="opacity-0 translate-y-3 sm:translate-y-0 sm:translate-x-4"
+        x-transition:enter-end="opacity-100 translate-y-0 sm:translate-x-0"
+        x-transition:leave="transition ease-in duration-200 transform"
+        x-transition:leave-start="opacity-100 translate-y-0 sm:translate-x-0"
+        x-transition:leave-end="opacity-0 translate-y-3 sm:translate-y-0 sm:translate-x-4"
+        class="fixed top-20 right-4 sm:right-6 z-50 max-w-sm w-full bg-surface border border-emerald-500/30 rounded-xl shadow-xl p-4 flex items-start gap-3 backdrop-blur-md"
+        style="display: none;"
+        role="status"
+        aria-live="polite"
+        id="toast-perencanaan"
+    >
+        <div class="w-8 h-8 rounded-full bg-emerald-500/15 text-emerald-500 dark:text-emerald-400 flex items-center justify-center shrink-0">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            </svg>
+        </div>
+        <div class="flex-1 min-w-0 pt-0.5">
+            <p class="text-sm font-semibold text-text-strong" x-text="title">Berhasil Disimpan</p>
+            <p class="text-xs text-muted mt-0.5 break-words" x-text="message">
+                @if(session('success'))
+                    {{ session('success') }}
+                @endif
+            </p>
+        </div>
+        <button type="button" @click="show = false" class="text-muted hover:text-text p-1 rounded-md transition-colors shrink-0" title="Tutup">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+        </button>
+    </div>
+
     @if($isAdmin)
         <div class="mb-6 rounded-lg bg-info/10 border border-info/20 px-4 py-3 text-sm text-info">
             Anda melihat data ini dalam mode <strong>read-only</strong>.
@@ -72,8 +129,19 @@
             @if($isEditable)
                 <div class="flex justify-end pt-4 border-t border-border">
                     <button type="submit" id="simpan-implementasi"
-                        class="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-primary hover:bg-primary-dark text-sm font-semibold text-white shadow transition-all cursor-pointer">
-                        Simpan Implementasi
+                        wire:loading.attr="disabled"
+                        wire:target="saveImplementasi"
+                        class="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-primary hover:bg-primary-dark disabled:opacity-50 text-sm font-semibold text-white shadow transition-all cursor-pointer">
+                        <span wire:loading.remove wire:target="saveImplementasi">
+                            Simpan Implementasi
+                        </span>
+                        <span wire:loading.inline-flex wire:target="saveImplementasi" class="items-center gap-2">
+                            <svg class="w-4 h-4 animate-spin text-white shrink-0" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                            </svg>
+                            <span>Menyimpan...</span>
+                        </span>
                     </button>
                 </div>
             @endif
@@ -164,8 +232,19 @@
                 @if($isEditable)
                     <div class="flex justify-end pt-4 border-t border-border">
                         <button type="submit" id="simpan-strategi"
-                            class="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-primary hover:bg-primary-dark text-sm font-semibold text-white shadow transition-all cursor-pointer">
-                            Simpan Strategi
+                            wire:loading.attr="disabled"
+                            wire:target="saveStrategi"
+                            class="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-primary hover:bg-primary-dark disabled:opacity-50 text-sm font-semibold text-white shadow transition-all cursor-pointer">
+                            <span wire:loading.remove wire:target="saveStrategi">
+                                Simpan Strategi
+                            </span>
+                            <span wire:loading.inline-flex wire:target="saveStrategi" class="items-center gap-2">
+                                <svg class="w-4 h-4 animate-spin text-white shrink-0" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                                </svg>
+                                <span>Menyimpan...</span>
+                            </span>
                         </button>
                     </div>
                 @endif

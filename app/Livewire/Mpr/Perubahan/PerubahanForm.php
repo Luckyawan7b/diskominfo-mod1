@@ -143,8 +143,12 @@ class PerubahanForm extends Component
         $this->formulirTerisi = [];
         $this->hitungHasilAlur();
 
-        session()->flash('success', 'Permohonan perubahan berhasil disimpan.');
+        $pesan = 'Permohonan perubahan berhasil disimpan.';
+        session()->flash('success', $pesan);
+        $this->dispatch('perubahan-saved', message: $pesan);
     }
+
+
 
     private function klasifikasiAtauLingkupBerubah(): bool
     {

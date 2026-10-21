@@ -13,6 +13,62 @@
         @endif
     </div>
 
+    {{-- Toast Notification (Melayang di kanan atas) --}}
+    <div
+        x-data="{
+            show: false,
+            message: '',
+            title: 'Berhasil',
+            timeout: null,
+            init() {
+                @if(session('success'))
+                    this.notify(@js(session('success')));
+                @endif
+            },
+            notify(msg, customTitle = 'Berhasil') {
+                this.message = msg;
+                this.title = customTitle;
+                this.show = true;
+                clearTimeout(this.timeout);
+                this.timeout = setTimeout(() => { this.show = false; }, 4000);
+            }
+        }"
+        x-on:perubahan-deleted.window="notify($event.detail.message, 'Berhasil Dihapus')"
+        x-on:notify.window="notify($event.detail.message, $event.detail.title ?? 'Notifikasi')"
+        x-show="show"
+        x-cloak
+        x-transition:enter="transition ease-out duration-300 transform"
+        x-transition:enter-start="opacity-0 translate-y-3 sm:translate-y-0 sm:translate-x-4"
+        x-transition:enter-end="opacity-100 translate-y-0 sm:translate-x-0"
+        x-transition:leave="transition ease-in duration-200 transform"
+        x-transition:leave-start="opacity-100 translate-y-0 sm:translate-x-0"
+        x-transition:leave-end="opacity-0 translate-y-3 sm:translate-y-0 sm:translate-x-4"
+        class="fixed top-20 right-4 sm:right-6 z-50 max-w-sm w-full bg-surface border border-emerald-500/30 rounded-xl shadow-xl p-4 flex items-start gap-3 backdrop-blur-md"
+        style="display: none;"
+        role="status"
+        aria-live="polite"
+        id="toast-perubahan-index"
+    >
+        <div class="w-8 h-8 rounded-full bg-emerald-500/15 text-emerald-500 dark:text-emerald-400 flex items-center justify-center shrink-0">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            </svg>
+        </div>
+        <div class="flex-1 min-w-0 pt-0.5">
+            <p class="text-sm font-semibold text-text-strong" x-text="title">Berhasil</p>
+            <p class="text-xs text-muted mt-0.5 break-words" x-text="message">
+                @if(session('success'))
+                    {{ session('success') }}
+                @endif
+            </p>
+        </div>
+        <button type="button" @click="show = false" class="text-muted hover:text-text p-1 rounded-md transition-colors shrink-0" title="Tutup">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+        </button>
+    </div>
+
     @if(! $isEditable)
         <div class="mb-6 rounded-lg bg-info/10 border border-info/20 px-4 py-3 text-sm text-info">
             Anda melihat daftar ini dalam mode <strong>read-only</strong>.

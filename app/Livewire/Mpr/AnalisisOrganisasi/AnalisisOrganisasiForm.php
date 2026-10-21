@@ -131,7 +131,10 @@ class AnalisisOrganisasiForm extends Component
         $this->kesimpulanNama = $ukuranKesimpulan?->nama;
         $this->rekomendasi = $analisis->rekomendasi;
 
-        session()->flash('success', 'Analisis dampak organisasi berhasil disimpan.');
+        $pesan = 'Analisis dampak organisasi berhasil disimpan.';
+        session()->flash('success', $pesan);
+        $this->dispatch('organisasi-mpr-saved', message: $pesan);
+        $this->dispatch('notify', message: $pesan, title: 'Berhasil Disimpan');
     }
 
     public function render()

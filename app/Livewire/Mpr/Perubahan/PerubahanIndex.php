@@ -33,8 +33,11 @@ class PerubahanIndex extends Component
         // Soft delete; hanya perubahan milik konteks ini.
         $this->konteks->perubahan()->findOrFail($id)->delete();
 
-        session()->flash('success', 'Perubahan berhasil dihapus.');
+        $pesan = 'Perubahan berhasil dihapus.';
+        session()->flash('success', $pesan);
+        $this->dispatch('perubahan-deleted', message: $pesan);
     }
+
 
     public function render()
     {

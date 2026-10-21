@@ -122,7 +122,9 @@ class PerencanaanFormTest extends TestCase
             ->set('jangka_waktu', '1 Bulan')
             ->set('pic_implementasi', 'Bidang Aplikasi')
             ->call('saveImplementasi')
-            ->assertHasNoErrors();
+            ->assertHasNoErrors()
+            ->assertDispatched('perencanaan-saved')
+            ->assertSee('Perencanaan implementasi berhasil disimpan.');
 
         $imp = $data->perubahan->fresh()->implementasi;
         $this->assertNotNull($imp);
@@ -148,7 +150,9 @@ class PerencanaanFormTest extends TestCase
             ->assertViewHas('selectedStrategiOrg', fn ($org) => $org && $org->kegiatan->count() === 8)
             ->set('detail_strategi_organisasi', 'Sosialisasi bertahap')
             ->call('saveStrategi')
-            ->assertHasNoErrors();
+            ->assertHasNoErrors()
+            ->assertDispatched('perencanaan-saved')
+            ->assertSee('Strategi perubahan berhasil disimpan.');
 
         $str = $data->perubahan->fresh()->strategi;
         $this->assertNotNull($str);
@@ -181,7 +185,9 @@ class PerencanaanFormTest extends TestCase
             ->set('sumberDayaBlocks.0.skema_pembiayaan', 'APBD')
             ->set('sumberDayaBlocks.0.pic', 'Subbag Keuangan')
             ->call('saveSumberDaya', 0)
-            ->assertHasNoErrors();
+            ->assertHasNoErrors()
+            ->assertDispatched('perencanaan-saved')
+            ->assertSee('Sumber daya berhasil disimpan.');
 
         // Tambah baris kedua untuk uji pengubahan urutan
         $c->call('addSumberDaya')
@@ -199,7 +205,9 @@ class PerencanaanFormTest extends TestCase
         $this->assertSame(1, MprSumberDaya::find($idPertama)->urutan);
 
         // Hapus baris pertama di urutan saat ini ($idKedua)
-        $c->call('removeSumberDaya', 0);
+        $c->call('removeSumberDaya', 0)
+            ->assertDispatched('perencanaan-deleted')
+            ->assertSee('Sumber daya berhasil dihapus.');
         $this->assertDatabaseMissing('mpr_sumber_daya', ['id' => $idKedua]);
         $this->assertSame(0, MprSumberDaya::find($idPertama)->urutan);
     }
@@ -218,7 +226,9 @@ class PerencanaanFormTest extends TestCase
             ->set('indikatorBlocks.0.target', '1.5')
             ->set('indikatorBlocks.0.realisasi', '1.2')
             ->call('saveIndikator', 0)
-            ->assertHasNoErrors();
+            ->assertHasNoErrors()
+            ->assertDispatched('perencanaan-saved')
+            ->assertSee('Indikator keberhasilan berhasil disimpan.');
 
         $c->call('addIndikator')
             ->set('indikatorBlocks.1.indikator', 'Tingkat kepuasan pengguna')
@@ -233,7 +243,9 @@ class PerencanaanFormTest extends TestCase
         $c->call('moveIndikatorDown', 0);
         $this->assertSame([$idB, $idA], $data->perubahan->indikatorKeberhasilan()->pluck('id')->all());
 
-        $c->call('removeIndikator', 1);
+        $c->call('removeIndikator', 1)
+            ->assertDispatched('perencanaan-deleted')
+            ->assertSee('Indikator keberhasilan berhasil dihapus.');
         $this->assertDatabaseMissing('mpr_indikator_keberhasilan', ['id' => $idA]);
     }
 
@@ -257,7 +269,9 @@ class PerencanaanFormTest extends TestCase
             ->set('stakeholderBlocks.0.ref_jenis_resistensi_id', $jns->id)
             ->set('stakeholderBlocks.0.ref_tingkat_resistensi_id', $tkt->id)
             ->call('saveStakeholder', 0)
-            ->assertHasNoErrors();
+            ->assertHasNoErrors()
+            ->assertDispatched('perencanaan-saved')
+            ->assertSee('Data pemangku kepentingan berhasil disimpan.');
 
         $this->assertSame(1, $data->perubahan->stakeholder()->count());
 
@@ -272,7 +286,9 @@ class PerencanaanFormTest extends TestCase
             ->set('komunikasiBlocks.0.media_komunikasi', 'Surat Edaran & Grup WA')
             ->set('komunikasiBlocks.0.periode_komunikasi', 'H-3 sebelum rilis')
             ->call('saveKomunikasi', 0)
-            ->assertHasNoErrors();
+            ->assertHasNoErrors()
+            ->assertDispatched('perencanaan-saved')
+            ->assertSee('Rencana komunikasi berhasil disimpan.');
 
         $this->assertSame(1, $data->perubahan->komunikasi()->count());
 
@@ -287,14 +303,22 @@ class PerencanaanFormTest extends TestCase
             ->set('pelatihanBlocks.0.metode_pelatihan', 'Tatap Muka')
             ->set('pelatihanBlocks.0.tanggal_pelaksanaan', '2026-06-20')
             ->call('savePelatihan', 0)
-            ->assertHasNoErrors();
+            ->assertHasNoErrors()
+            ->assertDispatched('perencanaan-saved')
+            ->assertSee('Rencana pelatihan berhasil disimpan.');
 
         $this->assertSame(1, $data->perubahan->pelatihan()->count());
 
         // Hapus masing-masing
         $c->call('removeStakeholder', 0)
+            ->assertDispatched('perencanaan-deleted')
+            ->assertSee('Data pemangku kepentingan berhasil dihapus.')
             ->call('removeKomunikasi', 0)
-            ->call('removePelatihan', 0);
+            ->assertDispatched('perencanaan-deleted')
+            ->assertSee('Rencana komunikasi berhasil dihapus.')
+            ->call('removePelatihan', 0)
+            ->assertDispatched('perencanaan-deleted')
+            ->assertSee('Rencana pelatihan berhasil dihapus.');
 
         $this->assertSame(0, $data->perubahan->stakeholder()->count());
         $this->assertSame(0, $data->perubahan->komunikasi()->count());

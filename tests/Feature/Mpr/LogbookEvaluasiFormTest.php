@@ -113,7 +113,9 @@ class LogbookEvaluasiFormTest extends TestCase
             ->set('status_perubahan', 'Berhasil')
             ->set('file_bukti', $file)
             ->call('save')
-            ->assertHasNoErrors();
+            ->assertHasNoErrors()
+            ->assertDispatched('logbook-saved')
+            ->assertSee('Logbook pelaksanaan perubahan berhasil disimpan.');
 
         $logbook = $data->perubahan->fresh()->logbook;
         $this->assertNotNull($logbook);
@@ -126,7 +128,9 @@ class LogbookEvaluasiFormTest extends TestCase
         Storage::disk('public')->assertExists($lampiran->path_file);
 
         // Hapus lampiran dari form
-        $c->call('deleteLampiran', $lampiran->id);
+        $c->call('deleteLampiran', $lampiran->id)
+            ->assertDispatched('lampiran-deleted')
+            ->assertSee('Lampiran bukti pelaksanaan berhasil dihapus.');
         Storage::disk('public')->assertMissing($lampiran->path_file);
         $this->assertSame(0, MrLampiran::withTrashed()->whereKey($lampiran->id)->count());
     }
@@ -261,7 +265,9 @@ class LogbookEvaluasiFormTest extends TestCase
             ->set('lesson_learned', 'Pengujian beban sebelum rilis sangat membantu.')
             ->set('rekomendasi_solusi', 'Terapkan juga pada layanan lain.')
             ->call('save')
-            ->assertHasNoErrors();
+            ->assertHasNoErrors()
+            ->assertDispatched('evaluasi-saved')
+            ->assertSee('Evaluasi perubahan berhasil disimpan.');
 
         $eval = $data->perubahan->fresh()->evaluasi;
         $this->assertNotNull($eval);

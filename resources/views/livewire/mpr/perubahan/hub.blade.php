@@ -32,16 +32,65 @@
             <span class="font-semibold text-text-strong">Kelengkapan Formulir Wajib</span>
             <span class="text-muted">{{ $kelengkapan['terisi'] }}/{{ $kelengkapan['wajib'] }} terisi</span>
         </div>
-        <div class="h-1.5 rounded-full bg-border mb-4">
+        <div class="h-1.5 rounded-full bg-border mb-4 sm:mb-5">
             <div class="h-1.5 rounded-full bg-accent transition-all"
                  style="width: {{ $kelengkapan['wajib'] > 0 ? round($kelengkapan['terisi'] / $kelengkapan['wajib'] * 100) : 0 }}%"></div>
         </div>
-        <ol class="flex flex-wrap items-center gap-x-2 gap-y-2 text-[11px]" id="stepper-perubahan">
-            <li class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-success-bg text-success border border-success/20 font-medium">F1 Permohonan</li>
+        <ol class="flex flex-wrap items-center gap-x-3 gap-y-2.5 sm:gap-y-3" id="stepper-perubahan">
+            <li class="inline-flex">
+                <a href="{{ route('mpr.perubahan.form', [$konteks, $p]) }}"
+                   class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-success-bg text-success border border-success/30 font-medium text-xs hover:border-success/50 hover:bg-success-bg/80 transition-colors">
+                    <svg class="w-3.5 h-3.5 text-success shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                    <span>F1 Permohonan</span>
+                </a>
+            </li>
             @foreach($formulir as $kunci => $f)
-                <li class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border font-medium
-                    {{ ! $f['wajib'] ? 'bg-surface-soft text-muted border-border opacity-60' : ($f['terisi'] ? 'bg-success-bg text-success border-success/20' : 'bg-surface-soft text-text border-border') }}">
-                    {{ $f['label'] }}
+                @php
+                    $url = ! empty($f['route'])
+                        ? route($f['route'], array_filter([$konteks, $p, 'tab' => $f['tab'] ?? null]))
+                        : null;
+                @endphp
+                <li class="inline-flex">
+                    @if($url)
+                        <a href="{{ $url }}"
+                           class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full border font-medium text-xs transition-colors
+                            {{ ! $f['wajib']
+                                ? 'bg-surface-soft text-muted border-border opacity-60 hover:opacity-100 hover:border-border-strong'
+                                : ($f['terisi']
+                                    ? 'bg-success-bg text-success border-success/30 hover:border-success/50 hover:bg-success-bg/80'
+                                    : 'bg-surface-soft text-text border-border hover:border-primary/40 hover:bg-surface') }}">
+                            @if($f['terisi'])
+                                <svg class="w-3.5 h-3.5 text-success shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                </svg>
+                            @elseif(! $f['wajib'])
+                                <span class="w-1.5 h-1.5 rounded-full bg-muted/40 shrink-0"></span>
+                            @else
+                                <span class="w-1.5 h-1.5 rounded-full bg-muted/60 shrink-0"></span>
+                            @endif
+                            <span>{{ $f['label'] }}</span>
+                        </a>
+                    @else
+                        <span class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full border font-medium text-xs
+                            {{ ! $f['wajib']
+                                ? 'bg-surface-soft text-muted border-border opacity-60'
+                                : ($f['terisi']
+                                    ? 'bg-success-bg text-success border-success/30'
+                                    : 'bg-surface-soft text-text border-border') }}">
+                            @if($f['terisi'])
+                                <svg class="w-3.5 h-3.5 text-success shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                </svg>
+                            @elseif(! $f['wajib'])
+                                <span class="w-1.5 h-1.5 rounded-full bg-muted/40 shrink-0"></span>
+                            @else
+                                <span class="w-1.5 h-1.5 rounded-full bg-muted/60 shrink-0"></span>
+                            @endif
+                            <span>{{ $f['label'] }}</span>
+                        </span>
+                    @endif
                 </li>
             @endforeach
         </ol>

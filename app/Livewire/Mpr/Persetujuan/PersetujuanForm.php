@@ -128,7 +128,10 @@ class PersetujuanForm extends Component
             }
         }
 
-        session()->flash('success', 'Data persetujuan berhasil disimpan.');
+        $pesan = 'Data persetujuan berhasil disimpan.';
+        session()->flash('success', $pesan);
+        $this->dispatch('persetujuan-saved', message: $pesan);
+        $this->dispatch('notify', message: $pesan, title: 'Berhasil Disimpan');
     }
 
     public function render()

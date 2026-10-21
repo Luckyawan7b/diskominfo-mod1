@@ -114,7 +114,10 @@ class LogbookForm extends Component
             $this->file_bukti = null;
         }
 
-        session()->flash('success', 'Logbook pelaksanaan perubahan berhasil disimpan.');
+        $pesan = 'Logbook pelaksanaan perubahan berhasil disimpan.';
+        session()->flash('success', $pesan);
+        $this->dispatch('logbook-saved', message: $pesan);
+        $this->dispatch('notify', message: $pesan, title: 'Berhasil Disimpan');
     }
 
     public function deleteLampiran(int $lampiranId): void
@@ -132,7 +135,10 @@ class LogbookForm extends Component
         }
         $lampiran->forceDelete();
 
-        session()->flash('success', 'Lampiran bukti pelaksanaan berhasil dihapus.');
+        $pesan = 'Lampiran bukti pelaksanaan berhasil dihapus.';
+        session()->flash('success', $pesan);
+        $this->dispatch('lampiran-deleted', message: $pesan);
+        $this->dispatch('notify', message: $pesan, title: 'Berhasil Dihapus');
     }
 
     public function render()

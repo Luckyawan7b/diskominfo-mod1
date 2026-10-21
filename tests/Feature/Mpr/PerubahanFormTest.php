@@ -259,4 +259,17 @@ class PerubahanFormTest extends TestCase
             ->assertSee('read-only')
             ->assertDontSee('Simpan Perubahan');
     }
+
+    public function test_simpan_perubahan_menampilkan_notifikasi_berhasil(): void
+    {
+        $data = $this->siapkanDataMpr();
+        $ref = $this->ref();
+
+        $this->isiValid($this->baru($data->operator, $data->konteks), $ref)
+            ->call('save')
+            ->assertHasNoErrors()
+            ->assertDispatched('perubahan-saved')
+            ->assertSee('Permohonan perubahan berhasil disimpan');
+    }
 }
+

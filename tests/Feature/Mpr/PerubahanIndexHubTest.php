@@ -98,7 +98,9 @@ class PerubahanIndexHubTest extends TestCase
 
         Livewire::actingAs($data->operator)
             ->test(PerubahanIndex::class, ['konteks' => $data->konteks])
-            ->call('hapus', $data->perubahan->id);
+            ->call('hapus', $data->perubahan->id)
+            ->assertDispatched('perubahan-deleted')
+            ->assertSee('Perubahan berhasil dihapus');
 
         $this->assertSoftDeleted('mpr_perubahan', ['id' => $data->perubahan->id, 'deleted_by' => $data->operator->id]);
 

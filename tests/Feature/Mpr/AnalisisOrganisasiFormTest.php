@@ -143,6 +143,8 @@ class AnalisisOrganisasiFormTest extends TestCase
 
         $c->call('save')
             ->assertHasNoErrors()
+            ->assertDispatched('organisasi-mpr-saved')
+            ->assertSee('Analisis dampak organisasi berhasil disimpan.')
             ->assertSet('kesimpulanNama', 'Tinggi')
             ->assertSet('rekomendasi', $tinggi->definisi);
 

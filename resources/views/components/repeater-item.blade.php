@@ -83,8 +83,19 @@
     @if($isEditable && $saveAction)
         <div class="flex justify-end gap-3 mt-6 pt-4 border-t border-border">
             <button type="button" wire:click="{{ $saveAction }}({{ $index }})" @if($saveId) id="{{ $saveId }}" @endif
-                class="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-primary hover:bg-primary-dark text-sm font-semibold text-white shadow transition-all cursor-pointer">
-                {{ $saveLabel }}
+                wire:loading.attr="disabled"
+                wire:target="{{ $saveAction }}({{ $index }})"
+                class="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-primary hover:bg-primary-dark disabled:opacity-50 text-sm font-semibold text-white shadow transition-all cursor-pointer">
+                <span wire:loading.remove wire:target="{{ $saveAction }}({{ $index }})">
+                    {{ $saveLabel }}
+                </span>
+                <span wire:loading.inline-flex wire:target="{{ $saveAction }}({{ $index }})" class="items-center gap-2">
+                    <svg class="w-4 h-4 animate-spin text-white shrink-0" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                    </svg>
+                    <span>Menyimpan...</span>
+                </span>
             </button>
         </div>
     @endif

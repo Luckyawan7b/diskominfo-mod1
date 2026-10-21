@@ -189,4 +189,19 @@ class AnalisisPrioritasFormTest extends TestCase
             ->get(route('mpr.analisis-prioritas.form', $data->konteks))
             ->assertForbidden();
     }
+
+    public function test_simpan_analisis_menampilkan_notifikasi_berhasil(): void
+    {
+        $data = $this->siapkanDataMpr();
+
+        $this->komponen($data->operator, $data->konteks)
+            ->call('addBlock')
+            ->set('blocks.0.kondisi_perlu_berubah', 'Perlu integrasi API')
+            ->call('saveBlock', 0)
+            ->assertHasNoErrors()
+            ->assertDispatched('analisis-saved')
+            ->assertSee('Analisis prioritas berhasil disimpan')
+            ->assertSee('Tersimpan');
+    }
 }
+

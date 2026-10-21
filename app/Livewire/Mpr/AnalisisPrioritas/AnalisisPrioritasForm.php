@@ -24,6 +24,8 @@ class AnalisisPrioritasForm extends Component
      */
     public array $blocks = [];
 
+    public ?int $lastSavedIndex = null;
+
     public function mount(MprKonteks $konteks): void
     {
         $this->konteks = $konteks;
@@ -100,8 +102,11 @@ class AnalisisPrioritasForm extends Component
 
         unset($this->blocks[$index]);
         $this->blocks = array_values($this->blocks);
+        $this->lastSavedIndex = null;
 
-        session()->flash('success', 'Analisis prioritas berhasil dihapus.');
+        $pesan = 'Analisis prioritas berhasil dihapus.';
+        session()->flash('success', $pesan);
+        $this->dispatch('analisis-deleted', message: $pesan);
     }
 
     /**
@@ -165,7 +170,11 @@ class AnalisisPrioritasForm extends Component
 
         $this->blocks[$index]['indikator_ids'] = array_map('intval', $indikatorIds);
 
-        session()->flash('success', 'Analisis prioritas berhasil disimpan.');
+        $this->lastSavedIndex = $index;
+
+        $pesan = 'Analisis prioritas berhasil disimpan.';
+        session()->flash('success', $pesan);
+        $this->dispatch('analisis-saved', message: $pesan);
     }
 
     public function render()

@@ -198,7 +198,10 @@ class PerencanaanForm extends Component
             ]
         );
 
-        session()->flash('success', 'Perencanaan implementasi berhasil disimpan.');
+        $pesan = 'Perencanaan implementasi berhasil disimpan.';
+        session()->flash('success', $pesan);
+        $this->dispatch('perencanaan-saved', message: $pesan);
+        $this->dispatch('notify', message: $pesan, title: 'Berhasil Disimpan');
     }
 
     // ─── Tab 2: Strategi ─────────────────────────────────────────────────────
@@ -226,7 +229,10 @@ class PerencanaanForm extends Component
             ]
         );
 
-        session()->flash('success', 'Strategi perubahan berhasil disimpan.');
+        $pesan = 'Strategi perubahan berhasil disimpan.';
+        session()->flash('success', $pesan);
+        $this->dispatch('perencanaan-saved', message: $pesan);
+        $this->dispatch('notify', message: $pesan, title: 'Berhasil Disimpan');
     }
 
     // ─── Tab 3: Sumber Daya ──────────────────────────────────────────────────
@@ -293,7 +299,10 @@ class PerencanaanForm extends Component
             $this->sumberDayaBlocks[$index]['id'] = $model->id;
         }
 
-        session()->flash('success', 'Sumber daya berhasil disimpan.');
+        $pesan = 'Sumber daya berhasil disimpan.';
+        session()->flash('success', $pesan);
+        $this->dispatch('perencanaan-saved', message: $pesan);
+        $this->dispatch('notify', message: $pesan, title: 'Berhasil Disimpan');
     }
 
     public function removeSumberDaya(int $index): void
@@ -317,7 +326,10 @@ class PerencanaanForm extends Component
         $this->sumberDayaBlocks = array_values($this->sumberDayaBlocks);
         $this->persistUrutanSumberDaya();
 
-        session()->flash('success', 'Sumber daya berhasil dihapus.');
+        $pesan = 'Sumber daya berhasil dihapus.';
+        session()->flash('success', $pesan);
+        $this->dispatch('perencanaan-deleted', message: $pesan);
+        $this->dispatch('notify', message: $pesan, title: 'Berhasil Dihapus');
     }
 
     public function moveSumberDayaUp(int $index): void
@@ -403,7 +415,10 @@ class PerencanaanForm extends Component
             $this->indikatorBlocks[$index]['id'] = $model->id;
         }
 
-        session()->flash('success', 'Indikator keberhasilan berhasil disimpan.');
+        $pesan = 'Indikator keberhasilan berhasil disimpan.';
+        session()->flash('success', $pesan);
+        $this->dispatch('perencanaan-saved', message: $pesan);
+        $this->dispatch('notify', message: $pesan, title: 'Berhasil Disimpan');
     }
 
     public function removeIndikator(int $index): void
@@ -427,7 +442,10 @@ class PerencanaanForm extends Component
         $this->indikatorBlocks = array_values($this->indikatorBlocks);
         $this->persistUrutanIndikator();
 
-        session()->flash('success', 'Indikator keberhasilan berhasil dihapus.');
+        $pesan = 'Indikator keberhasilan berhasil dihapus.';
+        session()->flash('success', $pesan);
+        $this->dispatch('perencanaan-deleted', message: $pesan);
+        $this->dispatch('notify', message: $pesan, title: 'Berhasil Dihapus');
     }
 
     public function moveIndikatorUp(int $index): void
@@ -510,7 +528,10 @@ class PerencanaanForm extends Component
             $this->stakeholderBlocks[$index]['id'] = $model->id;
         }
 
-        session()->flash('success', 'Data pemangku kepentingan berhasil disimpan.');
+        $pesan = 'Data pemangku kepentingan berhasil disimpan.';
+        session()->flash('success', $pesan);
+        $this->dispatch('perencanaan-saved', message: $pesan);
+        $this->dispatch('notify', message: $pesan, title: 'Berhasil Disimpan');
     }
 
     public function removeStakeholder(int $index): void
@@ -533,7 +554,10 @@ class PerencanaanForm extends Component
         unset($this->stakeholderBlocks[$index]);
         $this->stakeholderBlocks = array_values($this->stakeholderBlocks);
 
-        session()->flash('success', 'Data pemangku kepentingan berhasil dihapus.');
+        $pesan = 'Data pemangku kepentingan berhasil dihapus.';
+        session()->flash('success', $pesan);
+        $this->dispatch('perencanaan-deleted', message: $pesan);
+        $this->dispatch('notify', message: $pesan, title: 'Berhasil Dihapus');
     }
 
     // ─── Tab 6: Komunikasi ───────────────────────────────────────────────────
@@ -596,7 +620,10 @@ class PerencanaanForm extends Component
             $this->komunikasiBlocks[$index]['id'] = $model->id;
         }
 
-        session()->flash('success', 'Rencana komunikasi berhasil disimpan.');
+        $pesan = 'Rencana komunikasi berhasil disimpan.';
+        session()->flash('success', $pesan);
+        $this->dispatch('perencanaan-saved', message: $pesan);
+        $this->dispatch('notify', message: $pesan, title: 'Berhasil Disimpan');
     }
 
     public function removeKomunikasi(int $index): void
@@ -619,7 +646,10 @@ class PerencanaanForm extends Component
         unset($this->komunikasiBlocks[$index]);
         $this->komunikasiBlocks = array_values($this->komunikasiBlocks);
 
-        session()->flash('success', 'Rencana komunikasi berhasil dihapus.');
+        $pesan = 'Rencana komunikasi berhasil dihapus.';
+        session()->flash('success', $pesan);
+        $this->dispatch('perencanaan-deleted', message: $pesan);
+        $this->dispatch('notify', message: $pesan, title: 'Berhasil Dihapus');
     }
 
     // ─── Tab 7: Pelatihan ────────────────────────────────────────────────────
@@ -684,7 +714,10 @@ class PerencanaanForm extends Component
             $this->pelatihanBlocks[$index]['id'] = $model->id;
         }
 
-        session()->flash('success', 'Rencana pelatihan berhasil disimpan.');
+        $pesan = 'Rencana pelatihan berhasil disimpan.';
+        session()->flash('success', $pesan);
+        $this->dispatch('perencanaan-saved', message: $pesan);
+        $this->dispatch('notify', message: $pesan, title: 'Berhasil Disimpan');
     }
 
     public function removePelatihan(int $index): void
@@ -707,7 +740,10 @@ class PerencanaanForm extends Component
         unset($this->pelatihanBlocks[$index]);
         $this->pelatihanBlocks = array_values($this->pelatihanBlocks);
 
-        session()->flash('success', 'Rencana pelatihan berhasil dihapus.');
+        $pesan = 'Rencana pelatihan berhasil dihapus.';
+        session()->flash('success', $pesan);
+        $this->dispatch('perencanaan-deleted', message: $pesan);
+        $this->dispatch('notify', message: $pesan, title: 'Berhasil Dihapus');
     }
 
     // ─── Helpers ─────────────────────────────────────────────────────────────

@@ -120,7 +120,10 @@ class AnalisisRisikoForm extends Component
         unset($this->blocks[$index]);
         $this->blocks = array_values($this->blocks);
 
-        session()->flash('success', 'Analisis risiko berhasil dihapus.');
+        $pesan = 'Analisis risiko berhasil dihapus.';
+        session()->flash('success', $pesan);
+        $this->dispatch('risiko-mpr-deleted', message: $pesan);
+        $this->dispatch('notify', message: $pesan, title: 'Berhasil Dihapus');
     }
 
     /**
@@ -240,7 +243,10 @@ class AnalisisRisikoForm extends Component
         $this->blocks[$index]['kode_risiko'] = $model->kode_risiko;
         $this->blocks[$index]['mr_risiko_id'] = $model->mr_risiko_id;
 
-        session()->flash('success', 'Analisis risiko berhasil disimpan.');
+        $pesan = 'Analisis risiko berhasil disimpan.';
+        session()->flash('success', $pesan);
+        $this->dispatch('risiko-mpr-saved', message: $pesan);
+        $this->dispatch('notify', message: $pesan, title: 'Berhasil Disimpan');
     }
 
     public function render()

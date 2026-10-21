@@ -152,7 +152,9 @@ class AnalisisRisikoFormTest extends TestCase
             ->set('blocks.0.perencanaan_keberlangsungan', 'Siapkan halaman maintenance')
             ->assertViewHas('hasilPerBlok', fn (array $h) => $h[0]['besaran'] === 5 && $h[0]['label'] === 'Rendah')
             ->call('saveBlock', 0)
-            ->assertHasNoErrors();
+            ->assertHasNoErrors()
+            ->assertDispatched('risiko-mpr-saved')
+            ->assertSee('Analisis risiko berhasil disimpan.');
 
         $tersimpan = MprAnalisisRisiko::where('mpr_perubahan_id', $data->perubahan->id)->firstOrFail();
         $this->assertSame('R-PR-001', $tersimpan->kode_risiko);
@@ -275,7 +277,9 @@ class AnalisisRisikoFormTest extends TestCase
         ]);
 
         $this->komponen($data->operator, $data->konteks, $data->perubahan)
-            ->call('removeBlock', 0);
+            ->call('removeBlock', 0)
+            ->assertDispatched('risiko-mpr-deleted')
+            ->assertSee('Analisis risiko berhasil dihapus.');
 
         $this->assertSoftDeleted('mpr_analisis_risiko', [
             'id'         => $risiko->id,

@@ -127,7 +127,9 @@ class PersetujuanFormTest extends TestCase
             ->set('items.analisis_organisasi.status', 'Disetujui')
             ->set('items.analisis_organisasi.pic_penyetuju', 'Sekretaris')
             ->call('save')
-            ->assertHasNoErrors();
+            ->assertHasNoErrors()
+            ->assertDispatched('persetujuan-saved')
+            ->assertSee('Data persetujuan berhasil disimpan.');
 
         $this->assertSame(1, $data->perubahan->persetujuan()->count());
         $row = $data->perubahan->persetujuan()->where('tahap', 'analisis_teknis')->firstOrFail();

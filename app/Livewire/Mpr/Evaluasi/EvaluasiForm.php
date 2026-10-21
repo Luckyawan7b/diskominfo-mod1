@@ -64,7 +64,10 @@ class EvaluasiForm extends Component
             ]
         );
 
-        session()->flash('success', 'Evaluasi perubahan berhasil disimpan.');
+        $pesan = 'Evaluasi perubahan berhasil disimpan.';
+        session()->flash('success', $pesan);
+        $this->dispatch('evaluasi-saved', message: $pesan);
+        $this->dispatch('notify', message: $pesan, title: 'Berhasil Disimpan');
     }
 
     public function render()
